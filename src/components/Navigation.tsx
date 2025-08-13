@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { 
+  Home,
   Newspaper, 
   FileText, 
   BookOpen, 
@@ -17,6 +18,7 @@ const Navigation = () => {
   const location = useLocation();
 
   const navItems = [
+    { id: "inicio", label: "Início", icon: Home, path: "/" },
     { id: "noticias", label: "Notícias", icon: Newspaper, path: "/noticias" },
     { id: "materiais", label: "Materiais Técnicos", icon: FileText, path: "/materiais" },
     { id: "ebooks", label: "E-books", icon: BookOpen, path: "/ebooks" },

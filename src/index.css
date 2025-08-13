@@ -1,0 +1,94 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definição do sistema de design com cores personalizadas para o portal ALUINFO */
+
+@layer base {
+  :root {
+    --background: 0 0% 98%;
+    --foreground: 210 11% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 210 11% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 210 11% 15%;
+
+    --primary: 25 95% 53%;
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 210 11% 71%;
+    --secondary-foreground: 210 11% 15%;
+
+    --muted: 210 11% 93%;
+    --muted-foreground: 210 11% 45%;
+
+    --accent: 210 11% 90%;
+    --accent-foreground: 210 11% 15%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 210 11% 82%;
+    --input: 210 11% 82%;
+    --ring: 25 95% 53%;
+
+    --radius: 0.5rem;
+
+    --lead: 210 11% 31%;
+    --lead-light: 210 11% 45%;
+    --sidebar-background: 210 11% 15%;
+    --sidebar-foreground: 210 11% 85%;
+  }
+
+  .dark {
+    --background: 210 11% 15%;
+    --foreground: 0 0% 98%;
+
+    --card: 210 11% 15%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 210 11% 15%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 25 95% 53%;
+    --primary-foreground: 210 11% 15%;
+
+    --secondary: 210 11% 31%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 210 11% 25%;
+    --muted-foreground: 210 11% 65%;
+
+    --accent: 210 11% 31%;
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 210 11% 31%;
+    --input: 210 11% 31%;
+    --ring: 25 95% 53%;
+
+    --lead: 210 11% 85%;
+    --lead-light: 210 11% 65%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer components {
+  .banner-ad {
+    @apply bg-gradient-to-r from-slate-100 to-slate-200 border-2 border-dashed border-slate-300 rounded-lg flex items-center justify-center text-slate-500 font-medium transition-colors hover:from-slate-200 hover:to-slate-300;
+  }
+}

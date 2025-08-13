@@ -1,5 +1,6 @@
 
 import { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { 
   Newspaper, 
@@ -12,16 +13,19 @@ import {
 } from "lucide-react";
 
 const Navigation = () => {
-  const [activeSection, setActiveSection] = useState("noticias");
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const navItems = [
-    { id: "noticias", label: "Notícias", icon: Newspaper },
-    { id: "materiais", label: "Materiais Técnicos", icon: FileText },
-    { id: "ebooks", label: "E-books", icon: BookOpen },
-    { id: "fornecedores", label: "Fornecedores", icon: Users },
-    { id: "fundicoes", label: "Fundições", icon: Factory },
-    { id: "patrocinadas", label: "Patrocinadas", icon: Star },
+    { id: "noticias", label: "Notícias", icon: Newspaper, path: "/noticias" },
+    { id: "materiais", label: "Materiais Técnicos", icon: FileText, path: "/materiais" },
+    { id: "ebooks", label: "E-books", icon: BookOpen, path: "/ebooks" },
+    { id: "fornecedores", label: "Fornecedores", icon: Users, path: "/fornecedores" },
+    { id: "fundicoes", label: "Fundições", icon: Factory, path: "/fundicoes" },
+    { id: "patrocinadas", label: "Patrocinadas", icon: Star, path: "/patrocinadas" },
   ];
+
+  const isActive = (path: string) => location.pathname === path;
 
   return (
     <nav className="bg-lead-light shadow-md">
@@ -33,10 +37,10 @@ const Navigation = () => {
               return (
                 <Button
                   key={item.id}
-                  variant={activeSection === item.id ? "default" : "ghost"}
-                  onClick={() => setActiveSection(item.id)}
+                  variant={isActive(item.path) ? "default" : "ghost"}
+                  onClick={() => navigate(item.path)}
                   className={`flex items-center space-x-2 text-sm h-10 ${
-                    activeSection === item.id 
+                    isActive(item.path) 
                       ? "bg-primary text-white hover:bg-primary/90" 
                       : "text-white hover:bg-white/10"
                   }`}

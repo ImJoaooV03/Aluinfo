@@ -263,8 +263,6 @@ const MainContent = () => {
         </div>
       </section>
 
-      {/* Anúncio Final */}
-      <AdBanner size="large" position="content" />
 
       {/* Botão Carregar Mais */}
       <div className="text-center pt-8">

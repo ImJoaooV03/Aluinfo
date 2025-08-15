@@ -1,9 +1,28 @@
 
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 const Header = () => {
+  const [searchTerm, setSearchTerm] = useState("");
+  const navigate = useNavigate();
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchTerm.trim()) {
+      // Simular busca - redirecionar para página de notícias com parâmetro de busca
+      navigate(`/noticias?search=${encodeURIComponent(searchTerm.trim())}`);
+      setSearchTerm("");
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSearch(e as any);
+    }
+  };
   return (
     <header className="shadow-lg" style={{ backgroundColor: '#1a1a1a' }}>
       <div className="container mx-auto px-4">
@@ -34,15 +53,25 @@ const Header = () => {
           </div>
 
           {/* Search Bar */}
-          <div className="flex items-center max-w-md w-full mx-8">
+          <form onSubmit={handleSearch} className="flex items-center max-w-md w-full mx-8">
             <div className="relative w-full">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
               <Input 
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                onKeyPress={handleKeyPress}
                 placeholder="Buscar no portal..." 
                 className="pl-10 w-full"
               />
+              <Button 
+                type="submit"
+                size="sm"
+                className="absolute right-1 top-1/2 transform -translate-y-1/2 h-8"
+              >
+                Buscar
+              </Button>
             </div>
-          </div>
+          </form>
         </div>
       </div>
     </header>

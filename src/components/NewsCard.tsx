@@ -2,6 +2,7 @@
 import { Clock, User, Tag } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Link } from "react-router-dom";
 
 interface NewsCardProps {
   title: string;
@@ -23,7 +24,8 @@ const NewsCard = ({
   featured = false 
 }: NewsCardProps) => {
   return (
-    <Card className={`hover:shadow-lg transition-shadow duration-300 ${featured ? 'border-primary' : ''}`}>
+    <Link to="/noticia/1" className="block">
+      <Card className={`hover:shadow-lg transition-shadow duration-300 ${featured ? 'border-primary' : ''}`}>
       <CardContent className="p-0">
         {image && (
           <div className="aspect-video w-full overflow-hidden rounded-t-lg">
@@ -69,6 +71,7 @@ const NewsCard = ({
         </div>
       </CardContent>
     </Card>
+    </Link>
   );
 };
 

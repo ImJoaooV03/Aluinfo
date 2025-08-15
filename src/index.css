@@ -91,4 +91,29 @@
   .banner-ad {
     @apply bg-gradient-to-r from-slate-100 to-slate-200 border-2 border-dashed border-slate-300 rounded-lg flex items-center justify-center text-slate-500 font-medium transition-colors hover:from-slate-200 hover:to-slate-300;
   }
+
+  /* Estilização do conteúdo de artigos */
+  .prose {
+    @apply text-foreground;
+  }
+  
+  .prose h3 {
+    @apply text-xl font-bold mb-4 mt-8 text-lead;
+  }
+  
+  .prose p {
+    @apply mb-4 leading-relaxed;
+  }
+  
+  .prose ul {
+    @apply mb-6 ml-6 space-y-2;
+  }
+  
+  .prose li {
+    @apply list-disc;
+  }
+  
+  .prose strong {
+    @apply font-semibold text-lead;
+  }
 }

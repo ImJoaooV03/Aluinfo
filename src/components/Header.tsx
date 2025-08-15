@@ -48,7 +48,7 @@ const Header = () => {
             <img 
               src="/lovable-uploads/d3511c4a-0b98-48cc-89b9-33bdc5d980d2.png" 
               alt="ALUINFO" 
-              className="h-16 w-auto"
+              className="h-12 w-auto"
             />
           </div>
 

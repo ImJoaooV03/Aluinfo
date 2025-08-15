@@ -8,8 +8,10 @@ import Footer from "@/components/Footer";
 const Index = () => {
   return (
     <div className="min-h-screen bg-background">
-      <Header />
-      <Navigation />
+      <div className="sticky top-0 z-50">
+        <Header />
+        <Navigation />
+      </div>
       
       <div className="container mx-auto px-4 py-6">
         <div className="flex gap-6">

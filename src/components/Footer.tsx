@@ -11,7 +11,7 @@ const Footer = () => {
           {/* Company info */}
           <div className="lg:col-span-1">
             <img 
-              src="/lovable-uploads/1dbed61f-ab64-4e3a-87b8-39581ddd7ddb.png" 
+              src="/lovable-uploads/d3511c4a-0b98-48cc-89b9-33bdc5d980d2.png" 
               alt="ALUINFO" 
               className="h-20 w-auto mb-4"
             />

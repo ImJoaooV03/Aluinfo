@@ -23,7 +23,7 @@ const Header = () => {
         </div>
 
         {/* Main header */}
-        <div className="flex items-center justify-between py-6">
+        <div className="flex items-center justify-between py-3">
           {/* Logo and Title */}
           <div className="flex items-center space-x-6">
             <img 

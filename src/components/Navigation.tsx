@@ -30,7 +30,7 @@ const Navigation = () => {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <nav className="bg-lead-light shadow-md">
+    <nav className="shadow-md sticky top-0 z-40" style={{ backgroundColor: '#1a1a1a' }}>
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-12">
           <div className="flex items-center space-x-1">

@@ -13,7 +13,7 @@ const Footer = () => {
             <img 
               src="/lovable-uploads/2904d3c0-599a-438f-ba03-8efa385447af.png" 
               alt="ALUINFO" 
-              className="h-64 w-auto mb-4"
+              className="h-20 w-auto mb-4"
             />
             <p className="text-sm mb-6">
               O portal global que conecta toda a cadeia produtiva do alumínio. Fornecedores, fundições, compradores e profissionais unidos em uma só plataforma.

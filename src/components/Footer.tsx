@@ -10,7 +10,11 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
           {/* Company info */}
           <div className="lg:col-span-1">
-            <div className="w-12 h-12 bg-white rounded mb-4"></div>
+            <img 
+              src="/lovable-uploads/9735971c-e272-4659-aa61-782cc6abc19a.png" 
+              alt="ALUINFO" 
+              className="h-12 w-auto mb-4"
+            />
             <p className="text-sm mb-6">
               O portal global que conecta toda a cadeia produtiva do alumínio. Fornecedores, fundições, compradores e profissionais unidos em uma só plataforma.
             </p>

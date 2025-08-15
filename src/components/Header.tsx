@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 
 const Header = () => {
   return (
-    <header className="bg-card shadow-lg">
+    <header className="shadow-lg" style={{ backgroundColor: '#1a1a1a' }}>
       <div className="container mx-auto px-4">
         {/* Top bar */}
         <div className="flex items-center justify-between py-2 border-b border-border">

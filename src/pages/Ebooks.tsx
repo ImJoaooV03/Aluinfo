@@ -122,11 +122,6 @@ const Ebooks = () => {
               </div>
             </div>
 
-            {/* Banner Meio */}
-            <div className="mb-6">
-              <AdBanner size="medium" position="content" />
-            </div>
-
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
               {ebooks.map((ebook) => (
                 <Card key={ebook.id} className="overflow-hidden hover:shadow-lg transition-shadow">
@@ -183,11 +178,6 @@ const Ebooks = () => {
                   </CardContent>
                 </Card>
               ))}
-            </div>
-
-            {/* Banner Final */}
-            <div className="mt-8">
-              <AdBanner size="large" position="content" />
             </div>
           </main>
 

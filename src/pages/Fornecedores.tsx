@@ -134,11 +134,6 @@ const Fornecedores = () => {
               </div>
             </div>
 
-            {/* Banner Meio */}
-            <div className="mb-6">
-              <AdBanner size="medium" position="content" />
-            </div>
-
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
               {fornecedores.map((fornecedor) => (
                 <Card key={fornecedor.id} className="hover:shadow-lg transition-shadow">
@@ -210,11 +205,6 @@ const Fornecedores = () => {
                   </CardContent>
                 </Card>
               ))}
-            </div>
-
-            {/* Banner Final */}
-            <div className="mt-8">
-              <AdBanner size="large" position="content" />
             </div>
           </main>
 

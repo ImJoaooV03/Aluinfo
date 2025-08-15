@@ -104,11 +104,6 @@ const MateriaisTecnicos = () => {
               </div>
             </div>
 
-            {/* Banner Meio */}
-            <div className="mb-6">
-              <AdBanner size="medium" position="content" />
-            </div>
-
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
               {materiais.map((material) => {
                 const IconComponent = material.icon;
@@ -142,11 +137,6 @@ const MateriaisTecnicos = () => {
                   </Card>
                 );
               })}
-            </div>
-
-            {/* Banner Final */}
-            <div className="mt-8">
-              <AdBanner size="large" position="content" />
             </div>
           </main>
 

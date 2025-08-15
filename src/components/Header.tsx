@@ -24,16 +24,13 @@ const Header = () => {
 
         {/* Main header */}
         <div className="flex items-center justify-between py-3">
-          {/* Logo and Title */}
-          <div className="flex items-center space-x-6">
+          {/* Logo */}
+          <div className="flex items-center">
             <img 
               src="/lovable-uploads/9735971c-e272-4659-aa61-782cc6abc19a.png" 
               alt="ALUINFO" 
-              className="h-16 w-auto"
+              className="h-20 w-auto"
             />
-            <div>
-              <h1 className="text-2xl font-bold text-primary">ALUINFO</h1>
-            </div>
           </div>
 
           {/* Search Bar */}

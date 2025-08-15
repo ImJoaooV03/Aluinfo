@@ -1,6 +1,8 @@
 import Header from "@/components/Header";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import AdBanner from "@/components/AdBanner";
+import Sidebar from "@/components/Sidebar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -78,56 +80,78 @@ const MateriaisTecnicos = () => {
       <Navigation />
       
       <div className="container mx-auto px-4 py-8">
+        {/* Banner Principal */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-foreground mb-4">Materiais Técnicos</h1>
-          <p className="text-muted-foreground text-lg">
-            Acesse documentos técnicos, manuais e ferramentas especializadas para o setor de fundição
-          </p>
+          <AdBanner size="large" position="content" />
         </div>
 
-        <div className="mb-6">
-          <div className="flex flex-wrap gap-2">
-            {categorias.map((categoria) => (
-              <Button key={categoria} variant="outline" size="sm">
-                {categoria}
-              </Button>
-            ))}
-          </div>
-        </div>
+        <div className="flex gap-6">
+          <main className="flex-1">
+            <div className="mb-8">
+              <h1 className="text-4xl font-bold text-foreground mb-4">Materiais Técnicos</h1>
+              <p className="text-muted-foreground text-lg">
+                Acesse documentos técnicos, manuais e ferramentas especializadas para o setor de fundição
+              </p>
+            </div>
 
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {materiais.map((material) => {
-            const IconComponent = material.icon;
-            return (
-              <Card key={material.id} className="hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-center space-x-2">
-                      <IconComponent className="h-6 w-6 text-primary" />
-                      <Badge variant="secondary">{material.tipo}</Badge>
-                    </div>
-                    <Badge variant="outline">{material.categoria}</Badge>
-                  </div>
-                  <CardTitle className="line-clamp-2">
-                    {material.titulo}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground line-clamp-3 mb-4">
-                    {material.descricao}
-                  </p>
-                  <div className="flex items-center justify-between text-sm text-muted-foreground mb-4">
-                    <span>{material.tamanho}</span>
-                    <span>{material.downloads} downloads</span>
-                  </div>
-                  <Button className="w-full">
-                    <Download className="h-4 w-4 mr-2" />
-                    Download
+            <div className="mb-6">
+              <div className="flex flex-wrap gap-2">
+                {categorias.map((categoria) => (
+                  <Button key={categoria} variant="outline" size="sm">
+                    {categoria}
                   </Button>
-                </CardContent>
-              </Card>
-            );
-          })}
+                ))}
+              </div>
+            </div>
+
+            {/* Banner Meio */}
+            <div className="mb-6">
+              <AdBanner size="medium" position="content" />
+            </div>
+
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
+              {materiais.map((material) => {
+                const IconComponent = material.icon;
+                return (
+                  <Card key={material.id} className="hover:shadow-lg transition-shadow">
+                    <CardHeader>
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-center space-x-2">
+                          <IconComponent className="h-6 w-6 text-primary" />
+                          <Badge variant="secondary">{material.tipo}</Badge>
+                        </div>
+                        <Badge variant="outline">{material.categoria}</Badge>
+                      </div>
+                      <CardTitle className="line-clamp-2">
+                        {material.titulo}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-muted-foreground line-clamp-3 mb-4">
+                        {material.descricao}
+                      </p>
+                      <div className="flex items-center justify-between text-sm text-muted-foreground mb-4">
+                        <span>{material.tamanho}</span>
+                        <span>{material.downloads} downloads</span>
+                      </div>
+                      <Button className="w-full">
+                        <Download className="h-4 w-4 mr-2" />
+                        Download
+                      </Button>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+
+            {/* Banner Final */}
+            <div className="mt-8">
+              <AdBanner size="large" position="content" />
+            </div>
+          </main>
+
+          {/* Sidebar */}
+          <Sidebar />
         </div>
       </div>
       

@@ -1,6 +1,8 @@
 import Header from "@/components/Header";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import AdBanner from "@/components/AdBanner";
+import Sidebar from "@/components/Sidebar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -108,94 +110,116 @@ const Fornecedores = () => {
       <Navigation />
       
       <div className="container mx-auto px-4 py-8">
+        {/* Banner Principal */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-foreground mb-4">Fornecedores</h1>
-          <p className="text-muted-foreground text-lg">
-            Encontre os melhores fornecedores e parceiros para sua empresa
-          </p>
+          <AdBanner size="large" position="content" />
         </div>
 
-        <div className="mb-6">
-          <div className="flex flex-wrap gap-2">
-            {categorias.map((categoria) => (
-              <Button key={categoria} variant="outline" size="sm">
-                {categoria}
-              </Button>
-            ))}
-          </div>
-        </div>
+        <div className="flex gap-6">
+          <main className="flex-1">
+            <div className="mb-8">
+              <h1 className="text-4xl font-bold text-foreground mb-4">Fornecedores</h1>
+              <p className="text-muted-foreground text-lg">
+                Encontre os melhores fornecedores e parceiros para sua empresa
+              </p>
+            </div>
 
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {fornecedores.map((fornecedor) => (
-            <Card key={fornecedor.id} className="hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <div className="flex items-start space-x-4">
-                  <div className="w-16 h-16 bg-muted rounded-lg flex items-center justify-center">
-                    <img 
-                      src={fornecedor.logo} 
-                      alt={fornecedor.nome}
-                      className="w-12 h-12 object-contain"
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between mb-2">
-                      <Badge variant="secondary">{fornecedor.categoria}</Badge>
-                      <div className="flex items-center space-x-1">
-                        <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                        <span className="text-sm font-medium">{fornecedor.avaliacao}</span>
+            <div className="mb-6">
+              <div className="flex flex-wrap gap-2">
+                {categorias.map((categoria) => (
+                  <Button key={categoria} variant="outline" size="sm">
+                    {categoria}
+                  </Button>
+                ))}
+              </div>
+            </div>
+
+            {/* Banner Meio */}
+            <div className="mb-6">
+              <AdBanner size="medium" position="content" />
+            </div>
+
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
+              {fornecedores.map((fornecedor) => (
+                <Card key={fornecedor.id} className="hover:shadow-lg transition-shadow">
+                  <CardHeader>
+                    <div className="flex items-start space-x-4">
+                      <div className="w-16 h-16 bg-muted rounded-lg flex items-center justify-center">
+                        <img 
+                          src={fornecedor.logo} 
+                          alt={fornecedor.nome}
+                          className="w-12 h-12 object-contain"
+                        />
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between mb-2">
+                          <Badge variant="secondary">{fornecedor.categoria}</Badge>
+                          <div className="flex items-center space-x-1">
+                            <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                            <span className="text-sm font-medium">{fornecedor.avaliacao}</span>
+                          </div>
+                        </div>
+                        <CardTitle className="text-lg">{fornecedor.nome}</CardTitle>
+                        <p className="text-sm text-primary font-medium">{fornecedor.especialidade}</p>
                       </div>
                     </div>
-                    <CardTitle className="text-lg">{fornecedor.nome}</CardTitle>
-                    <p className="text-sm text-primary font-medium">{fornecedor.especialidade}</p>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground line-clamp-2 mb-4">
-                  {fornecedor.descricao}
-                </p>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground line-clamp-2 mb-4">
+                      {fornecedor.descricao}
+                    </p>
 
-                <div className="space-y-2 text-sm mb-4">
-                  <div className="flex items-center space-x-2 text-muted-foreground">
-                    <MapPin className="h-4 w-4" />
-                    <span>{fornecedor.localizacao}</span>
-                  </div>
-                  <div className="flex items-center space-x-2 text-muted-foreground">
-                    <Users className="h-4 w-4" />
-                    <span>{fornecedor.colaboradores} funcionários</span>
-                  </div>
-                </div>
+                    <div className="space-y-2 text-sm mb-4">
+                      <div className="flex items-center space-x-2 text-muted-foreground">
+                        <MapPin className="h-4 w-4" />
+                        <span>{fornecedor.localizacao}</span>
+                      </div>
+                      <div className="flex items-center space-x-2 text-muted-foreground">
+                        <Users className="h-4 w-4" />
+                        <span>{fornecedor.colaboradores} funcionários</span>
+                      </div>
+                    </div>
 
-                <div className="mb-4">
-                  <p className="text-sm font-medium mb-2">Principais Serviços:</p>
-                  <div className="flex flex-wrap gap-1">
-                    {fornecedor.servicos.slice(0, 2).map((servico) => (
-                      <Badge key={servico} variant="outline" className="text-xs">
-                        {servico}
-                      </Badge>
-                    ))}
-                    {fornecedor.servicos.length > 2 && (
-                      <Badge variant="outline" className="text-xs">
-                        +{fornecedor.servicos.length - 2}
-                      </Badge>
-                    )}
-                  </div>
-                </div>
+                    <div className="mb-4">
+                      <p className="text-sm font-medium mb-2">Principais Serviços:</p>
+                      <div className="flex flex-wrap gap-1">
+                        {fornecedor.servicos.slice(0, 2).map((servico) => (
+                          <Badge key={servico} variant="outline" className="text-xs">
+                            {servico}
+                          </Badge>
+                        ))}
+                        {fornecedor.servicos.length > 2 && (
+                          <Badge variant="outline" className="text-xs">
+                            +{fornecedor.servicos.length - 2}
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
 
-                <div className="grid grid-cols-3 gap-2">
-                  <Button size="sm" variant="outline">
-                    <Phone className="h-3 w-3" />
-                  </Button>
-                  <Button size="sm" variant="outline">
-                    <Mail className="h-3 w-3" />
-                  </Button>
-                  <Button size="sm" variant="outline">
-                    <Globe className="h-3 w-3" />
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                    <div className="grid grid-cols-3 gap-2">
+                      <Button size="sm" variant="outline">
+                        <Phone className="h-3 w-3" />
+                      </Button>
+                      <Button size="sm" variant="outline">
+                        <Mail className="h-3 w-3" />
+                      </Button>
+                      <Button size="sm" variant="outline">
+                        <Globe className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+
+            {/* Banner Final */}
+            <div className="mt-8">
+              <AdBanner size="large" position="content" />
+            </div>
+          </main>
+
+          {/* Sidebar */}
+          <Sidebar />
         </div>
       </div>
       

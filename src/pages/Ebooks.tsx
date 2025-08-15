@@ -1,6 +1,8 @@
 import Header from "@/components/Header";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import AdBanner from "@/components/AdBanner";
+import Sidebar from "@/components/Sidebar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -96,79 +98,101 @@ const Ebooks = () => {
       <Navigation />
       
       <div className="container mx-auto px-4 py-8">
+        {/* Banner Principal */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-foreground mb-4">E-books</h1>
-          <p className="text-muted-foreground text-lg">
-            Biblioteca digital com os melhores e-books sobre fundição e metalurgia
-          </p>
+          <AdBanner size="large" position="content" />
         </div>
 
-        <div className="mb-6">
-          <div className="flex flex-wrap gap-2">
-            {categorias.map((categoria) => (
-              <Button key={categoria} variant="outline" size="sm">
-                {categoria}
-              </Button>
-            ))}
-          </div>
-        </div>
+        <div className="flex gap-6">
+          <main className="flex-1">
+            <div className="mb-8">
+              <h1 className="text-4xl font-bold text-foreground mb-4">E-books</h1>
+              <p className="text-muted-foreground text-lg">
+                Biblioteca digital com os melhores e-books sobre fundição e metalurgia
+              </p>
+            </div>
 
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {ebooks.map((ebook) => (
-            <Card key={ebook.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-              <div className="aspect-[3/4] bg-muted relative">
-                <img 
-                  src={ebook.capa} 
-                  alt={ebook.titulo}
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute top-2 right-2">
-                  <Badge variant={ebook.preco === "Gratuito" ? "default" : "secondary"}>
-                    {ebook.preco}
-                  </Badge>
-                </div>
+            <div className="mb-6">
+              <div className="flex flex-wrap gap-2">
+                {categorias.map((categoria) => (
+                  <Button key={categoria} variant="outline" size="sm">
+                    {categoria}
+                  </Button>
+                ))}
               </div>
-              <CardHeader>
-                <div className="flex items-center justify-between mb-2">
-                  <Badge variant="outline">{ebook.categoria}</Badge>
-                  <div className="flex items-center space-x-1">
-                    <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                    <span className="text-sm font-medium">{ebook.avaliacao}</span>
-                  </div>
-                </div>
-                <CardTitle className="line-clamp-2">
-                  {ebook.titulo}
-                </CardTitle>
-                <p className="text-sm text-muted-foreground">por {ebook.autor}</p>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground line-clamp-2 mb-4">
-                  {ebook.descricao}
-                </p>
-                
-                <div className="space-y-2 text-sm text-muted-foreground mb-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-1">
-                      <BookOpen className="h-4 w-4" />
-                      <span>{ebook.paginas} páginas</span>
-                    </div>
-                    <div className="flex items-center space-x-1">
-                      <Clock className="h-4 w-4" />
-                      <span>{ebook.tempoLeitura}</span>
+            </div>
+
+            {/* Banner Meio */}
+            <div className="mb-6">
+              <AdBanner size="medium" position="content" />
+            </div>
+
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
+              {ebooks.map((ebook) => (
+                <Card key={ebook.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                  <div className="aspect-[3/4] bg-muted relative">
+                    <img 
+                      src={ebook.capa} 
+                      alt={ebook.titulo}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute top-2 right-2">
+                      <Badge variant={ebook.preco === "Gratuito" ? "default" : "secondary"}>
+                        {ebook.preco}
+                      </Badge>
                     </div>
                   </div>
-                  <div className="flex items-center space-x-1">
-                    <Download className="h-4 w-4" />
-                    <span>{ebook.downloads} downloads</span>
-                  </div>
-                </div>
-                
-                <Button className="w-full">
-                  {ebook.preco === "Gratuito" ? "Download Gratuito" : "Comprar"}
-                </Button>
-              </CardContent>
-            </Card>
-          ))}
+                  <CardHeader>
+                    <div className="flex items-center justify-between mb-2">
+                      <Badge variant="outline">{ebook.categoria}</Badge>
+                      <div className="flex items-center space-x-1">
+                        <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                        <span className="text-sm font-medium">{ebook.avaliacao}</span>
+                      </div>
+                    </div>
+                    <CardTitle className="line-clamp-2">
+                      {ebook.titulo}
+                    </CardTitle>
+                    <p className="text-sm text-muted-foreground">por {ebook.autor}</p>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground line-clamp-2 mb-4">
+                      {ebook.descricao}
+                    </p>
+                    
+                    <div className="space-y-2 text-sm text-muted-foreground mb-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-1">
+                          <BookOpen className="h-4 w-4" />
+                          <span>{ebook.paginas} páginas</span>
+                        </div>
+                        <div className="flex items-center space-x-1">
+                          <Clock className="h-4 w-4" />
+                          <span>{ebook.tempoLeitura}</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-1">
+                        <Download className="h-4 w-4" />
+                        <span>{ebook.downloads} downloads</span>
+                      </div>
+                    </div>
+                    
+                    <Button className="w-full">
+                      {ebook.preco === "Gratuito" ? "Download Gratuito" : "Comprar"}
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+
+            {/* Banner Final */}
+            <div className="mt-8">
+              <AdBanner size="large" position="content" />
+            </div>
+          </main>
+
+          {/* Sidebar */}
+          <Sidebar />
         </div>
       </div>
       

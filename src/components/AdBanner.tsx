@@ -22,10 +22,10 @@ const AdBanner = ({ size, position, className = "" }: AdBannerProps) => {
 
   return (
     <div className={`banner-ad ${sizeClasses[size]} ${className}`}>
-      <div className="flex flex-col items-center justify-center space-y-2">
-        <ExternalLink className="h-6 w-6 text-slate-400" />
-        <span className="text-sm text-slate-500">{positionText[position]}</span>
-        <span className="text-xs text-slate-400">
+      <div className="flex flex-col items-center justify-center space-y-1">
+        <ExternalLink className="h-5 w-5 text-muted-foreground" />
+        <span className="text-sm font-medium text-muted-foreground">{positionText[position]}</span>
+        <span className="text-xs text-muted-foreground/70">
           {size === "small" ? "300x120" : size === "medium" ? "300x160" : "300x240"}
         </span>
       </div>

@@ -89,7 +89,7 @@
 
 @layer components {
   .banner-ad {
-    @apply bg-gradient-to-r from-slate-100 to-slate-200 border-2 border-dashed border-slate-300 rounded-lg flex items-center justify-center text-slate-500 font-medium transition-colors hover:from-slate-200 hover:to-slate-300;
+    @apply bg-muted/50 border border-border rounded-lg flex items-center justify-center transition-colors hover:bg-muted/70;
   }
 
   /* Estilização do conteúdo de artigos */

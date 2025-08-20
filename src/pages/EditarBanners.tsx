@@ -32,6 +32,9 @@ const EditarBanners = () => {
   const regularBanners = localBanners.filter(banner => banner.id <= 4);
   const largeBanners = localBanners.filter(banner => banner.id > 4);
 
+  console.log('Local banners:', localBanners);
+  console.log('Large banners:', largeBanners);
+
   const handleFileUpload = (bannerId: number, file: File) => {
     if (file && file.type.startsWith('image/')) {
       const reader = new FileReader();
@@ -189,7 +192,7 @@ const EditarBanners = () => {
               <span className="text-sm text-muted-foreground">(728x250px)</span>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {largeBanners.map((banner) => (
+              {largeBanners.length > 0 ? largeBanners.map((banner) => (
                 <Card key={banner.id} className="overflow-hidden">
                   <CardHeader className="pb-3">
                     <CardTitle className="flex items-center justify-between">
@@ -253,7 +256,12 @@ const EditarBanners = () => {
                     </div>
                   </CardContent>
                 </Card>
-              ))}
+              )) : (
+                <div className="col-span-full text-center py-8 text-muted-foreground">
+                  <p>Nenhum banner grande encontrado. Total de banners: {localBanners.length}</p>
+                  <p>IDs dos banners: {localBanners.map(b => b.id).join(', ')}</p>
+                </div>
+              )}
             </div>
           </div>
 

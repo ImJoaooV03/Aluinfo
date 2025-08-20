@@ -13,6 +13,12 @@ const defaultBanners: BannerData[] = [
   { id: 2, imageUrl: null, title: 'Banner 2' },
   { id: 3, imageUrl: null, title: 'Banner 3' },
   { id: 4, imageUrl: null, title: 'Banner 4' },
+  { id: 5, imageUrl: null, title: 'Banner Grande 1' },
+  { id: 6, imageUrl: null, title: 'Banner Grande 2' },
+  { id: 7, imageUrl: null, title: 'Banner Grande 3' },
+  { id: 8, imageUrl: null, title: 'Banner Grande 4' },
+  { id: 9, imageUrl: null, title: 'Banner Grande 5' },
+  { id: 10, imageUrl: null, title: 'Banner Grande 6' },
 ];
 
 export const useBanners = () => {

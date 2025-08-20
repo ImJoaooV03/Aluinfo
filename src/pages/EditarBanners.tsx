@@ -193,7 +193,7 @@ const EditarBanners = () => {
                 <Card key={banner.id} className="overflow-hidden">
                   <CardHeader className="pb-3">
                     <CardTitle className="flex items-center justify-between">
-                      <span>{banner.id <= 4 ? `Banner ${banner.id}` : `Banner Grande ${banner.id - 4}`}</span>
+                      <span>Banner Grande {banner.id - 4}</span>
                       {getCurrentImage(banner) && (
                         <Button
                           variant="ghost"
@@ -209,19 +209,19 @@ const EditarBanners = () => {
                   <CardContent className="space-y-4">
                     <div className="space-y-2">
                       <Label htmlFor={`banner-${banner.id}`}>
-                        Imagem {banner.id <= 4 ? banner.id : `Grande ${banner.id - 4}`}
+                        Imagem Grande {banner.id - 4}
                       </Label>
                       
                       {getCurrentImage(banner) ? (
                         <div className="relative">
                           <img
                             src={getCurrentImage(banner)!}
-                            alt={`Banner ${banner.id <= 4 ? banner.id : `Grande ${banner.id - 4}`}`}
+                            alt={`Banner Grande ${banner.id - 4}`}
                             className="w-full h-[180px] object-cover rounded-lg border"
                           />
                           <div className="absolute top-2 right-2 bg-black/50 rounded px-2 py-1">
                             <span className="text-xs text-white">
-                              {banner.id <= 4 ? `Banner ${banner.id}` : `Banner Grande ${banner.id - 4}`}
+                              Banner Grande {banner.id - 4}
                             </span>
                           </div>
                         </div>

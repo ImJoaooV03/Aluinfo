@@ -87,14 +87,11 @@ const NoticiaIndividual = () => {
       </div>
 
       <div className="container mx-auto px-4 py-6">
-        {/* Banner Principal */}
-        <div className="mb-6">
-          <AdBanner size="large" position="content" />
-        </div>
-
         <div className="flex gap-6">
           {/* Conteúdo Principal */}
-          <main className="flex-1">
+          <main className="flex-1">  
+            {/* Banner Principal */}
+            <AdBanner size="large" position="content" className="mb-6" />
             {/* Breadcrumb */}
             <div className="mb-6">
               <Link 

@@ -110,13 +110,10 @@ const Fornecedores = () => {
       <Navigation />
       
       <div className="container mx-auto px-4 py-8">
-        {/* Banner Principal */}
-        <div className="mb-8">
-          <AdBanner size="large" position="content" />
-        </div>
-
         <div className="flex gap-6">
           <main className="flex-1">
+            {/* Banner Principal */}
+            <AdBanner size="large" position="content" className="mb-8" />
             <div className="mb-8">
               <h1 className="text-4xl font-bold text-foreground mb-4">Fornecedores</h1>
               <p className="text-muted-foreground text-lg">

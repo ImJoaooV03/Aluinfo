@@ -42,7 +42,7 @@ const Navigation = () => {
                   className={`flex items-center space-x-2 text-sm h-10 ${
                     isActive(item.path) 
                       ? "bg-primary text-white hover:bg-primary/90" 
-                      : "text-white hover:bg-white/10"
+                      : "text-white hover:bg-primary hover:text-white"
                   }`}
                 >
                   <Icon className="h-4 w-4" />

@@ -11,7 +11,7 @@ const AdBanner = ({ size, position, className = "" }: AdBannerProps) => {
   const sizeClasses = {
     small: "h-24 w-full",
     medium: "h-32 w-full",
-    large: "h-50 w-full"
+    large: "h-75 w-full"
   };
 
   const positionText = {

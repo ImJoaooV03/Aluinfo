@@ -21,13 +21,14 @@ const AdBanner = ({ size, position, className = "" }: AdBannerProps) => {
   };
 
   return (
-    <div className={`banner-ad ${sizeClasses[size]} ${className}`}>
-      <div className="flex flex-col items-center justify-center space-y-1">
-        <ExternalLink className="h-5 w-5 text-muted-foreground" />
-        <span className="text-sm font-medium text-muted-foreground">{positionText[position]}</span>
-        <span className="text-xs text-muted-foreground/70">
-          {size === "small" ? "300x150" : size === "medium" ? "300x150" : "300x150"}
-        </span>
+    <div className={`banner-ad ${sizeClasses[size]} ${className} relative overflow-hidden rounded-lg border`}>
+      <img 
+        src="/lovable-uploads/3c7eb808-83a8-4f8b-b8af-52fff0a008ef.png" 
+        alt="ChemTrend - Release Agent Products"
+        className="w-full h-full object-cover"
+      />
+      <div className="absolute top-2 right-2 bg-black/50 rounded px-2 py-1">
+        <span className="text-xs text-white">{positionText[position]}</span>
       </div>
     </div>
   );

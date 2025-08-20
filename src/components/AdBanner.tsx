@@ -16,13 +16,17 @@ const AdBanner = ({ size, position, spaceNumber, className = "" }: AdBannerProps
   };
 
   const getPositionText = () => {
+    if (spaceNumber) {
+      return `Banner ${spaceNumber}`;
+    }
+    
     const baseText = {
       sidebar: "Espaço Publicitário",
       content: "Publicidade", 
       header: "Anúncio"
     };
     
-    return spaceNumber ? `${baseText[position]} ${spaceNumber}` : baseText[position];
+    return baseText[position];
   };
 
   return (

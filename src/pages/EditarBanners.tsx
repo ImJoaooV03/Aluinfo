@@ -65,12 +65,14 @@ const EditarBanners = () => {
     // Salva as alterações no estado global dos banners
     localBanners.forEach(banner => {
       const imageUrl = banner.preview || banner.url;
+      // Garantir que cada banner seja salvo com seu ID específico
       updateBanner(banner.id, imageUrl);
+      console.log(`Banner ID ${banner.id} (${banner.id <= 4 ? 'Regular' : 'Grande'}) salvo com imagem: ${imageUrl ? 'Sim' : 'Não'}`);
     });
 
     toast({
       title: "Sucesso",
-      description: "Banners atualizados com sucesso! As alterações são visíveis imediatamente em todas as páginas.",
+      description: "Banners atualizados com sucesso! Cada banner mantém suas próprias configurações independentes.",
     });
   };
 

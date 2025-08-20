@@ -4,17 +4,17 @@ import AdBanner from "./AdBanner";
 const Sidebar = () => {
   return (
     <aside className="w-80 space-y-6">
-      {/* Anúncio Topo */}
-      <AdBanner size="medium" position="sidebar" />
+      {/* Espaço Publicitário 1 */}
+      <AdBanner size="medium" position="sidebar" spaceNumber={1} />
       
-      {/* Anúncio Meio */}
-      <AdBanner size="medium" position="sidebar" />
+      {/* Espaço Publicitário 2 */}
+      <AdBanner size="medium" position="sidebar" spaceNumber={2} />
 
-      {/* Anúncio Adicional */}
-      <AdBanner size="medium" position="sidebar" />
+      {/* Espaço Publicitário 3 */}
+      <AdBanner size="medium" position="sidebar" spaceNumber={3} />
 
-      {/* Anúncio Final */}
-      <AdBanner size="large" position="sidebar" />
+      {/* Espaço Publicitário 4 */}
+      <AdBanner size="large" position="sidebar" spaceNumber={4} />
     </aside>
   );
 };

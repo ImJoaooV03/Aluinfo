@@ -9,7 +9,6 @@ import {
   BookOpen, 
   Users, 
   Factory, 
-  Settings,
   ChevronDown
 } from "lucide-react";
 
@@ -24,7 +23,6 @@ const Navigation = () => {
     { id: "ebooks", label: "E-books", icon: BookOpen, path: "/ebooks" },
     { id: "fornecedores", label: "Fornecedores", icon: Users, path: "/fornecedores" },
     { id: "fundicoes", label: "Fundições", icon: Factory, path: "/fundicoes" },
-    { id: "editar-banners", label: "Editar Banners", icon: Settings, path: "/editar-banners" },
   ];
 
   const isActive = (path: string) => location.pathname === path;

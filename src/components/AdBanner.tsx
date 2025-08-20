@@ -1,5 +1,6 @@
 
 import { ExternalLink } from "lucide-react";
+import { useBanners } from "@/hooks/useBanners";
 
 interface AdBannerProps {
   size: "small" | "medium" | "large";
@@ -9,6 +10,8 @@ interface AdBannerProps {
 }
 
 const AdBanner = ({ size, position, spaceNumber, className = "" }: AdBannerProps) => {
+  const { getBanner } = useBanners();
+  
   const sizeClasses = {
     small: "h-[150px] w-full",
     medium: "h-[150px] w-full",
@@ -29,16 +32,30 @@ const AdBanner = ({ size, position, spaceNumber, className = "" }: AdBannerProps
     return baseText[position];
   };
 
+  // Busca a imagem do banner se tiver spaceNumber
+  const bannerData = spaceNumber ? getBanner(spaceNumber) : null;
+  const bannerImage = bannerData?.imageUrl;
+
   return (
     <div className={`banner-ad ${sizeClasses[size]} ${className} relative overflow-hidden rounded-lg border`}>
-      <img 
-        src="/lovable-uploads/3c7eb808-83a8-4f8b-b8af-52fff0a008ef.png" 
-        alt="ChemTrend - Release Agent Products"
-        className="w-full h-full object-cover"
-      />
-      <div className="absolute top-2 right-2 bg-black/50 rounded px-2 py-1">
-        <span className="text-xs text-white">{getPositionText()}</span>
-      </div>
+      {bannerImage ? (
+        <>
+          <img 
+            src={bannerImage} 
+            alt={`${getPositionText()}`}
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute top-2 right-2 bg-black/50 rounded px-2 py-1">
+            <span className="text-xs text-white">{getPositionText()}</span>
+          </div>
+        </>
+      ) : (
+        <div className="flex flex-col items-center justify-center space-y-1 h-full">
+          <ExternalLink className="h-5 w-5 text-muted-foreground" />
+          <span className="text-sm font-medium text-muted-foreground">{getPositionText()}</span>
+          <span className="text-xs text-muted-foreground/70">300x150</span>
+        </div>
+      )}
     </div>
   );
 };

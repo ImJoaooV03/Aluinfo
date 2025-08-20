@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
+import { useBanners } from "@/hooks/useBanners";
 
 interface BannerImage {
   id: number;
@@ -17,20 +18,24 @@ interface BannerImage {
 }
 
 const EditarBanners = () => {
-  const [banners, setBanners] = useState<BannerImage[]>([
-    { id: 1, file: null, preview: null, url: "/lovable-uploads/3c7eb808-83a8-4f8b-b8af-52fff0a008ef.png" },
-    { id: 2, file: null, preview: null, url: null },
-    { id: 3, file: null, preview: null, url: null },
-    { id: 4, file: null, preview: null, url: null },
-  ]);
+  const { banners, updateBanner } = useBanners();
+  const [localBanners, setLocalBanners] = useState<BannerImage[]>(() =>
+    banners.map(banner => ({
+      id: banner.id,
+      file: null,
+      preview: null,
+      url: banner.imageUrl
+    }))
+  );
 
   const handleFileUpload = (bannerId: number, file: File) => {
     if (file && file.type.startsWith('image/')) {
       const reader = new FileReader();
       reader.onload = (e) => {
-        setBanners(prev => prev.map(banner => 
+        const imageUrl = e.target?.result as string;
+        setLocalBanners(prev => prev.map(banner => 
           banner.id === bannerId 
-            ? { ...banner, file, preview: e.target?.result as string }
+            ? { ...banner, file, preview: imageUrl }
             : banner
         ));
       };
@@ -45,7 +50,7 @@ const EditarBanners = () => {
   };
 
   const handleRemoveImage = (bannerId: number) => {
-    setBanners(prev => prev.map(banner => 
+    setLocalBanners(prev => prev.map(banner => 
       banner.id === bannerId 
         ? { ...banner, file: null, preview: null, url: null }
         : banner
@@ -53,10 +58,20 @@ const EditarBanners = () => {
   };
 
   const handleSave = () => {
+    // Salva as alterações no estado global dos banners
+    localBanners.forEach(banner => {
+      const imageUrl = banner.preview || banner.url;
+      updateBanner(banner.id, imageUrl);
+    });
+
     toast({
       title: "Sucesso",
-      description: "Configurações dos banners salvas com sucesso!",
+      description: "Banners atualizados com sucesso! As alterações são visíveis imediatamente em todas as páginas.",
     });
+  };
+
+  const handlePreview = () => {
+    window.open('/', '_blank');
   };
 
   const getCurrentImage = (banner: BannerImage) => {
@@ -80,7 +95,7 @@ const EditarBanners = () => {
               </p>
             </div>
             <div className="flex gap-2">
-              <Button variant="outline" className="flex items-center gap-2">
+              <Button variant="outline" onClick={handlePreview} className="flex items-center gap-2">
                 <Eye className="h-4 w-4" />
                 Visualizar
               </Button>
@@ -92,7 +107,7 @@ const EditarBanners = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {banners.map((banner) => (
+            {localBanners.map((banner) => (
               <Card key={banner.id} className="overflow-hidden">
                 <CardHeader className="pb-3">
                   <CardTitle className="flex items-center justify-between">

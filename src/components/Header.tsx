@@ -74,11 +74,6 @@ const Header = () => {
             </div>
           </form>
         </div>
-
-        {/* Banner Grande 6 */}
-        <div className="py-2">
-          <AdBanner size="medium" position="header" spaceNumber={10} />
-        </div>
       </div>
     </header>
   );

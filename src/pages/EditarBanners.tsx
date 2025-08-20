@@ -197,7 +197,7 @@ const EditarBanners = () => {
           {/* Seção de Banners Grandes */}
           <div className="space-y-4">
             <div className="flex items-center gap-2">
-              <h2 className="text-xl font-semibold">Banners de Publicidade Grandes</h2>
+              <h2 className="text-xl font-semibold">Banners de Publicidade Grandes (1-5)</h2>
               <span className="text-sm text-muted-foreground">(728x250px)</span>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -273,7 +273,7 @@ const EditarBanners = () => {
             <h3 className="font-semibold mb-2">Instruções de Uso</h3>
             <ul className="text-sm text-muted-foreground space-y-1">
               <li>• <strong>Banners Regulares (1-4):</strong> Dimensões 300x150px para espaços menores</li>
-              <li>• <strong>Banners Grandes (1-6):</strong> Dimensões 728x250px para espaços publicitários maiores</li>
+              <li>• <strong>Banners Grandes (1-5):</strong> Dimensões 728x250px para espaços publicitários maiores</li>
               <li>• Cada banner é numerado sequencialmente para fácil identificação</li>
               <li>• Clique em "Salvar Alterações" para aplicar as modificações</li>
               <li>• Use "Visualizar" para ver como os banners aparecerão no site</li>

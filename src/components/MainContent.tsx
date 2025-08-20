@@ -139,8 +139,8 @@ const MainContent = () => {
 
   return (
     <main className="flex-1 space-y-6">
-      {/* Anúncio Topo */}
-      <AdBanner size="medium" position="content" />
+      {/* Anúncio Topo - Banner Grande 3 */}
+      <AdBanner size="medium" position="content" spaceNumber={7} />
 
       {/* Notícias Destaque */}
       <section>
@@ -152,8 +152,8 @@ const MainContent = () => {
         </div>
       </section>
 
-      {/* Anúncio Entre Seções */}
-      <AdBanner size="large" position="content" />
+      {/* Anúncio Entre Seções - Banner Grande 1 */}
+      <AdBanner size="large" position="content" spaceNumber={5} />
 
       {/* Materiais Técnicos */}
       <section>
@@ -184,8 +184,8 @@ const MainContent = () => {
         </div>
       </section>
 
-      {/* Anúncio Meio */}
-      <AdBanner size="medium" position="content" />
+      {/* Anúncio Meio - Banner Grande 4 */}
+      <AdBanner size="medium" position="content" spaceNumber={8} />
 
       {/* Dicionário Técnico */}
       <section>
@@ -210,8 +210,8 @@ const MainContent = () => {
         </div>
       </section>
 
-      {/* Anúncio Entre Seções */}
-      <AdBanner size="large" position="content" />
+      {/* Anúncio Entre Seções - Banner Grande 2 */}
+      <AdBanner size="large" position="content" spaceNumber={6} />
 
       {/* Cursos */}
       <section>
@@ -250,8 +250,8 @@ const MainContent = () => {
         </div>
       </section>
 
-      {/* Anúncio Entre Seções */}
-      <AdBanner size="medium" position="content" />
+      {/* Anúncio Entre Seções - Banner Grande 5 */}
+      <AdBanner size="medium" position="content" spaceNumber={9} />
 
       {/* Últimas Notícias */}
       <section>

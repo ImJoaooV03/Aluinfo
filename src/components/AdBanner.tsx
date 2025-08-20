@@ -20,6 +20,11 @@ const AdBanner = ({ size, position, spaceNumber, className = "" }: AdBannerProps
 
   const getPositionText = () => {
     if (spaceNumber) {
+      // Para banners grandes (5-10), usar numeração sequencial começando em 1
+      if (spaceNumber > 4) {
+        return `Banner Grande ${spaceNumber - 4}`;
+      }
+      // Para banners regulares (1-4)
       return `Banner ${spaceNumber}`;
     }
     

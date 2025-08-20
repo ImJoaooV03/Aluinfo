@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import AdBanner from "./AdBanner";
 
 const Header = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -72,6 +73,11 @@ const Header = () => {
               </Button>
             </div>
           </form>
+        </div>
+
+        {/* Banner Grande 6 */}
+        <div className="py-2">
+          <AdBanner size="medium" position="header" spaceNumber={10} />
         </div>
       </div>
     </header>

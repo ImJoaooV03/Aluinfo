@@ -91,7 +91,7 @@ const NoticiaIndividual = () => {
           {/* Conteúdo Principal */}
           <main className="flex-1">  
             {/* Banner Principal */}
-            <AdBanner size="large" position="content" className="mb-6" />
+            <AdBanner size="large" position="content" className="mb-8" />
             {/* Breadcrumb */}
             <div className="mb-6">
               <Link 

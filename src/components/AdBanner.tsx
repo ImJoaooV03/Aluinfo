@@ -26,7 +26,7 @@ const AdBanner = ({ size, position, className = "" }: AdBannerProps) => {
         <ExternalLink className="h-5 w-5 text-muted-foreground" />
         <span className="text-sm font-medium text-muted-foreground">{positionText[position]}</span>
         <span className="text-xs text-muted-foreground/70">
-          {size === "small" ? "300x120" : size === "medium" ? "300x160" : "300x240"}
+          {size === "small" ? "300x96" : size === "medium" ? "300x128" : "300x300"}
         </span>
       </div>
     </div>

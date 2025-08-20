@@ -9,9 +9,9 @@ interface AdBannerProps {
 
 const AdBanner = ({ size, position, className = "" }: AdBannerProps) => {
   const sizeClasses = {
-    small: "h-24 w-full",
-    medium: "h-32 w-full",
-    large: "h-75 w-full"
+    small: "h-[500px] w-full",
+    medium: "h-[500px] w-full",
+    large: "h-[500px] w-full"
   };
 
   const positionText = {
@@ -26,7 +26,7 @@ const AdBanner = ({ size, position, className = "" }: AdBannerProps) => {
         <ExternalLink className="h-5 w-5 text-muted-foreground" />
         <span className="text-sm font-medium text-muted-foreground">{positionText[position]}</span>
         <span className="text-xs text-muted-foreground/70">
-          {size === "small" ? "300x96" : size === "medium" ? "300x128" : "300x300"}
+          {size === "small" ? "300x500" : size === "medium" ? "300x500" : "300x500"}
         </span>
       </div>
     </div>

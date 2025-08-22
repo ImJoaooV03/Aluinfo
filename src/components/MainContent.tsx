@@ -3,7 +3,7 @@ import NewsCard from "./NewsCard";
 import AdBanner from "./AdBanner";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { BookOpen, GraduationCap, Library, Download } from "lucide-react";
+import { BookOpen, GraduationCap, Calendar, Download } from "lucide-react";
 
 const MainContent = () => {
 
@@ -122,18 +122,24 @@ const MainContent = () => {
     }
   ];
 
-  const dictionaryTerms = [
+  const upcomingEvents = [
     {
-      term: "Anodização",
-      definition: "Processo eletroquímico que aumenta a espessura da camada de óxido natural do alumínio"
+      title: "FEAL 2024 - Feira Brasileira do Alumínio",
+      date: "15-18 de Outubro",
+      location: "São Paulo Expo",
+      description: "A maior feira da América Latina dedicada ao setor do alumínio"
     },
     {
-      term: "Extrusão",
-      definition: "Processo de fabricação onde o material é forçado através de uma matriz para criar perfis"
+      title: "Congresso Internacional de Fundição",
+      date: "22-24 de Novembro",
+      location: "Centro de Convenções - RJ",
+      description: "Evento técnico sobre inovações em processos de fundição"
     },
     {
-      term: "Liga 6061",
-      definition: "Liga de alumínio com magnésio e silício, amplamente utilizada em estruturas"
+      title: "Summit Sustentabilidade no Alumínio",
+      date: "5-7 de Dezembro",
+      location: "Centro de Eventos - SP",
+      description: "Discussões sobre práticas sustentáveis na indústria do alumínio"
     }
   ];
 
@@ -187,26 +193,36 @@ const MainContent = () => {
       {/* Anúncio Meio - Banner Grande 3 */}
       <AdBanner size="medium" position="content" spaceNumber={7} />
 
-      {/* Dicionário Técnico */}
+      {/* Próximos Eventos */}
       <section>
-        <h2 className="text-2xl font-bold mb-4 text-lead">Dicionário Técnico</h2>
+        <h2 className="text-2xl font-bold mb-4 text-lead">Próximos Eventos</h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {dictionaryTerms.map((item, index) => (
+          {upcomingEvents.map((event, index) => (
             <Card key={index} className="hover:shadow-lg transition-shadow">
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
-                  <Library className="h-5 w-5 text-primary" />
-                  <span className="text-lg">{item.term}</span>
+                  <Calendar className="h-5 w-5 text-primary" />
+                  <span className="text-lg">{event.title}</span>
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-muted-foreground">{item.definition}</p>
+                <div className="space-y-2 mb-3">
+                  <div className="flex justify-between text-sm">
+                    <span className="font-medium">Data:</span>
+                    <span className="text-primary">{event.date}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="font-medium">Local:</span>
+                    <span>{event.location}</span>
+                  </div>
+                </div>
+                <p className="text-sm text-muted-foreground">{event.description}</p>
               </CardContent>
             </Card>
           ))}
         </div>
         <div className="text-center mt-6">
-          <Button variant="outline">Ver Dicionário Completo</Button>
+          <Button variant="outline">Ver Todos os Eventos</Button>
         </div>
       </section>
 

@@ -33,10 +33,10 @@ const Header = () => {
             Portal Global do Mercado de Alumínio
           </div>
           <div className="flex items-center space-x-4">
-            <Button variant="ghost" size="sm" className="text-sm text-muted-foreground hover:text-foreground">
+            <Button variant="ghost" size="sm" className="text-sm text-primary hover:text-primary-foreground hover:bg-primary">
               Newsletter
             </Button>
-            <Button variant="ghost" size="sm" className="text-sm text-muted-foreground hover:text-foreground">
+            <Button variant="ghost" size="sm" className="text-sm text-primary hover:text-primary-foreground hover:bg-primary">
               Anuncie Conosco
             </Button>
           </div>

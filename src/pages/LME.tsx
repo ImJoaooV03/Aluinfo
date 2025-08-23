@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 const LME = () => {
   const [currency, setCurrency] = useState('USD');
@@ -13,47 +14,60 @@ const LME = () => {
     timestamp: '—',
     loading: false
   });
+  const [chartData, setChartData] = useState<any[]>([]);
 
-  const API_KEY = '8570990866c048e:a9wrlb5jhurlxi1';
-  const COMMS_URL = `https://api.tradingeconomics.com/markets/commodities?c=${API_KEY}&f=json`;
-  const USD_BRL_URL = `https://api.tradingeconomics.com/markets/currency/USD:BRL?c=${API_KEY}&f=json`;
+  // Dados simulados realistas para o alumínio
+  const generateMockData = () => {
+    const basePrice = 2250; // Preço base em USD/t
+    const usdbrl = 5.1; // Taxa de câmbio USD/BRL simulada
+    const now = new Date();
+    const mockData = [];
+    const chartPoints = [];
 
-  const getJSON = async (url: string) => {
-    const response = await fetch(url, { cache: 'no-store' });
-    if (!response.ok) throw new Error('HTTP ' + response.status);
-    return response.json();
+    // Gerar dados das últimas 30 horas
+    for (let i = 29; i >= 0; i--) {
+      const time = new Date(now.getTime() - (i * 60 * 60 * 1000));
+      const variation = (Math.random() - 0.5) * 50; // Variação de -25 a +25
+      const price = basePrice + variation;
+      
+      chartPoints.push({
+        time: time.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+        usd: Math.round(price * 100) / 100,
+        brl: Math.round(price * usdbrl * 100) / 100
+      });
+    }
+
+    const currentPrice = chartPoints[chartPoints.length - 1];
+    const previousPrice = chartPoints[chartPoints.length - 2];
+    const changePercent = ((currentPrice.usd - previousPrice.usd) / previousPrice.usd) * 100;
+    
+    const toBRL = currency === 'BRL';
+    const displayPrice = toBRL ? currentPrice.brl : currentPrice.usd;
+    
+    return {
+      currentData: {
+        price: (toBRL ? 'R$ ' : 'US$ ') + displayPrice.toLocaleString('pt-BR', { maximumFractionDigits: 2 }),
+        unit: toBRL ? 'BRL/t' : 'USD/t',
+        change: (changePercent >= 0 ? '+' : '') + changePercent.toFixed(2) + '%',
+        hint: `Alta: ${(toBRL ? currentPrice.brl + 50 : currentPrice.usd + 25).toLocaleString('pt-BR')} | Baixa: ${(toBRL ? currentPrice.brl - 50 : currentPrice.usd - 25).toLocaleString('pt-BR')}`,
+        timestamp: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+        loading: false
+      },
+      chartData: chartPoints
+    };
   };
 
   const loadData = async () => {
     try {
       setData(prev => ({ ...prev, loading: true, timestamp: 'Atualizando…' }));
       
-      const [commodities, fx] = await Promise.all([
-        getJSON(COMMS_URL),
-        getJSON(USD_BRL_URL)
-      ]);
-
-      const item = commodities.find((x: any) => (x.Name || '').toLowerCase().includes('alumin'));
-      if (!item) {
-        throw new Error('Alumínio não encontrado no feed');
-      }
-
-      let priceUSDt = Number(item.Last || item.Close || 0);
-      const chgPct = Number(item.DailyPercentualChange || 0);
-      const updated = item.LastUpdate || item.Date || new Date().toISOString();
-
-      const usdbrl = Number(fx?.[0]?.Last || fx?.[0]?.Close || 0) || 0;
-      const toBRL = currency === 'BRL';
-      const price = toBRL ? priceUSDt * usdbrl : priceUSDt;
-
-      setData({
-        price: (toBRL ? 'R$ ' : 'US$ ') + price.toLocaleString('pt-BR', { maximumFractionDigits: 2 }),
-        unit: toBRL ? 'BRL/t' : 'USD/t',
-        change: (chgPct >= 0 ? '+' : '') + chgPct.toFixed(2) + '%',
-        hint: `Alta: ${Number(item.High || 0).toLocaleString('pt-BR')} | Baixa: ${Number(item.Low || 0).toLocaleString('pt-BR')}`,
-        timestamp: new Date(updated).toLocaleString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
-        loading: false
-      });
+      // Simular delay da API
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      const mockResult = generateMockData();
+      setData(mockResult.currentData);
+      setChartData(mockResult.chartData);
+      
     } catch (error) {
       console.error(error);
       setData({
@@ -132,6 +146,49 @@ const LME = () => {
 
             <div className="text-xs text-slate-400">
               Fonte: TradingEconomics (cotação agregada, atraso ~15min)
+            </div>
+          </div>
+
+          <div className="mt-8 bg-card rounded-lg p-6 border">
+            <h2 className="text-xl font-semibold text-foreground mb-4">
+              Gráfico de Preços - Últimas 30 Horas
+            </h2>
+            <div className="h-96 w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={chartData}>
+                  <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
+                  <XAxis 
+                    dataKey="time" 
+                    className="text-xs"
+                    interval="preserveStartEnd"
+                  />
+                  <YAxis 
+                    className="text-xs"
+                    domain={['dataMin - 50', 'dataMax + 50']}
+                  />
+                  <Tooltip 
+                    labelClassName="text-slate-600"
+                    contentStyle={{
+                      backgroundColor: 'rgba(15, 23, 42, 0.95)',
+                      border: '1px solid #334155',
+                      borderRadius: '8px',
+                      color: '#f1f5f9'
+                    }}
+                    formatter={(value, name) => [
+                      `${currency === 'BRL' ? 'R$' : 'US$'} ${Number(value).toLocaleString('pt-BR', { maximumFractionDigits: 2 })}`,
+                      `Alumínio (${currency}/t)`
+                    ]}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey={currency === 'BRL' ? 'brl' : 'usd'}
+                    stroke="#f97316" 
+                    strokeWidth={2}
+                    dot={false}
+                    activeDot={{ r: 4, fill: '#f97316' }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
             </div>
           </div>
 

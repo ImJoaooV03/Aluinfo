@@ -8,7 +8,8 @@ import {
   FileText, 
   BookOpen, 
   Users, 
-  Factory, 
+  Factory,
+  TrendingUp,
   ChevronDown
 } from "lucide-react";
 
@@ -23,6 +24,7 @@ const Navigation = () => {
     { id: "ebooks", label: "E-books", icon: BookOpen, path: "/ebooks" },
     { id: "fornecedores", label: "Fornecedores", icon: Users, path: "/fornecedores" },
     { id: "fundicoes", label: "Fundições", icon: Factory, path: "/fundicoes" },
+    { id: "lme", label: "LME", icon: TrendingUp, path: "/lme" },
   ];
 
   const isActive = (path: string) => location.pathname === path;

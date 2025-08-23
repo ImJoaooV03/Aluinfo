@@ -12,6 +12,7 @@ import Fornecedores from "./pages/Fornecedores";
 import Fundicoes from "./pages/Fundicoes";
 import Patrocinadas from "./pages/Patrocinadas";
 import EditarBanners from "./pages/EditarBanners";
+import LME from "./pages/LME";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -31,6 +32,7 @@ const App = () => (
           <Route path="/fornecedores" element={<Fornecedores />} />
           <Route path="/fundicoes" element={<Fundicoes />} />
           <Route path="/patrocinadas" element={<Patrocinadas />} />
+          <Route path="/lme" element={<LME />} />
           <Route path="/editar-banners" element={<EditarBanners />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

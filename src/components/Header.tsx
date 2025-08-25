@@ -25,7 +25,7 @@ const Header = () => {
     }
   };
   return (
-    <header className="shadow-lg" style={{ backgroundColor: '#1a1a1a' }}>
+    <header className="shadow-lg" style={{ backgroundColor: 'hsl(var(--header-footer))' }}>
       <div className="container mx-auto px-4">
         {/* Top bar */}
         <div className="flex items-center justify-between py-2 border-b border-border">

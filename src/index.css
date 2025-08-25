@@ -41,7 +41,7 @@
     --lead-light: 210 11% 45%;
     --sidebar-background: 210 11% 15%;
     --sidebar-foreground: 210 11% 85%;
-    --header-footer: 0 0% 70.6%;
+    --header-footer: 0 0% 16.9%;
   }
 
   .dark {
@@ -75,7 +75,7 @@
 
     --lead: 210 11% 85%;
     --lead-light: 210 11% 65%;
-    --header-footer: 0 0% 70.6%;
+    --header-footer: 0 0% 16.9%;
   }
 }
 

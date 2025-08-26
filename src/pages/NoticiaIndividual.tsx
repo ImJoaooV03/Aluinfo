@@ -91,8 +91,8 @@ const NoticiaIndividual = () => {
         <div className="flex gap-6">
           {/* Conteúdo Principal */}
           <main className="flex-1">  
-            {/* Banner Principal */}
-            <AdBanner size="large" position="content" className="mb-8" />
+            {/* Banner 14 - Notícia Topo */}
+            <AdBanner size="large" position="content" slotKey="noticia-top" className="mb-8" />
             {/* Breadcrumb */}
             <div className="mb-6">
               <Link 
@@ -158,8 +158,8 @@ const NoticiaIndividual = () => {
                 </div>
               )}
 
-              {/* Banner Meio do Artigo */}
-              <AdBanner size="medium" position="content" />
+              {/* Banner 15 - Notícia Meio */}
+              <AdBanner size="medium" position="content" slotKey="noticia-middle" />
 
               {/* Conteúdo do Artigo */}
               <div 
@@ -167,8 +167,8 @@ const NoticiaIndividual = () => {
                 dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(noticia.content) }}
               />
 
-              {/* Banner Final do Artigo */}
-              <AdBanner size="large" position="content" />
+              {/* Banner 16 - Notícia Final */}
+              <AdBanner size="large" position="content" slotKey="noticia-bottom" />
             </article>
 
             {/* Notícias Relacionadas */}

@@ -25,6 +25,7 @@ import {
 import { Plus, Edit, Trash2, Upload, Image, ExternalLink, MousePointer } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { BANNER_SLOTS } from "@/lib/bannerSlots";
 
 interface Banner {
   id: string;
@@ -54,7 +55,7 @@ const AdminBanners = () => {
     title: '',
     description: '',
     link_url: '',
-    position: 'sidebar',
+    position: 'sidebar-1',
     is_active: true,
     start_date: '',
     end_date: ''
@@ -223,7 +224,7 @@ const AdminBanners = () => {
       title: '',
       description: '',
       link_url: '',
-      position: 'sidebar',
+      position: 'sidebar-1',
       is_active: true,
       start_date: '',
       end_date: ''
@@ -297,16 +298,17 @@ const AdminBanners = () => {
                 </div>
                 
                 <div>
-                  <label className="text-sm font-medium">Posição</label>
+                  <label className="text-sm font-medium">Posição do Banner</label>
                   <Select value={formData.position} onValueChange={(value) => setFormData({ ...formData, position: value })}>
                     <SelectTrigger>
-                      <SelectValue />
+                      <SelectValue placeholder="Selecione a posição" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="sidebar">Sidebar</SelectItem>
-                      <SelectItem value="header">Header</SelectItem>
-                      <SelectItem value="content">Conteúdo</SelectItem>
-                      <SelectItem value="footer">Footer</SelectItem>
+                      {BANNER_SLOTS.map((slot) => (
+                        <SelectItem key={slot.key} value={slot.key}>
+                          {slot.label}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
@@ -435,7 +437,9 @@ const AdminBanners = () => {
                     </div>
                   </TableCell>
                   <TableCell>
-                    <Badge variant="outline">{banner.position}</Badge>
+                    <Badge variant="outline">
+                      {BANNER_SLOTS.find(slot => slot.key === banner.position)?.label || banner.position}
+                    </Badge>
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center space-x-2">

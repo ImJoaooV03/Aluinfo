@@ -145,8 +145,8 @@ const MainContent = () => {
 
   return (
     <main className="flex-1 space-y-6">
-      {/* Anúncio Topo - Banner Grande 1 */}
-      <AdBanner size="medium" position="content" spaceNumber={5} />
+      {/* Banner 5 - Conteúdo Grande 1 */}
+      <AdBanner size="medium" position="content" spaceNumber={5} slotKey="content-1" />
 
       {/* Notícias Destaque */}
       <section>
@@ -158,8 +158,8 @@ const MainContent = () => {
         </div>
       </section>
 
-      {/* Anúncio Entre Seções - Banner Grande 2 */}
-      <AdBanner size="large" position="content" spaceNumber={6} />
+      {/* Banner 6 - Conteúdo Grande 2 */}
+      <AdBanner size="large" position="content" spaceNumber={6} slotKey="content-2" />
 
       {/* Materiais Técnicos */}
       <section>
@@ -190,8 +190,8 @@ const MainContent = () => {
         </div>
       </section>
 
-      {/* Anúncio Meio - Banner Grande 3 */}
-      <AdBanner size="medium" position="content" spaceNumber={7} />
+      {/* Banner 7 - Conteúdo Grande 3 */}
+      <AdBanner size="medium" position="content" spaceNumber={7} slotKey="content-3" />
 
       {/* Próximos Eventos */}
       <section>
@@ -226,8 +226,8 @@ const MainContent = () => {
         </div>
       </section>
 
-      {/* Anúncio Entre Seções - Banner Grande 4 */}
-      <AdBanner size="large" position="content" spaceNumber={8} />
+      {/* Banner 8 - Conteúdo Grande 4 */}
+      <AdBanner size="large" position="content" spaceNumber={8} slotKey="content-4" />
 
       {/* Cursos */}
       <section>
@@ -266,8 +266,8 @@ const MainContent = () => {
         </div>
       </section>
 
-      {/* Anúncio Entre Seções - Banner Grande 5 */}
-      <AdBanner size="medium" position="content" spaceNumber={9} />
+      {/* Banner 9 - Conteúdo Grande 5 */}
+      <AdBanner size="medium" position="content" spaceNumber={9} slotKey="content-5" />
 
       {/* Últimas Notícias */}
       <section>

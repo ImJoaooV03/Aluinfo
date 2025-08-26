@@ -1,16 +1,20 @@
 
 import { ExternalLink } from "lucide-react";
 import { useBanners } from "@/hooks/useBanners";
+import { useSupabaseBanners } from "@/hooks/useSupabaseBanners";
+import { getBannerSlotById } from "@/lib/bannerSlots";
 
 interface AdBannerProps {
   size: "small" | "medium" | "large";
   position: "sidebar" | "content" | "header";
   spaceNumber?: number;
+  slotKey?: string;
   className?: string;
 }
 
-const AdBanner = ({ size, position, spaceNumber, className = "" }: AdBannerProps) => {
+const AdBanner = ({ size, position, spaceNumber, slotKey, className = "" }: AdBannerProps) => {
   const { getBanner } = useBanners();
+  const { getBannerBySlot } = useSupabaseBanners();
   
   const sizeClasses = {
     small: "h-[150px] w-full",
@@ -19,6 +23,12 @@ const AdBanner = ({ size, position, spaceNumber, className = "" }: AdBannerProps
   };
 
   const getPositionText = () => {
+    // If slotKey is provided, get banner slot info
+    if (slotKey) {
+      const slot = getBannerSlotById(parseInt(slotKey.split('-')[1]) || 0);
+      return slot ? slot.label : slotKey;
+    }
+
     if (spaceNumber) {
       // Para banners grandes (5-10), usar numeração sequencial começando em 1
       if (spaceNumber > 4) {
@@ -37,11 +47,15 @@ const AdBanner = ({ size, position, spaceNumber, className = "" }: AdBannerProps
     return baseText[position];
   };
 
-  // Busca a imagem do banner se tiver spaceNumber
-  const bannerData = spaceNumber ? getBanner(spaceNumber) : null;
-  const bannerImage = bannerData?.imageUrl;
+  // Get banner from Supabase if slotKey is provided, otherwise fallback to local storage
+  const supabaseBanner = slotKey ? getBannerBySlot(slotKey) : null;
+  const localBanner = spaceNumber ? getBanner(spaceNumber) : null;
+  
+  // Priority: Supabase banner > Local banner
+  const bannerImage = supabaseBanner?.image_url || localBanner?.imageUrl;
+  const bannerLink = supabaseBanner?.link_url;
 
-  return (
+  const BannerContent = () => (
     <div className={`banner-ad ${sizeClasses[size]} ${className} relative overflow-hidden rounded-lg border`}>
       {bannerImage ? (
         <>
@@ -62,6 +76,14 @@ const AdBanner = ({ size, position, spaceNumber, className = "" }: AdBannerProps
         </div>
       )}
     </div>
+  );
+
+  return bannerLink ? (
+    <a href={bannerLink} target="_blank" rel="noopener noreferrer" className="block">
+      <BannerContent />
+    </a>
+  ) : (
+    <BannerContent />
   );
 };
 

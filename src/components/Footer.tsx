@@ -21,27 +21,26 @@ const Footer = () => {
             <div className="space-y-3">
               <div className="flex items-center text-sm">
                 <Mail className="h-4 w-4 text-primary mr-2" />
-                contato@aluinfo.com.br
+                adm@aluinfo.com
               </div>
               <div className="flex items-center text-sm">
                 <Phone className="h-4 w-4 text-primary mr-2" />
-                +55 11 3000-0000
+                +55 47 99631-2867
               </div>
               <div className="flex items-center text-sm">
                 <MapPin className="h-4 w-4 text-primary mr-2" />
-                São Paulo, Brasil
+                Santa Catarina, Brasil
               </div>
             </div>
           </div>
 
           {/* Portal */}
           <div>
-            <h3 className="text-white font-semibold mb-4">Portal</h3>
+            <h3 className="text-white font-semibold mb-4">PORTAL</h3>
             <ul className="space-y-2 text-sm">
-              <li><a href="#" className="hover:text-primary transition-colors">Sobre Nós</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Como Funciona</a></li>
+              <li><a href="#" className="hover:text-primary transition-colors">Anuncie</a></li>
+              <li><a href="#" className="hover:text-primary transition-colors">Midia Kit</a></li>
               <li><a href="#" className="hover:text-primary transition-colors">Contato</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">FAQ</a></li>
             </ul>
           </div>
 

@@ -1,14 +1,11 @@
 import { Button } from "@/components/ui/button";
 import heroBackground from "@/assets/hero-blue-background.jpg";
 const HeroSection = () => {
-  return <section 
-      className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white py-20 relative"
-      style={{
-        backgroundImage: `linear-gradient(to bottom right, rgba(15, 23, 42, 0.9), rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.9)), url(${heroBackground})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center'
-      }}
-    >
+  return <section style={{
+    backgroundImage: `linear-gradient(to bottom right, rgba(15, 23, 42, 0.9), rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.9)), url(${heroBackground})`,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center'
+  }} className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white relative py-[200px]">
       <div className="container mx-auto px-4 text-center">
         {/* Main Content */}
         <div className="max-w-4xl mx-auto">

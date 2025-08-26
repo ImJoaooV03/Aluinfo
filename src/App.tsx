@@ -15,6 +15,12 @@ import EditarBanners from "./pages/EditarBanners";
 import LME from "./pages/LME";
 import NotFound from "./pages/NotFound";
 
+// Admin pages
+import AdminAuth from "./pages/AdminAuth";
+import { AdminLayout } from "./components/AdminLayout";
+import AdminDashboard from "./pages/admin/Dashboard";
+import AdminNoticias from "./pages/admin/AdminNoticias";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -34,6 +40,12 @@ const App = () => (
           <Route path="/patrocinadas" element={<Patrocinadas />} />
           <Route path="/lme" element={<LME />} />
           <Route path="/editar-banners" element={<EditarBanners />} />
+          
+          {/* Admin routes */}
+          <Route path="/admin/auth" element={<AdminAuth />} />
+          <Route path="/admin/dashboard" element={<AdminLayout><AdminDashboard /></AdminLayout>} />
+          <Route path="/admin/noticias" element={<AdminLayout><AdminNoticias /></AdminLayout>} />
+          
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

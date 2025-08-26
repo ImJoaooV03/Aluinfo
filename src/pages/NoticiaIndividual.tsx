@@ -1,5 +1,6 @@
 import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, Clock, User, Tag, Share2, Eye } from "lucide-react";
+import DOMPurify from "dompurify";
 import Header from "@/components/Header";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
@@ -163,7 +164,7 @@ const NoticiaIndividual = () => {
               {/* Conteúdo do Artigo */}
               <div 
                 className="prose prose-lg max-w-none"
-                dangerouslySetInnerHTML={{ __html: noticia.content }}
+                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(noticia.content) }}
               />
 
               {/* Banner Final do Artigo */}

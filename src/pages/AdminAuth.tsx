@@ -153,17 +153,6 @@ export default function AdminAuth() {
             </Button>
           </form>
           
-          <div className="mt-4 text-center">
-            <p className="text-sm text-muted-foreground">
-              Primeiro acesso?{" "}
-              <Link 
-                to="/admin/create" 
-                className="text-primary hover:underline font-medium"
-              >
-                Criar usuário administrador
-              </Link>
-            </p>
-          </div>
         </CardContent>
       </Card>
     </div>

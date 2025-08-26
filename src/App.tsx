@@ -17,7 +17,7 @@ import NotFound from "./pages/NotFound";
 
 // Admin pages
 import AdminAuth from "./pages/AdminAuth";
-import CreateAdmin from "./pages/CreateAdmin";
+
 import { AdminLayout } from "./components/AdminLayout";
 import AdminDashboard from "./pages/admin/Dashboard";
 import AdminNoticias from "./pages/admin/AdminNoticias";
@@ -44,7 +44,7 @@ const App = () => (
           
           {/* Admin routes */}
           <Route path="/admin/auth" element={<AdminAuth />} />
-          <Route path="/admin/create" element={<CreateAdmin />} />
+          
           <Route path="/admin/dashboard" element={<AdminLayout><AdminDashboard /></AdminLayout>} />
           <Route path="/admin/noticias" element={<AdminLayout><AdminNoticias /></AdminLayout>} />
           

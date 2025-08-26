@@ -172,7 +172,7 @@ const NoticiaIndividual = () => {
 
             {/* Notícias Relacionadas */}
             <section className="mt-12">
-              <h2 className="text-2xl font-bold mb-6 text-lead">Notícias Relacionadas</h2>
+              <h2 className="text-2xl font-bold mb-6 text-lead">Outras Notícias</h2>
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {noticiasRelacionadas.map((news, index) => (
                   <NewsCard key={index} {...news} />

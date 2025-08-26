@@ -1,24 +1,18 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Globe, Users, TrendingUp } from "lucide-react";
+import heroBackground from "@/assets/hero-background.jpg";
 const HeroSection = () => {
-  const stats = [{
-    icon: Globe,
-    value: "+50",
-    label: "Países Conectados"
-  }, {
-    icon: Users,
-    value: "+10K",
-    label: "Empresas Registradas"
-  }, {
-    icon: TrendingUp,
-    value: "+1M",
-    label: "Visualizações Mensais"
-  }];
-  return <section className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white py-20">
+  return <section 
+      className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white py-20 relative"
+      style={{
+        backgroundImage: `url(${heroBackground})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundBlendMode: 'overlay'
+      }}
+    >
       <div className="container mx-auto px-4 text-center">
         {/* Main Content */}
-        <div className="max-w-4xl mx-auto mb-16">
+        <div className="max-w-4xl mx-auto">
           <h1 className="text-4xl font-bold mb-6 leading-tight md:text-7xl">
             O Portal Global do Mercado de Alumínio
           </h1>
@@ -36,20 +30,6 @@ const HeroSection = () => {
               Anuncie Conosco
             </Button>
           </div>
-        </div>
-
-        {/* Statistics Cards */}
-        <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-          {stats.map((stat, index) => {
-          const IconComponent = stat.icon;
-          return <Card key={index} className="bg-slate-800/50 border-slate-700 backdrop-blur-sm">
-                <CardContent className="p-6 text-center">
-                  <IconComponent className="h-8 w-8 text-orange-500 mx-auto mb-4" />
-                  <div className="text-3xl font-bold text-white mb-2">{stat.value}</div>
-                  <div className="text-slate-400">{stat.label}</div>
-                </CardContent>
-              </Card>;
-        })}
         </div>
       </div>
     </section>;

@@ -2,7 +2,7 @@
 import { ExternalLink } from "lucide-react";
 import { useBanners } from "@/hooks/useBanners";
 import { useSupabaseBanners } from "@/hooks/useSupabaseBanners";
-import { getBannerSlotById } from "@/lib/bannerSlots";
+import { getBannerSlotByKey } from "@/lib/bannerSlots";
 
 interface AdBannerProps {
   size: "small" | "medium" | "large";
@@ -25,7 +25,7 @@ const AdBanner = ({ size, position, spaceNumber, slotKey, className = "" }: AdBa
   const getPositionText = () => {
     // If slotKey is provided, get banner slot info
     if (slotKey) {
-      const slot = getBannerSlotById(parseInt(slotKey.split('-')[1]) || 0);
+      const slot = getBannerSlotByKey(slotKey);
       return slot ? slot.label : slotKey;
     }
 

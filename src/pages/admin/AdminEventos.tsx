@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -62,7 +61,7 @@ const AdminEventos = () => {
     max_attendees: '',
     website_url: '',
     registration_url: '',
-    status: 'draft' as const
+    status: 'draft' as 'draft' | 'published' | 'archived'
   });
 
   const { data: events = [], isLoading } = useQuery({

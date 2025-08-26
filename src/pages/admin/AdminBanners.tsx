@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -443,7 +442,6 @@ const AdminBanners = () => {
                       <Switch
                         checked={banner.is_active}
                         onCheckedChange={(checked) => toggleActiveMutation.mutate({ id: banner.id, is_active: checked })}
-                        size="sm"
                       />
                       <Badge variant={banner.is_active ? 'default' : 'secondary'}>
                         {banner.is_active ? 'Ativo' : 'Inativo'}

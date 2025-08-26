@@ -1,5 +1,6 @@
+
 import { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,43 +18,82 @@ export default function AdminAuth() {
   const { toast } = useToast();
 
   useEffect(() => {
-    checkAuthStatus();
-  }, []);
+    let mounted = true;
 
-  const checkAuthStatus = async () => {
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (session?.user) {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('user_id', session.user.id)
-          .single();
+    const checkExistingAuth = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (session?.user) {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('user_id', session.user.id)
+            .single();
 
-        if (profile?.role === 'admin') {
-          navigate('/admin/dashboard');
-          return;
+          if (profile?.role === 'admin') {
+            if (mounted) {
+              navigate('/admin/dashboard');
+            }
+            return;
+          }
+        }
+      } catch (error) {
+        console.error('Erro ao verificar autenticação existente:', error);
+      } finally {
+        if (mounted) {
+          setCheckingAuth(false);
         }
       }
-    } catch (error) {
-      console.error('Error checking auth:', error);
-    } finally {
-      setCheckingAuth(false);
-    }
-  };
+    };
+
+    // Configurar listener de mudanças de autenticação
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        console.log('Auth state changed in AdminAuth:', event, session?.user?.email);
+        
+        if (event === 'SIGNED_IN' && session?.user && mounted) {
+          // Verificar se é admin e redirecionar
+          try {
+            const { data: profile } = await supabase
+              .from('profiles')
+              .select('role')
+              .eq('user_id', session.user.id)
+              .single();
+
+            if (profile?.role === 'admin') {
+              navigate('/admin/dashboard');
+            }
+          } catch (error) {
+            console.error('Erro ao verificar perfil após login:', error);
+          }
+        }
+      }
+    );
+
+    // Verificar se já está logado
+    checkExistingAuth();
+
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
+  }, [navigate]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
+      console.log('Tentando fazer login com:', email);
+      
       const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-        email,
+        email: email.trim(),
         password,
       });
 
       if (authError) {
+        console.error('Erro de autenticação:', authError);
         toast({
           title: "Erro no login",
           description: authError.message,
@@ -62,31 +102,69 @@ export default function AdminAuth() {
         return;
       }
 
-      if (authData.user) {
-        const { data: profile, error: profileError } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('user_id', authData.user.id)
-          .single();
-
-        if (profileError || profile?.role !== 'admin') {
-          await supabase.auth.signOut();
-          toast({
-            title: "Acesso negado",
-            description: "Você não tem permissão para acessar o painel administrativo.",
-            variant: "destructive",
-          });
-          return;
-        }
-
+      if (!authData.user) {
         toast({
-          title: "Login realizado",
-          description: "Bem-vindo ao painel administrativo!",
+          title: "Erro",
+          description: "Falha na autenticação. Tente novamente.",
+          variant: "destructive",
         });
-        
-        navigate('/admin/dashboard');
+        return;
       }
+
+      console.log('Login bem-sucedido, chamando ensure_admin_self...');
+
+      // Chamar a função para garantir o papel de admin
+      try {
+        const { error: adminError } = await supabase.rpc('ensure_admin_self');
+        
+        if (adminError) {
+          console.error('Erro ao definir papel de admin:', adminError);
+        } else {
+          console.log('Papel de admin definido com sucesso');
+        }
+      } catch (rpcError) {
+        console.error('Erro ao chamar ensure_admin_self:', rpcError);
+      }
+
+      // Verificar o perfil atualizado
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('role, email, full_name')
+        .eq('user_id', authData.user.id)
+        .single();
+
+      if (profileError) {
+        console.error('Erro ao buscar perfil:', profileError);
+        await supabase.auth.signOut();
+        toast({
+          title: "Erro",
+          description: "Erro ao verificar permissões do usuário.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (profile?.role !== 'admin') {
+        console.log('Usuário não é admin:', profile);
+        await supabase.auth.signOut();
+        toast({
+          title: "Acesso negado",
+          description: "Você não tem permissão para acessar o painel administrativo.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      console.log('Login como admin confirmado, redirecionando...');
+      
+      toast({
+        title: "Login realizado",
+        description: `Bem-vindo, ${profile.full_name || profile.email}!`,
+      });
+      
+      navigate('/admin/dashboard');
     } catch (error: any) {
+      console.error('Erro geral no login:', error);
       toast({
         title: "Erro",
         description: error.message || "Erro inesperado ao fazer login",
@@ -124,10 +202,11 @@ export default function AdminAuth() {
               <Input
                 id="email"
                 type="email"
-                placeholder="admin@aluinfo.com"
+                placeholder="joaovicrengel@gmail.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                autoComplete="email"
               />
             </div>
             <div className="space-y-2">
@@ -139,6 +218,7 @@ export default function AdminAuth() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                autoComplete="current-password"
               />
             </div>
             <Button type="submit" className="w-full" disabled={loading}>
@@ -152,7 +232,6 @@ export default function AdminAuth() {
               )}
             </Button>
           </form>
-          
         </CardContent>
       </Card>
     </div>

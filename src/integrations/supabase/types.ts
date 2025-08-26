@@ -671,6 +671,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      ensure_admin_self: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       get_foundry_contact_info: {
         Args: { foundry_id: string }
         Returns: Json

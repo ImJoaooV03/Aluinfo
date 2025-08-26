@@ -1,7 +1,7 @@
 
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Search } from "lucide-react";
+import { useNavigate, Link } from "react-router-dom";
+import { Search, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import AdBanner from "./AdBanner";
@@ -39,6 +39,12 @@ const Header = () => {
             <Button variant="ghost" size="sm" className="text-sm text-primary hover:text-primary-foreground hover:bg-primary">
               Anuncie Conosco
             </Button>
+            <Link to="/admin/auth">
+              <Button variant="ghost" size="sm" className="text-sm text-primary hover:text-primary-foreground hover:bg-primary">
+                <Settings className="h-3 w-3 mr-1" />
+                Admin
+              </Button>
+            </Link>
           </div>
         </div>
 

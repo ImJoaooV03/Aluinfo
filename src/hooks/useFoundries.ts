@@ -37,10 +37,10 @@ export const useFoundries = () => {
       setLoading(true);
       setError(null);
 
-      // Fetch foundries data
+      // Fetch foundries data WITHOUT sensitive contact information
       const { data: foundriesData, error: foundriesError } = await supabase
         .from('foundries')
-        .select('*')
+        .select('id, name, slug, specialty, description, logo_url, country, state, city, website, rating, employees_count, category_id, status, created_at, updated_at')
         .eq('status', 'published')
         .order('name');
 

@@ -37,10 +37,10 @@ export const useSuppliers = () => {
       setLoading(true);
       setError(null);
 
-      // Fetch suppliers data
+      // Fetch suppliers data WITHOUT sensitive contact information
       const { data: suppliersData, error: suppliersError } = await supabase
         .from('suppliers')
-        .select('*')
+        .select('id, name, slug, specialty, description, logo_url, country, state, city, website, rating, employees_count, category_id, status, created_at, updated_at')
         .eq('status', 'published')
         .order('name');
 

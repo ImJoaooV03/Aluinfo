@@ -1,10 +1,10 @@
 import { Button } from "@/components/ui/button";
-import heroBackground from "@/assets/hero-background.jpg";
+import heroBackground from "@/assets/hero-blue-background.jpg";
 const HeroSection = () => {
   return <section 
       className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white py-20 relative"
       style={{
-        backgroundImage: `linear-gradient(to bottom right, rgb(15 23 42), rgb(30 41 59), rgb(15 23 42)), url(${heroBackground})`,
+        backgroundImage: `linear-gradient(to bottom right, rgba(15, 23, 42, 0.9), rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.9)), url(${heroBackground})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center'
       }}

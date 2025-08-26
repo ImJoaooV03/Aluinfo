@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { 
   LayoutDashboard, 
@@ -8,7 +9,8 @@ import {
   TrendingUp,
   LogOut,
   Users,
-  Settings
+  Settings,
+  Home
 } from "lucide-react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -71,6 +73,10 @@ export function AdminSidebar() {
     }
   };
 
+  const handleGoToSite = () => {
+    navigate('/');
+  };
+
   return (
     <Sidebar
       className={collapsed ? "w-14" : "w-60"}
@@ -104,7 +110,16 @@ export function AdminSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="p-4 border-t">
+      <SidebarFooter className="p-4 border-t space-y-2">
+        <Button 
+          variant="outline" 
+          onClick={handleGoToSite}
+          className="w-full justify-start"
+        >
+          <Home className="mr-2 h-4 w-4" />
+          {!collapsed && "Voltar ao site"}
+        </Button>
+        
         <Button 
           variant="ghost" 
           onClick={handleLogout}

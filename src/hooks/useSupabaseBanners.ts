@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -60,6 +61,30 @@ export const useSupabaseBanners = () => {
 
   useEffect(() => {
     fetchBanners();
+
+    // Configurar Realtime para atualizações automáticas
+    const channel = supabase
+      .channel('schema-db-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*', // Escutar INSERT, UPDATE e DELETE
+          schema: 'public',
+          table: 'banners'
+        },
+        (payload) => {
+          console.log('Banner change detected:', payload);
+          // Recarregar os banners quando houver qualquer mudança
+          fetchBanners();
+        }
+      )
+      .subscribe();
+
+    // Cleanup function para remover o canal quando o componente for desmontado
+    return () => {
+      console.log('Removing realtime channel for banners');
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   return {

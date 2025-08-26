@@ -49,9 +49,9 @@ const Footer = () => {
             <h3 className="text-white font-semibold mb-4">Serviços</h3>
             <ul className="space-y-2 text-sm">
               <li><a href="/fornecedores" className="hover:text-primary transition-colors">Guia de Fornecedores</a></li>
-              <li><a href="/fundicoes" className="hover:text-primary transition-colors">Guia de Fundições</a></li>
-              <li><a href="/materiais" className="hover:text-primary transition-colors">Materiais Técnicos</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Anuncie Conosco</a></li>
+              <li><a href="/fundicoes" className="hover:text-primary transition-colors">Guias de Fundições</a></li>
+              <li><a href="/materiais" className="hover:text-primary transition-colors">Artigos Técnicos</a></li>
+              <li><a href="#" className="hover:text-primary transition-colors">Newsletter</a></li>
             </ul>
           </div>
 
@@ -59,18 +59,16 @@ const Footer = () => {
           <div>
             <h3 className="text-white font-semibold mb-4">Educação</h3>
             <ul className="space-y-2 text-sm">
-              <li><a href="#" className="hover:text-primary transition-colors">Cursos Online</a></li>
-              <li><a href="/ebooks" className="hover:text-primary transition-colors">Ebooks</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Certificações</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Webinars</a></li>
+              <li><a href="#" className="hover:text-primary transition-colors">Cursos (Em breve)</a></li>
+              <li><a href="/ebooks" className="hover:text-primary transition-colors">E-books</a></li>
             </ul>
           </div>
 
-          {/* Mercado */}
+          {/* Notícias */}
           <div>
-            <h3 className="text-white font-semibold mb-4">Mercado</h3>
+            <h3 className="text-white font-semibold mb-4">Notícias</h3>
             <ul className="space-y-2 text-sm">
-              <li><a href="/noticias" className="hover:text-primary transition-colors">Notícias</a></li>
+              <li><a href="/noticias" className="hover:text-primary transition-colors">Mercado</a></li>
               <li><a href="#" className="hover:text-primary transition-colors">Análises</a></li>
               <li><a href="#" className="hover:text-primary transition-colors">Cotações</a></li>
               <li><a href="#" className="hover:text-primary transition-colors">Relatórios</a></li>

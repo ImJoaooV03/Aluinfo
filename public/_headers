@@ -1,0 +1,26 @@
+# Security Headers Configuration for Production
+/*
+  # HTTPS Strict Transport Security (HSTS)
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+  
+  # Content Security Policy (CSP)
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://api.tradingeconomics.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://unvxhbgcoraoxfjhapja.supabase.co https://api.tradingeconomics.com wss://unvxhbgcoraoxfjhapja.supabase.co; frame-ancestors 'none'; base-uri 'self'; form-action 'self'
+  
+  # X-Frame-Options
+  X-Frame-Options: DENY
+  
+  # X-Content-Type-Options
+  X-Content-Type-Options: nosniff
+  
+  # X-XSS-Protection
+  X-XSS-Protection: 1; mode=block
+  
+  # Referrer Policy
+  Referrer-Policy: strict-origin-when-cross-origin
+  
+  # Permissions Policy
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), bluetooth=()
+  
+  # Remove Server Information
+  Server: ""
+  X-Powered-By: ""

@@ -8,6 +8,8 @@ export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
+    // Enable HTTPS in development for testing
+    // https: mode === 'development' ? undefined : true,
   },
   plugins: [
     react(),
@@ -17,6 +19,17 @@ export default defineConfig(({ mode }) => ({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+    },
+  },
+  build: {
+    // Security enhancements for production builds
+    rollupOptions: {
+      output: {
+        // Ensure secure asset handling
+        assetFileNames: 'assets/[name]-[hash][extname]',
+        chunkFileNames: 'assets/[name]-[hash].js',
+        entryFileNames: 'assets/[name]-[hash].js',
+      },
     },
   },
 }));

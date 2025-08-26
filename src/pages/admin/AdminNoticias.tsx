@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { validateImageUrl, enforceHttps } from "@/utils/httpsUtils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -105,12 +106,28 @@ export default function AdminNoticias() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Validate and sanitize image URL
+    let sanitizedImageUrl = formData.featured_image_url;
+    if (sanitizedImageUrl) {
+      const validatedUrl = validateImageUrl(sanitizedImageUrl);
+      if (!validatedUrl) {
+        toast({
+          title: "Erro",
+          description: "URL da imagem inválida ou insegura. Use apenas URLs HTTPS de fontes confiáveis.",
+          variant: "destructive",
+        });
+        return;
+      }
+      sanitizedImageUrl = validatedUrl;
+    }
+    
     try {
       const slug = generateSlug(formData.title);
       const now = new Date().toISOString();
       
       const newsData = {
         ...formData,
+        featured_image_url: sanitizedImageUrl,
         slug,
         published_at: formData.status === 'published' ? now : null,
       };

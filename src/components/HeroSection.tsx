@@ -4,10 +4,9 @@ const HeroSection = () => {
   return <section 
       className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white py-20 relative"
       style={{
-        backgroundImage: `url(${heroBackground})`,
+        backgroundImage: `linear-gradient(to bottom right, rgb(15 23 42), rgb(30 41 59), rgb(15 23 42)), url(${heroBackground})`,
         backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundBlendMode: 'overlay'
+        backgroundPosition: 'center'
       }}
     >
       <div className="container mx-auto px-4 text-center">

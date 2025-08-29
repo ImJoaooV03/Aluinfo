@@ -20,7 +20,7 @@ const Navigation = () => {
   const navItems = [
     { id: "inicio", label: "Início", icon: Home, path: "/" },
     { id: "noticias", label: "Notícias", icon: Newspaper, path: "/noticias" },
-    { id: "materiais", label: "Artigos Técnicos", icon: FileText, path: "/materiais" },
+    { id: "materiais", label: "Artigos Técnicos", icon: FileText, path: "/artigos-tecnicos" },
     { id: "ebooks", label: "E-books", icon: BookOpen, path: "/ebooks" },
     { id: "fornecedores", label: "Fornecedores", icon: Users, path: "/fornecedores" },
     { id: "fundicoes", label: "Fundições", icon: Factory, path: "/fundicoes" },

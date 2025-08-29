@@ -11,64 +11,104 @@ import { useTechnicalMaterials } from "@/hooks/useTechnicalMaterials";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { enforceHttps } from "@/utils/httpsUtils";
+import { useState } from "react";
+
 const MateriaisTecnicos = () => {
   const { materials, loading, refetch } = useTechnicalMaterials();
   const { toast } = useToast();
+  const [downloadCounts, setDownloadCounts] = useState<Record<string, number>>({});
 
-  const handleDownload = async (material: any) => {
+  const handleDownload = (material: any) => {
+    // Validar se há arquivo disponível
+    if (!material.file_url) {
+      toast({
+        title: "Arquivo indisponível",
+        description: "Este material não possui arquivo para download.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
-      // Preabre uma aba para evitar bloqueio de pop-up
       const fileUrl = enforceHttps(material.file_url);
-      let newWindow: Window | null = null;
+      
+      // Otimisticamente atualizar o contador no UI
+      setDownloadCounts(prev => ({
+        ...prev,
+        [material.id]: (downloadCounts[material.id] || material.download_count || 0) + 1
+      }));
+
+      // Método 1: Tentar window.open
+      let downloadStarted = false;
       try {
-        newWindow = window.open('about:blank', '_blank');
+        const newWindow = window.open(fileUrl, '_blank', 'noopener,noreferrer');
+        if (newWindow) {
+          downloadStarted = true;
+          toast({
+            title: "Download iniciado",
+            description: `O arquivo "${material.title}" foi aberto em uma nova aba.`,
+          });
+        }
       } catch (e) {
-        newWindow = null;
+        console.log('window.open falhou, tentando fallback');
       }
 
-      // Registra o download no analytics sem bloquear a navegação
-      const { data: userData } = await supabase.auth.getUser();
-      supabase
-        .from('analytics_views')
-        .insert({
-          content_type: 'technical_materials',
-          content_id: material.id,
-          user_id: userData?.user?.id || null,
-          ip_address: null,
-          user_agent: window.navigator.userAgent,
-          referer: window.location.href,
-        })
-        .then(
-          () => {
-            // Atualiza a lista para mostrar o novo contador após registrar
-            setTimeout(() => {
-              refetch();
-            }, 300);
-          },
-          (err) => {
-            console.error('Erro ao registrar download:', err);
-            // Mesmo com erro no analytics, continua o download
-          }
-        );
-
-      // Abre/navega para o arquivo
-      if (newWindow) {
+      // Método 2: Fallback com elemento <a>
+      if (!downloadStarted) {
+        const link = document.createElement('a');
+        link.href = fileUrl;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        link.style.display = 'none';
+        document.body.appendChild(link);
+        
         try {
-          newWindow.location.href = fileUrl;
-        } catch {
-          window.open(fileUrl, '_blank');
+          link.click();
+          downloadStarted = true;
+          toast({
+            title: "Download iniciado",
+            description: `O arquivo "${material.title}" está sendo baixado.`,
+          });
+        } catch (e) {
+          console.log('Link click falhou, usando location.href');
+        } finally {
+          document.body.removeChild(link);
         }
-        toast({
-          title: "Download iniciado",
-          description: `O arquivo "${material.title}" foi aberto em uma nova aba.`,
-        });
-      } else {
-        // Fallback: se a nova aba foi bloqueada, abre no mesmo separador
+      }
+
+      // Método 3: Último recurso - abrir na mesma aba
+      if (!downloadStarted) {
         window.location.href = fileUrl;
       }
 
+      // Registrar analytics em background (não bloqueia download)
+      supabase.auth.getUser().then(({ data: userData }) => {
+        return supabase
+          .from('analytics_views')
+          .insert({
+            content_type: 'technical_materials',
+            content_id: material.id,
+            user_id: userData?.user?.id || null,
+            ip_address: null,
+            user_agent: window.navigator.userAgent,
+            referer: window.location.href,
+          });
+      }).then(() => {
+        // Refetch após analytics para sincronizar contador real
+        setTimeout(() => {
+          refetch();
+        }, 500);
+      }).catch((err) => {
+        console.error('Erro ao registrar analytics:', err);
+      });
+
     } catch (error) {
       console.error('Erro no download:', error);
+      // Reverter contador otimista em caso de erro
+      setDownloadCounts(prev => ({
+        ...prev,
+        [material.id]: Math.max(0, (downloadCounts[material.id] || material.download_count || 0) - 1)
+      }));
       toast({
         title: "Erro no download",
         description: "Não foi possível processar o download. Tente novamente.",
@@ -160,17 +200,18 @@ const MateriaisTecnicos = () => {
                         <p className="text-muted-foreground line-clamp-3 mb-4">
                           {material.description || 'Material técnico disponível para download'}
                         </p>
-                        <div className="flex items-center justify-between text-sm text-muted-foreground mb-4">
-                          <span>{formatFileSize(material.file_size)}</span>
-                          <span>{material.download_count || 0} downloads</span>
-                        </div>
-                        <Button 
-                          className="w-full" 
-                          onClick={() => handleDownload(material)}
-                        >
-                          <Download className="h-4 w-4 mr-2" />
-                          Download
-                        </Button>
+                         <div className="flex items-center justify-between text-sm text-muted-foreground mb-4">
+                           <span>{formatFileSize(material.file_size)}</span>
+                           <span>{downloadCounts[material.id] || material.download_count || 0} downloads</span>
+                         </div>
+                         <Button 
+                           className="w-full" 
+                           onClick={() => handleDownload(material)}
+                           disabled={!material.file_url}
+                         >
+                           <Download className="h-4 w-4 mr-2" />
+                           {material.file_url ? 'Download' : 'Arquivo indisponível'}
+                         </Button>
                       </CardContent>
                     </Card>
                   );

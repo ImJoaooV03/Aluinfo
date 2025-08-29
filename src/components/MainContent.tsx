@@ -44,7 +44,7 @@ const MainContent = () => {
   return (
     <div className="space-y-12">
       {/* Banner 1 - Home Topo */}
-      <AdBanner size="large" position="hero" slotKey="home-top" />
+      <AdBanner size="large" position="content" slotKey="home-top" />
 
       {/* Seção de Notícias */}
       <section>
@@ -76,6 +76,7 @@ const MainContent = () => {
                 category="Notícias"
                 image={item.featured_image_url || undefined}
                 featured={index === 0}
+                href={`/noticia/${item.id}`}
               />
             ))}
           </div>

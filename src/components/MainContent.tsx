@@ -133,6 +133,9 @@ const MainContent = () => {
         )}
       </section>
 
+      {/* Banner 3 - Conteúdo Grande 3 */}
+      <AdBanner size="large" position="content" slotKey="content-3" />
+
       {/* Seção de E-books */}
       <section>
         <div className="flex items-center justify-between mb-6">
@@ -196,9 +199,6 @@ const MainContent = () => {
         )}
       </section>
 
-      {/* Banner 3 - Conteúdo Grande 3 */}
-      <AdBanner size="large" position="content" slotKey="content-3" />
-      
       {/* Banner 4 - Conteúdo Grande 4 */}
       <AdBanner size="large" position="content" slotKey="content-4" />
 
@@ -271,6 +271,9 @@ const MainContent = () => {
         )}
       </section>
 
+      {/* Banner 5 - Conteúdo Grande 5 */}
+      <AdBanner size="large" position="content" slotKey="content-5" />
+
       {/* Seção de Indicadores LME */}
       <section>
         <div className="flex items-center justify-between mb-6">
@@ -329,8 +332,6 @@ const MainContent = () => {
         )}
       </section>
 
-      {/* Banner 5 - Conteúdo Grande 5 */}
-      <AdBanner size="large" position="content" slotKey="content-5" />
     </div>
   );
 };

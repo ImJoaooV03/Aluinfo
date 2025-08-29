@@ -1,3 +1,4 @@
+
 import { useLocation } from "react-router-dom";
 import Header from "@/components/Header";
 import Navigation from "@/components/Navigation";
@@ -7,175 +8,36 @@ import Sidebar from "@/components/Sidebar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Clock, User, FileText, BookOpen, Users, Factory, Search as SearchIcon } from "lucide-react";
+import { Clock, User, Search as SearchIcon } from "lucide-react";
+import { useUniversalSearch } from "@/hooks/useUniversalSearch";
+import { useNews } from "@/hooks/useNews";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 const Noticias = () => {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const searchTerm = searchParams.get('search');
 
-  // Dados mockados para demonstração - em uma aplicação real, viriam de uma API
-  const allContent = {
-    noticias: [
-      {
-        id: 1,
-        titulo: "Mercado de Alumínio Registra Crescimento de 8% no Primeiro Semestre",
-        resumo: "Análise completa dos fatores que impulsionaram o crescimento do setor de alumínio no Brasil, incluindo exportações e demanda interna.",
-        data: "15 de Janeiro, 2024",
-        autor: "João Silva",
-        categoria: "Mercado",
-        tipo: "Notícia",
-        imagem: "/lovable-uploads/885334ae-0873-4973-826d-dffaf8fd1f05.png"
-      },
-      {
-        id: 2,
-        titulo: "Sustentabilidade na Fundição: Práticas Verdes em Foco",
-        resumo: "Empresas do setor adotam práticas sustentáveis para reduzir impacto ambiental e aumentar competitividade.",
-        data: "12 de Janeiro, 2024",
-        autor: "Maria Santos",
-        categoria: "Sustentabilidade",
-        tipo: "Notícia",
-        imagem: "/lovable-uploads/2ca1f8d8-a33c-4033-ab60-b9636f11f86a.png"
-      },
-      {
-        id: 3,
-        titulo: "Mercado de Fundição Cresce 15% no Último Trimestre",
-        resumo: "Setor apresenta crescimento significativo impulsionado pela demanda da indústria automotiva.",
-        data: "10 de Janeiro, 2024",
-        autor: "Carlos Oliveira",
-        categoria: "Mercado",
-        tipo: "Notícia",
-        imagem: "/lovable-uploads/885334ae-0873-4973-826d-dffaf8fd1f05.png"
-      }
-    ],
-    materiais: [
-      {
-        id: 1,
-        titulo: "Manual de Fundição em Areia - Análise de Mercado",
-        resumo: "Documento técnico abrangente sobre processos de fundição em areia, incluindo análise de mercado atual.",
-        categoria: "Processos",
-        tipo: "Material Técnico",
-        downloads: 1250
-      },
-      {
-        id: 2,
-        titulo: "Relatório de Mercado - Tendências 2024",
-        resumo: "Análise detalhada das tendências do mercado de fundição para 2024.",
-        categoria: "Mercado",
-        tipo: "Material Técnico",
-        downloads: 890
-      }
-    ],
-    ebooks: [
-      {
-        id: 1,
-        titulo: "Fundição Moderna: Análise de Mercado Global",
-        autor: "Dr. Roberto Machado",
-        resumo: "E-book completo com análise do mercado global de fundição e tendências futuras.",
-        categoria: "Mercado",
-        tipo: "E-book",
-        preco: "Gratuito",
-        paginas: 285
-      },
-      {
-        id: 2,
-        titulo: "Sustentabilidade na Indústria de Fundição",
-        autor: "Dra. Marina Costa",
-        resumo: "Abordagem sobre práticas sustentáveis, reciclagem de materiais e redução de impacto ambiental.",
-        categoria: "Sustentabilidade",
-        tipo: "E-book",
-        preco: "R$ 19,90",
-        paginas: 165
-      }
-    ],
-    fornecedores: [
-      {
-        id: 1,
-        nome: "MetalTech Indústria",
-        especialidade: "Equipamentos para Fundição",
-        resumo: "Fabricante líder em equipamentos e máquinas para fundição, com presença forte no mercado nacional.",
-        categoria: "Equipamentos",
-        tipo: "Fornecedor",
-        localizacao: "São Paulo, SP"
-      }
-    ],
-    fundicoes: [
-      {
-        id: 1,
-        nome: "Fundição São Paulo",
-        especialidade: "Ferro Fundido e Aço",
-        resumo: "Uma das maiores fundições do país, com forte presença no mercado automotivo e agrícola.",
-        categoria: "Ferro Fundido",
-        tipo: "Fundição",
-        localizacao: "São Paulo, SP"
-      }
-    ]
+  const { results: searchResults, loading: searchLoading } = useUniversalSearch(searchTerm || '');
+  const { news, loading: newsLoading } = useNews();
+
+  const formatDate = (dateString: string) => {
+    try {
+      return format(new Date(dateString), "dd 'de' MMMM, yyyy", { locale: ptBR });
+    } catch {
+      return dateString;
+    }
   };
 
-  // Função para filtrar conteúdo baseado no termo de pesquisa
-  const filterContent = (term: string) => {
-    if (!term) return [];
-    
-    const searchLower = term.toLowerCase();
-    const results: any[] = [];
-    
-    // Buscar em notícias
-    allContent.noticias.forEach(item => {
-      if (item.titulo.toLowerCase().includes(searchLower) || 
-          item.resumo.toLowerCase().includes(searchLower) ||
-          item.categoria.toLowerCase().includes(searchLower)) {
-        results.push(item);
-      }
-    });
-    
-    // Buscar em materiais técnicos
-    allContent.materiais.forEach(item => {
-      if (item.titulo.toLowerCase().includes(searchLower) || 
-          item.resumo.toLowerCase().includes(searchLower) ||
-          item.categoria.toLowerCase().includes(searchLower)) {
-        results.push(item);
-      }
-    });
-    
-    // Buscar em e-books
-    allContent.ebooks.forEach(item => {
-      if (item.titulo.toLowerCase().includes(searchLower) || 
-          item.resumo.toLowerCase().includes(searchLower) ||
-          item.categoria.toLowerCase().includes(searchLower)) {
-        results.push(item);
-      }
-    });
-    
-    // Buscar em fornecedores
-    allContent.fornecedores.forEach(item => {
-      if (item.nome.toLowerCase().includes(searchLower) || 
-          item.resumo.toLowerCase().includes(searchLower) ||
-          item.especialidade.toLowerCase().includes(searchLower)) {
-        results.push(item);
-      }
-    });
-    
-    // Buscar em fundições
-    allContent.fundicoes.forEach(item => {
-      if (item.nome.toLowerCase().includes(searchLower) || 
-          item.resumo.toLowerCase().includes(searchLower) ||
-          item.especialidade.toLowerCase().includes(searchLower)) {
-        results.push(item);
-      }
-    });
-    
-    return results;
-  };
-
-  const searchResults = searchTerm ? filterContent(searchTerm) : [];
-  
   const getIconByType = (tipo: string) => {
     switch (tipo) {
       case 'Notícia': return <Clock className="h-4 w-4" />;
-      case 'Material Técnico': return <FileText className="h-4 w-4" />;
-      case 'E-book': return <BookOpen className="h-4 w-4" />;
-      case 'Fornecedor': return <Users className="h-4 w-4" />;
-      case 'Fundição': return <Factory className="h-4 w-4" />;
+      case 'Material Técnico': return <Clock className="h-4 w-4" />;
+      case 'E-book': return <Clock className="h-4 w-4" />;
+      case 'Evento': return <Clock className="h-4 w-4" />;
+      case 'Fornecedor': return <Clock className="h-4 w-4" />;
+      case 'Fundição': return <Clock className="h-4 w-4" />;
       default: return <SearchIcon className="h-4 w-4" />;
     }
   };
@@ -205,15 +67,21 @@ const Noticias = () => {
                 </p>
               </div>
 
-              {searchResults.length > 0 ? (
+              {searchLoading ? (
+                <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2">
+                  {[...Array(6)].map((_, i) => (
+                    <div key={i} className="h-64 bg-muted animate-pulse rounded-lg" />
+                  ))}
+                </div>
+              ) : searchResults.length > 0 ? (
                 <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2">
                   {searchResults.map((result, index) => (
-                    <Card key={`${result.tipo}-${result.id || index}`} className="overflow-hidden hover:shadow-lg transition-shadow">
-                      {result.imagem && (
+                    <Card key={`${result.type}-${result.id}`} className="overflow-hidden hover:shadow-lg transition-shadow">
+                      {result.image && (
                         <div className="aspect-video bg-muted">
                           <img 
-                            src={result.imagem} 
-                            alt={result.titulo || result.nome}
+                            src={result.image} 
+                            alt={result.title || result.name}
                             className="w-full h-full object-cover"
                           />
                         </div>
@@ -221,46 +89,46 @@ const Noticias = () => {
                       <CardHeader>
                         <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center space-x-2">
-                            {getIconByType(result.tipo)}
-                            <Badge variant="secondary">{result.tipo}</Badge>
+                            {getIconByType(result.type)}
+                            <Badge variant="secondary">{result.type}</Badge>
                           </div>
-                          <Badge variant="outline">{result.categoria}</Badge>
+                          {result.category && <Badge variant="outline">{result.category}</Badge>}
                         </div>
                         <CardTitle className="line-clamp-2 hover:text-primary cursor-pointer">
-                          {result.titulo || result.nome}
+                          {result.title || result.name}
                         </CardTitle>
-                        {result.autor && (
-                          <p className="text-sm text-muted-foreground">por {result.autor}</p>
+                        {result.author && (
+                          <p className="text-sm text-muted-foreground">por {result.author}</p>
                         )}
-                        {result.especialidade && (
-                          <p className="text-sm text-primary font-medium">{result.especialidade}</p>
+                        {result.specialty && (
+                          <p className="text-sm text-primary font-medium">{result.specialty}</p>
                         )}
                       </CardHeader>
                       <CardContent>
                         <p className="text-muted-foreground line-clamp-3 mb-4">
-                          {result.resumo}
+                          {result.summary}
                         </p>
                         <div className="flex items-center justify-between text-sm text-muted-foreground">
-                          {result.data && (
+                          {result.date && (
                             <div className="flex items-center space-x-1">
                               <Clock className="h-3 w-3" />
-                              <span>{result.data}</span>
+                              <span>{formatDate(result.date)}</span>
                             </div>
                           )}
-                          {result.autor && (
+                          {result.author && (
                             <div className="flex items-center space-x-1">
                               <User className="h-3 w-3" />
-                              <span>{result.autor}</span>
+                              <span>{result.author}</span>
                             </div>
                           )}
                           {result.downloads && (
                             <span>{result.downloads} downloads</span>
                           )}
-                          {result.preco && (
-                            <span className="font-medium">{result.preco}</span>
+                          {result.price && (
+                            <span className="font-medium">{result.price}</span>
                           )}
-                          {result.localizacao && (
-                            <span>{result.localizacao}</span>
+                          {result.location && (
+                            <span>{result.location}</span>
                           )}
                         </div>
                       </CardContent>
@@ -281,7 +149,6 @@ const Noticias = () => {
               )}
             </main>
 
-            {/* Sidebar */}
             <Sidebar />
           </div>
         </div>
@@ -319,43 +186,52 @@ const Noticias = () => {
               </div>
             </div>
 
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
-              {allContent.noticias.map((noticia) => (
-                <Card key={noticia.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                  <div className="aspect-video bg-muted">
-                    <img 
-                      src={noticia.imagem} 
-                      alt={noticia.titulo}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <CardHeader>
-                    <div className="flex items-center justify-between mb-2">
-                      <Badge variant="secondary">{noticia.categoria}</Badge>
-                      <div className="flex items-center text-sm text-muted-foreground">
-                        <Clock className="h-4 w-4 mr-1" />
-                        {noticia.data}
+            {newsLoading ? (
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
+                {[...Array(6)].map((_, i) => (
+                  <div key={i} className="h-64 bg-muted animate-pulse rounded-lg" />
+                ))}
+              </div>
+            ) : (
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
+                {news.map((noticia) => (
+                  <Card key={noticia.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                    {noticia.featured_image_url && (
+                      <div className="aspect-video bg-muted">
+                        <img 
+                          src={noticia.featured_image_url} 
+                          alt={noticia.title}
+                          className="w-full h-full object-cover"
+                        />
                       </div>
-                    </div>
-                    <CardTitle className="line-clamp-2 hover:text-primary cursor-pointer">
-                      {noticia.titulo}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground line-clamp-3 mb-4">
-                      {noticia.resumo}
-                    </p>
-                    <div className="flex items-center text-sm text-muted-foreground">
-                      <User className="h-4 w-4 mr-1" />
-                      {noticia.autor}
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+                    )}
+                    <CardHeader>
+                      <div className="flex items-center justify-between mb-2">
+                        <Badge variant="secondary">Notícia</Badge>
+                        <div className="flex items-center text-sm text-muted-foreground">
+                          <Clock className="h-4 w-4 mr-1" />
+                          {formatDate(noticia.published_at || noticia.created_at)}
+                        </div>
+                      </div>
+                      <CardTitle className="line-clamp-2 hover:text-primary cursor-pointer">
+                        {noticia.title}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-muted-foreground line-clamp-3 mb-4">
+                        {noticia.excerpt || noticia.content.substring(0, 200) + '...'}
+                      </p>
+                      <div className="flex items-center text-sm text-muted-foreground">
+                        <User className="h-4 w-4 mr-1" />
+                        Portal da Fundição
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
           </main>
 
-          {/* Sidebar */}
           <Sidebar />
         </div>
       </div>

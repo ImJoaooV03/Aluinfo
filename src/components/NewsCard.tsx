@@ -12,6 +12,8 @@ interface NewsCardProps {
   category: string;
   image?: string;
   featured?: boolean;
+  slug?: string;
+  newsId?: string;
 }
 
 const NewsCard = ({ 
@@ -21,10 +23,15 @@ const NewsCard = ({
   date, 
   category, 
   image,
-  featured = false 
+  featured = false,
+  slug,
+  newsId
 }: NewsCardProps) => {
+  // Create link based on slug or ID
+  const linkTo = slug ? `/noticia/${slug}` : `/noticia/${newsId || '1'}`;
+
   return (
-    <Link to="/noticia/1" className="block">
+    <Link to={linkTo} className="block">
       <Card className={`hover:shadow-lg transition-shadow duration-300 ${featured ? 'border-primary' : ''}`}>
       <CardContent className="p-0">
         {image && (

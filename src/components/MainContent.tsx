@@ -1,292 +1,330 @@
 
-import NewsCard from "./NewsCard";
-import AdBanner from "./AdBanner";
+import { Wrench, TrendingUp, Calendar, BookOpen, FileText, Clock } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { BookOpen, GraduationCap, Calendar, Download } from "lucide-react";
+import NewsCard from "@/components/NewsCard";
+import AdBanner from "@/components/AdBanner";
+import { Link } from "react-router-dom";
+import { useNews } from "@/hooks/useNews";
+import { useTechnicalMaterials } from "@/hooks/useTechnicalMaterials";
+import { useEbooks } from "@/hooks/useEbooks";
+import { useEvents } from "@/hooks/useEvents";
+import { useLMEIndicators } from "@/hooks/useLMEIndicators";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 const MainContent = () => {
+  const { news, loading: newsLoading } = useNews();
+  const { materials, loading: materialsLoading } = useTechnicalMaterials();
+  const { ebooks, loading: ebooksLoading } = useEbooks();
+  const { events, loading: eventsLoading } = useEvents();
+  const { indicators, loading: indicatorsLoading } = useLMEIndicators();
 
-  const featuredNews = [
-    {
-      title: "Mercado de Alumínio Registra Crescimento de 8% no Primeiro Semestre",
-      summary: "Análise completa dos fatores que impulsionaram o crescimento do setor de alumínio no Brasil, incluindo exportações e demanda interna.",
-      author: "Carlos Silva",
-      date: "1h atrás",
-      category: "Mercado",
-      image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=500&h=300&fit=crop",
-      featured: true
-    },
-    {
-      title: "Nova Tecnologia de Reciclagem Promete Revolucionar Setor",
-      summary: "Processo inovador desenvolvido por startup brasileira pode aumentar em 40% a eficiência da reciclagem de alumínio.",
-      author: "Ana Santos",
-      date: "2h atrás",
-      category: "Tecnologia",
-      image: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=500&h=300&fit=crop",
-      featured: true
-    }
-  ];
+  // Get latest items for each section
+  const latestNews = news.slice(0, 4);
+  const latestMaterials = materials.slice(0, 3);
+  const latestEbooks = ebooks.slice(0, 3);
+  const upcomingEvents = events.slice(0, 3);
+  const latestIndicators = indicators.slice(0, 6);
 
-  const regularNews = [
-    {
-      title: "Preços do Alumínio Sobem 3% no Mercado Internacional",
-      summary: "Commodity registra alta influenciada por restrições na produção chinesa e aumento da demanda global.",
-      author: "Roberto Lima",
-      date: "3h atrás",
-      category: "Preços",
-      image: "https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?w=400&h=250&fit=crop"
-    },
-    {
-      title: "Exportações Brasileiras Crescem 15% no Trimestre",
-      summary: "Setor de alumínio impulsiona balança comercial brasileira com forte demanda externa.",
-      author: "Marina Costa",
-      date: "4h atrás",
-      category: "Exportação",
-      image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=400&h=250&fit=crop"
-    },
-    {
-      title: "Sustentabilidade: Empresas Investem em Processos Verdes",
-      summary: "Indústria do alumínio adota práticas sustentáveis para reduzir impacto ambiental e atender demandas ESG.",
-      author: "João Oliveira",
-      date: "5h atrás",
-      category: "Sustentabilidade",
-      image: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=400&h=250&fit=crop"
-    },
-    {
-      title: "Inovações em Ligas de Alumínio para Construção Civil",
-      summary: "Novos materiais prometem maior durabilidade e resistência para aplicações na construção civil.",
-      author: "Pedro Fernandes",
-      date: "6h atrás",
-      category: "Materiais",
-      image: "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?w=400&h=250&fit=crop"
-    },
-    {
-      title: "Fundições Brasileiras Modernizam Equipamentos",
-      summary: "Investimentos em tecnologia visam aumentar produtividade e qualidade dos produtos finais.",
-      author: "Lucia Martins",
-      date: "7h atrás",
-      category: "Fundição"
-    },
-    {
-      title: "Curso Online: Tratamentos Superficiais em Alumínio",
-      summary: "Nova formação técnica aborda as principais técnicas de acabamento e proteção superficial.",
-      author: "Dr. Miguel Torres",
-      date: "8h atrás",
-      category: "Educação"
+  const formatDate = (dateString: string) => {
+    try {
+      return format(new Date(dateString), "dd 'de' MMMM, yyyy", { locale: ptBR });
+    } catch {
+      return dateString;
     }
-  ];
+  };
 
-  const technicalMaterials = [
-    {
-      title: "Normas ABNT para Alumínio",
-      type: "PDF",
-      description: "Compilação das principais normas técnicas brasileiras para produtos de alumínio",
-      downloads: "3.2k"
-    },
-    {
-      title: "Tabela de Propriedades Mecânicas",
-      type: "Excel",
-      description: "Dados técnicos completos das principais ligas de alumínio",
-      downloads: "2.8k"
-    },
-    {
-      title: "Guia de Soldagem TIG",
-      type: "PDF",
-      description: "Manual técnico para soldagem de alumínio com processo TIG",
-      downloads: "2.1k"
-    }
-  ];
-
-  const courses = [
-    {
-      title: "Fundição de Alumínio - Básico",
-      duration: "40h",
-      level: "Básico",
-      price: "R$ 299",
-      instructor: "Prof. João Silva"
-    },
-    {
-      title: "Tratamentos Superficiais Avançados",
-      duration: "60h",
-      level: "Avançado",
-      price: "R$ 450",
-      instructor: "Dra. Maria Santos"
-    },
-    {
-      title: "Reciclagem e Sustentabilidade",
-      duration: "30h",
-      level: "Intermediário",
-      price: "R$ 200",
-      instructor: "Eng. Pedro Costa"
-    }
-  ];
-
-  const upcomingEvents = [
-    {
-      title: "FEAL 2024 - Feira Brasileira do Alumínio",
-      date: "15-18 de Outubro",
-      location: "São Paulo Expo",
-      description: "A maior feira da América Latina dedicada ao setor do alumínio"
-    },
-    {
-      title: "Congresso Internacional de Fundição",
-      date: "22-24 de Novembro",
-      location: "Centro de Convenções - RJ",
-      description: "Evento técnico sobre inovações em processos de fundição"
-    },
-    {
-      title: "Summit Sustentabilidade no Alumínio",
-      date: "5-7 de Dezembro",
-      location: "Centro de Eventos - SP",
-      description: "Discussões sobre práticas sustentáveis na indústria do alumínio"
-    }
-  ];
+  const formatPrice = (price: number | null) => {
+    if (!price || price === 0) return "Gratuito";
+    return `R$ ${price.toFixed(2)}`;
+  };
 
   return (
-    <main className="flex-1 space-y-6">
-      {/* Banner 5 - Conteúdo Grande 1 */}
-      <AdBanner size="medium" position="content" spaceNumber={5} slotKey="content-1" />
+    <div className="space-y-12">
+      {/* Banner 1 - Home Topo */}
+      <AdBanner size="large" position="hero" slotKey="home-top" />
 
-      {/* Notícias Destaque */}
+      {/* Seção de Notícias */}
       <section>
-        <h2 className="text-2xl font-bold mb-4 text-lead">Notícias Destaque</h2>
-        <div className="grid md:grid-cols-2 gap-6 mb-6">
-          {featuredNews.map((news, index) => (
-            <NewsCard key={index} {...news} />
-          ))}
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center space-x-2">
+            <FileText className="h-6 w-6 text-primary" />
+            <h2 className="text-2xl font-bold text-foreground">Últimas Notícias</h2>
+          </div>
+          <Button variant="outline" asChild>
+            <Link to="/noticias">Ver todas</Link>
+          </Button>
         </div>
+
+        {newsLoading ? (
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="h-64 bg-muted animate-pulse rounded-lg" />
+            ))}
+          </div>
+        ) : (
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
+            {latestNews.map((item, index) => (
+              <NewsCard
+                key={item.id}
+                title={item.title}
+                summary={item.excerpt || item.content.substring(0, 200) + '...'}
+                author="Portal da Fundição"
+                date={formatDate(item.published_at || item.created_at)}
+                category="Notícias"
+                image={item.featured_image_url || undefined}
+                featured={index === 0}
+              />
+            ))}
+          </div>
+        )}
       </section>
 
-      {/* Banner 6 - Conteúdo Grande 2 */}
-      <AdBanner size="large" position="content" spaceNumber={6} slotKey="content-2" />
+      {/* Banner 2 - Home Meio */}
+      <AdBanner size="medium" position="content" slotKey="home-middle" />
 
-      {/* Materiais Técnicos */}
+      {/* Seção de Materiais Técnicos */}
       <section>
-        <h2 className="text-2xl font-bold mb-4 text-lead">Materiais Técnicos</h2>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {technicalMaterials.map((material, index) => (
-            <Card key={index} className="hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <CardTitle className="flex items-center justify-between">
-                  <span className="text-lg">{material.title}</span>
-                  <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded">
-                    {material.type}
-                  </span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground mb-3">{material.description}</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-muted-foreground">{material.downloads} downloads</span>
-                  <Button size="sm" variant="outline">
-                    <Download className="h-4 w-4 mr-1" />
-                    Baixar
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center space-x-2">
+            <Wrench className="h-6 w-6 text-primary" />
+            <h2 className="text-2xl font-bold text-foreground">Materiais Técnicos</h2>
+          </div>
+          <Button variant="outline" asChild>
+            <Link to="/materiais-tecnicos">Ver todos</Link>
+          </Button>
+        </div>
+
+        {materialsLoading ? (
+          <div className="grid gap-6 md:grid-cols-3 lg:grid-cols-3">
+            {[...Array(3)].map((_, i) => (
+              <div key={i} className="h-48 bg-muted animate-pulse rounded-lg" />
+            ))}
+          </div>
+        ) : (
+          <div className="grid gap-6 md:grid-cols-3 lg:grid-cols-3">
+            {latestMaterials.map((material) => (
+              <Card key={material.id} className="hover:shadow-lg transition-shadow">
+                <CardHeader>
+                  <div className="flex items-center justify-between mb-2">
+                    <Badge variant="secondary">{material.file_type || 'PDF'}</Badge>
+                    <span className="text-sm text-muted-foreground">
+                      {material.download_count || 0} downloads
+                    </span>
+                  </div>
+                  <CardTitle className="line-clamp-2 text-base">
+                    {material.title}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
+                    {material.description || 'Material técnico disponível para download'}
+                  </p>
+                  <Button size="sm" className="w-full">
+                    Download
                   </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
       </section>
 
-      {/* Banner 7 - Conteúdo Grande 3 */}
-      <AdBanner size="medium" position="content" spaceNumber={7} slotKey="content-3" />
-
-      {/* Próximos Eventos */}
+      {/* Seção de E-books */}
       <section>
-        <h2 className="text-2xl font-bold mb-4 text-lead">Próximos Eventos</h2>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {upcomingEvents.map((event, index) => (
-            <Card key={index} className="hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Calendar className="h-5 w-5 text-primary" />
-                  <span className="text-lg">{event.title}</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2 mb-3">
-                  <div className="flex justify-between text-sm">
-                    <span className="font-medium">Data:</span>
-                    <span className="text-primary">{event.date}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="font-medium">Local:</span>
-                    <span>{event.location}</span>
-                  </div>
-                </div>
-                <p className="text-sm text-muted-foreground">{event.description}</p>
-              </CardContent>
-            </Card>
-          ))}
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center space-x-2">
+            <BookOpen className="h-6 w-6 text-primary" />
+            <h2 className="text-2xl font-bold text-foreground">E-books</h2>
+          </div>
+          <Button variant="outline" asChild>
+            <Link to="/ebooks">Ver todos</Link>
+          </Button>
         </div>
-        <div className="text-center mt-6">
-          <Button variant="outline">Ver Todos os Eventos</Button>
-        </div>
+
+        {ebooksLoading ? (
+          <div className="grid gap-6 md:grid-cols-3 lg:grid-cols-3">
+            {[...Array(3)].map((_, i) => (
+              <div key={i} className="h-56 bg-muted animate-pulse rounded-lg" />
+            ))}
+          </div>
+        ) : (
+          <div className="grid gap-6 md:grid-cols-3 lg:grid-cols-3">
+            {latestEbooks.map((ebook) => (
+              <Card key={ebook.id} className="hover:shadow-lg transition-shadow">
+                {ebook.cover_image_url && (
+                  <div className="aspect-video bg-muted">
+                    <img 
+                      src={ebook.cover_image_url} 
+                      alt={ebook.title}
+                      className="w-full h-full object-cover rounded-t-lg"
+                    />
+                  </div>
+                )}
+                <CardHeader>
+                  <div className="flex items-center justify-between mb-2">
+                    <Badge variant="secondary">E-book</Badge>
+                    <span className="text-sm font-medium text-primary">
+                      {formatPrice(ebook.price)}
+                    </span>
+                  </div>
+                  <CardTitle className="line-clamp-2 text-base">
+                    {ebook.title}
+                  </CardTitle>
+                  <p className="text-sm text-muted-foreground">
+                    por {ebook.author}
+                  </p>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
+                    {ebook.description || 'E-book disponível para download'}
+                  </p>
+                  <div className="flex items-center justify-between text-xs text-muted-foreground mb-3">
+                    {ebook.pages_count && <span>{ebook.pages_count} páginas</span>}
+                    {ebook.download_count && <span>{ebook.download_count} downloads</span>}
+                  </div>
+                  <Button size="sm" className="w-full">
+                    {ebook.price && ebook.price > 0 ? 'Comprar' : 'Download'}
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
       </section>
 
-      {/* Banner 8 - Conteúdo Grande 4 */}
-      <AdBanner size="large" position="content" spaceNumber={8} slotKey="content-4" />
+      {/* Banner 3 - Home Inferior */}
+      <AdBanner size="large" position="content" slotKey="home-bottom" />
 
-      {/* Cursos */}
+      {/* Seção de Eventos */}
       <section>
-        <h2 className="text-2xl font-bold mb-4 text-lead">Cursos Online</h2>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {courses.map((course, index) => (
-            <Card key={index} className="hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <GraduationCap className="h-5 w-5 text-primary" />
-                  <span className="text-lg">{course.title}</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2 mb-4">
-                  <div className="flex justify-between text-sm">
-                    <span>Duração:</span>
-                    <span>{course.duration}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span>Nível:</span>
-                    <span>{course.level}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span>Instrutor:</span>
-                    <span>{course.instructor}</span>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-lg font-bold text-primary">{course.price}</span>
-                  <Button size="sm">Inscrever-se</Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center space-x-2">
+            <Calendar className="h-6 w-6 text-primary" />
+            <h2 className="text-2xl font-bold text-foreground">Próximos Eventos</h2>
+          </div>
+          <Button variant="outline" asChild>
+            <Link to="/eventos">Ver todos</Link>
+          </Button>
         </div>
+
+        {eventsLoading ? (
+          <div className="grid gap-6 md:grid-cols-3 lg:grid-cols-3">
+            {[...Array(3)].map((_, i) => (
+              <div key={i} className="h-48 bg-muted animate-pulse rounded-lg" />
+            ))}
+          </div>
+        ) : (
+          <div className="grid gap-6 md:grid-cols-3 lg:grid-cols-3">
+            {upcomingEvents.map((event) => (
+              <Card key={event.id} className="hover:shadow-lg transition-shadow">
+                {event.image_url && (
+                  <div className="aspect-video bg-muted">
+                    <img 
+                      src={event.image_url} 
+                      alt={event.title}
+                      className="w-full h-full object-cover rounded-t-lg"
+                    />
+                  </div>
+                )}
+                <CardHeader>
+                  <div className="flex items-center justify-between mb-2">
+                    <Badge variant="secondary">Evento</Badge>
+                    <div className="flex items-center text-sm text-muted-foreground">
+                      <Calendar className="h-3 w-3 mr-1" />
+                      {formatDate(event.event_date)}
+                    </div>
+                  </div>
+                  <CardTitle className="line-clamp-2 text-base">
+                    {event.title}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
+                    {event.description || 'Evento do setor de fundição'}
+                  </p>
+                  {event.location && (
+                    <p className="text-xs text-muted-foreground mb-3">
+                      📍 {event.location}
+                    </p>
+                  )}
+                  <div className="flex items-center justify-between">
+                    {event.price && (
+                      <span className="text-sm font-medium text-primary">
+                        {formatPrice(event.price)}
+                      </span>
+                    )}
+                    <Button size="sm" className="ml-auto">
+                      Saiba mais
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
       </section>
 
-      {/* Banner 9 - Conteúdo Grande 5 */}
-      <AdBanner size="medium" position="content" spaceNumber={9} slotKey="content-5" />
-
-      {/* Últimas Notícias */}
+      {/* Seção de Indicadores LME */}
       <section>
-        <h2 className="text-2xl font-bold mb-4 text-lead">Últimas Notícias</h2>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {regularNews.map((news, index) => (
-            <NewsCard key={index} {...news} />
-          ))}
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center space-x-2">
+            <TrendingUp className="h-6 w-6 text-primary" />
+            <h2 className="text-2xl font-bold text-foreground">Indicadores LME</h2>
+          </div>
+          <Button variant="outline" asChild>
+            <Link to="/lme">Ver todos</Link>
+          </Button>
         </div>
+
+        {indicatorsLoading ? (
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="h-24 bg-muted animate-pulse rounded-lg" />
+            ))}
+          </div>
+        ) : (
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {latestIndicators.map((indicator) => (
+              <Card key={indicator.id} className="hover:shadow-lg transition-shadow">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="font-semibold text-foreground">
+                        {indicator.metal_name}
+                      </h3>
+                      <p className="text-sm text-muted-foreground">
+                        {indicator.metal_symbol}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-lg font-bold text-foreground">
+                        ${indicator.price.toFixed(2)}
+                      </p>
+                      {indicator.change_percent && (
+                        <p className={`text-sm ${
+                          indicator.change_percent >= 0 ? 'text-green-600' : 'text-red-600'
+                        }`}>
+                          {indicator.change_percent >= 0 ? '+' : ''}{indicator.change_percent.toFixed(2)}%
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                  {indicator.timestamp && (
+                    <div className="flex items-center text-xs text-muted-foreground mt-2">
+                      <Clock className="h-3 w-3 mr-1" />
+                      {formatDate(indicator.timestamp)}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
       </section>
-
-
-      {/* Botão Carregar Mais */}
-      <div className="text-center pt-8">
-        <Button variant="outline" className="px-8">
-          Carregar Mais Notícias
-        </Button>
-      </div>
-    </main>
+    </div>
   );
 };
 

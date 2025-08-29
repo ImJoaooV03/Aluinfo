@@ -11,11 +11,14 @@ import { BookOpen, Star, Download, Clock } from "lucide-react";
 import { useEbooks } from "@/hooks/useEbooks";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { DownloadGateDialog } from "@/components/DownloadGateDialog";
 
 const Ebooks = () => {
   const { ebooks, loading, error } = useEbooks();
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [isGateOpen, setIsGateOpen] = useState(false);
+  const [pendingEbook, setPendingEbook] = useState<any>(null);
 
   useEffect(() => {
     fetchCategories();
@@ -222,7 +225,10 @@ const Ebooks = () => {
                       
                       <Button 
                         className="w-full"
-                        onClick={() => handleDownload(ebook)}
+                        onClick={() => {
+                          setPendingEbook(ebook);
+                          setIsGateOpen(true);
+                        }}
                       >
                         {ebook.price === null || ebook.price === 0 ? "Download Gratuito" : "Comprar"}
                       </Button>
@@ -239,6 +245,21 @@ const Ebooks = () => {
       </div>
       
       <Footer />
+      
+      {pendingEbook && (
+        <DownloadGateDialog
+          open={isGateOpen}
+          onOpenChange={setIsGateOpen}
+          contentType="ebooks"
+          contentId={pendingEbook.id}
+          fileUrl={pendingEbook.file_url}
+          title={pendingEbook.title}
+          onDownloadComplete={() => {
+            // Limpar pending ebook
+            setPendingEbook(null);
+          }}
+        />
+      )}
     </div>
   );
 };

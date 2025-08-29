@@ -12,11 +12,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { enforceHttps } from "@/utils/httpsUtils";
 import { useState } from "react";
+import { DownloadGateDialog } from "@/components/DownloadGateDialog";
 
 const ArtigosTecnicos = () => {
   const { materials, loading, refetch } = useTechnicalMaterials();
   const { toast } = useToast();
   const [downloadCounts, setDownloadCounts] = useState<Record<string, number>>({});
+  const [isGateOpen, setIsGateOpen] = useState(false);
+  const [pendingMaterial, setPendingMaterial] = useState<any>(null);
 
   const handleDownload = (material: any) => {
     // Validar se há arquivo disponível
@@ -204,14 +207,25 @@ const ArtigosTecnicos = () => {
                            <span>{formatFileSize(material.file_size)}</span>
                            <span>{downloadCounts[material.id] || material.download_count || 0} downloads</span>
                          </div>
-                         <Button 
-                           className="w-full" 
-                           onClick={() => handleDownload(material)}
-                           disabled={!material.file_url}
-                         >
-                           <Download className="h-4 w-4 mr-2" />
-                           {material.file_url ? 'Download' : 'Arquivo indisponível'}
-                         </Button>
+                          <Button 
+                            className="w-full" 
+                            onClick={() => {
+                              if (!material.file_url) {
+                                toast({
+                                  title: "Arquivo indisponível",
+                                  description: "Este material não possui arquivo para download.",
+                                  variant: "destructive",
+                                });
+                                return;
+                              }
+                              setPendingMaterial(material);
+                              setIsGateOpen(true);
+                            }}
+                            disabled={!material.file_url}
+                          >
+                            <Download className="h-4 w-4 mr-2" />
+                            {material.file_url ? 'Download' : 'Arquivo indisponível'}
+                          </Button>
                       </CardContent>
                     </Card>
                   );
@@ -235,6 +249,32 @@ const ArtigosTecnicos = () => {
       </div>
       
       <Footer />
+      
+      {pendingMaterial && (
+        <DownloadGateDialog
+          open={isGateOpen}
+          onOpenChange={setIsGateOpen}
+          contentType="technical_materials"
+          contentId={pendingMaterial.id}
+          fileUrl={pendingMaterial.file_url}
+          title={pendingMaterial.title}
+          onDownloadComplete={() => {
+            // Atualizar contador otimisticamente
+            setDownloadCounts(prev => ({
+              ...prev,
+              [pendingMaterial.id]: (downloadCounts[pendingMaterial.id] || pendingMaterial.download_count || 0) + 1
+            }));
+            
+            // Refetch após um tempo para sincronizar
+            setTimeout(() => {
+              refetch();
+            }, 500);
+            
+            // Limpar pending material
+            setPendingMaterial(null);
+          }}
+        />
+      )}
     </div>
   );
 };

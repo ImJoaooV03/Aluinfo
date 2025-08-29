@@ -1,5 +1,5 @@
 
-import { useLocation } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 import Header from "@/components/Header";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
@@ -195,38 +195,40 @@ const Noticias = () => {
             ) : (
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
                 {news.map((noticia) => (
-                  <Card key={noticia.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                    {noticia.featured_image_url && (
-                      <div className="aspect-video bg-muted">
-                        <img 
-                          src={noticia.featured_image_url} 
-                          alt={noticia.title}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                    )}
-                    <CardHeader>
-                      <div className="flex items-center justify-between mb-2">
-                        <Badge variant="secondary">Notícia</Badge>
-                        <div className="flex items-center text-sm text-muted-foreground">
-                          <Clock className="h-4 w-4 mr-1" />
-                          {formatDate(noticia.published_at || noticia.created_at)}
+                  <Link key={noticia.id} to={`/noticia/${noticia.slug}`}>
+                    <Card className="overflow-hidden hover:shadow-lg transition-shadow">
+                      {noticia.featured_image_url && (
+                        <div className="aspect-video bg-muted">
+                          <img 
+                            src={noticia.featured_image_url} 
+                            alt={noticia.title}
+                            className="w-full h-full object-cover"
+                          />
                         </div>
-                      </div>
-                      <CardTitle className="line-clamp-2 hover:text-primary cursor-pointer">
-                        {noticia.title}
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-muted-foreground line-clamp-3 mb-4">
-                        {noticia.excerpt || noticia.content.substring(0, 200) + '...'}
-                      </p>
-                      <div className="flex items-center text-sm text-muted-foreground">
-                        <User className="h-4 w-4 mr-1" />
-                        Portal da Fundição
-                      </div>
-                    </CardContent>
-                  </Card>
+                      )}
+                      <CardHeader>
+                        <div className="flex items-center justify-between mb-2">
+                          <Badge variant="secondary">Notícia</Badge>
+                          <div className="flex items-center text-sm text-muted-foreground">
+                            <Clock className="h-4 w-4 mr-1" />
+                            {formatDate(noticia.published_at || noticia.created_at)}
+                          </div>
+                        </div>
+                        <CardTitle className="line-clamp-2 hover:text-primary cursor-pointer">
+                          {noticia.title}
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-muted-foreground line-clamp-3 mb-4">
+                          {noticia.excerpt || noticia.content.substring(0, 200) + '...'}
+                        </p>
+                        <div className="flex items-center text-sm text-muted-foreground">
+                          <User className="h-4 w-4 mr-1" />
+                          Portal da Fundição
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </Link>
                 ))}
               </div>
             )}

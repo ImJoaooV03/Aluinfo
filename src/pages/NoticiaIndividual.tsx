@@ -1,6 +1,8 @@
 import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, Clock, User, Tag, Share2, Eye } from "lucide-react";
 import DOMPurify from "dompurify";
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import Header from "@/components/Header";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
@@ -10,75 +12,124 @@ import Sidebar from "@/components/Sidebar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+
+interface NewsItem {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string | null;
+  content: string;
+  featured_image_url: string | null;
+  view_count: number | null;
+  published_at: string | null;
+  status: string;
+  category_id: string | null;
+  author_id: string | null;
+  created_at: string;
+  updated_at: string;
+}
 
 const NoticiaIndividual = () => {
-  const { id } = useParams();
+  const { slug } = useParams();
+  const [noticia, setNoticia] = useState<NewsItem | null>(null);
+  const [relatedNews, setRelatedNews] = useState<NewsItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
 
-  // Dados mockados da notícia - em um app real, estes viriam de uma API
-  const noticia = {
-    id: "1",
-    title: "Mercado de Alumínio Registra Crescimento de 8% no Primeiro Semestre",
-    summary: "Análise completa dos fatores que impulsionaram o crescimento do setor de alumínio no Brasil, incluindo exportações e demanda interna.",
-    content: `
-      <p>O mercado brasileiro de alumínio apresentou um crescimento robusto de 8% no primeiro semestre de 2024, superando as expectativas iniciais do setor. Segundo dados consolidados pela Associação Brasileira do Alumínio (ABAL), o crescimento foi impulsionado tanto pelo aumento das exportações quanto pela recuperação da demanda interna.</p>
-      
-      <h3>Fatores do Crescimento</h3>
-      <p>Entre os principais fatores que contribuíram para este desempenho positivo, destacam-se:</p>
-      
-      <ul>
-        <li><strong>Aumento das exportações:</strong> As vendas externas cresceram 12% em relação ao mesmo período do ano anterior, com destaque para os mercados americano e europeu.</li>
-        <li><strong>Recuperação da construção civil:</strong> O setor da construção civil apresentou sinais de recuperação, aumentando a demanda por perfis e chapas de alumínio.</li>
-        <li><strong>Setor automotivo:</strong> A indústria automobilística manteve o consumo estável, com previsão de crescimento para o segundo semestre.</li>
-        <li><strong>Investimentos em sustentabilidade:</strong> Empresas aumentaram investimentos em processos de reciclagem e produção sustentável.</li>
-      </ul>
-      
-      <h3>Perspectivas para o Segundo Semestre</h3>
-      <p>As perspectivas para o segundo semestre são otimistas, com projeções de crescimento adicional de 5% a 7%. Os analistas apontam que a manutenção dos preços internacionais em patamares favoráveis e a continuidade da recuperação econômica doméstica são fatores-chave para sustentar essa trajetória.</p>
-      
-      <p>O presidente da ABAL, João Silva, comentou: "Estamos vivenciando um momento único de crescimento sustentado no setor. A combinação de fatores internos e externos tem criado um ambiente favorável para expandir nossa produção e nossa presença no mercado internacional."</p>
-      
-      <h3>Impacto Regional</h3>
-      <p>O crescimento tem sido distribuído de forma equilibrada entre as regiões produtoras. O Sudeste mantém a liderança com 45% da produção nacional, seguido pelo Nordeste com 28% e Sul com 22%. A região Norte, tradicionalmente focada na produção primária, apresentou o maior crescimento percentual: 15%.</p>
-      
-      <h3>Desafios e Oportunidades</h3>
-      <p>Apesar dos resultados positivos, o setor ainda enfrenta desafios importantes, como a volatilidade dos preços da energia elétrica e a necessidade de modernização de algumas plantas industriais. No entanto, as oportunidades de expansão, especialmente no mercado de energias renováveis e economia circular, são promissoras.</p>
-    `,
-    author: "Carlos Silva",
-    date: "15 de agosto de 2024",
-    timeAgo: "1h atrás",
-    category: "Mercado",
-    image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&h=400&fit=crop",
-    views: "2.3k",
-    featured: true
+  useEffect(() => {
+    const fetchNews = async () => {
+      if (!slug) return;
+
+      try {
+        setLoading(true);
+        
+        // Fetch the main news article by slug
+        const { data: newsData, error: newsError } = await supabase
+          .from('news')
+          .select('*')
+          .eq('slug', slug)
+          .eq('status', 'published')
+          .single();
+
+        if (newsError || !newsData) {
+          setNotFound(true);
+          return;
+        }
+
+        setNoticia(newsData);
+
+        // Fetch related news (exclude current article)
+        const { data: relatedData } = await supabase
+          .from('news')
+          .select('*')
+          .eq('status', 'published')
+          .neq('id', newsData.id)
+          .order('published_at', { ascending: false })
+          .limit(3);
+
+        setRelatedNews(relatedData || []);
+
+      } catch (error) {
+        console.error('Error fetching news:', error);
+        setNotFound(true);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchNews();
+  }, [slug]);
+
+  const formatDate = (dateString: string) => {
+    try {
+      return format(new Date(dateString), "dd 'de' MMMM, yyyy", { locale: ptBR });
+    } catch {
+      return dateString;
+    }
   };
 
-  // Notícias relacionadas
-  const noticiasRelacionadas = [
-    {
-      title: "Preços do Alumínio Sobem 3% no Mercado Internacional",
-      summary: "Commodity registra alta influenciada por restrições na produção chinesa e aumento da demanda global.",
-      author: "Roberto Lima",
-      date: "3h atrás",
-      category: "Preços",
-      image: "https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?w=400&h=250&fit=crop"
-    },
-    {
-      title: "Exportações Brasileiras Crescem 15% no Trimestre",
-      summary: "Setor de alumínio impulsiona balança comercial brasileira com forte demanda externa.",
-      author: "Marina Costa",
-      date: "4h atrás",
-      category: "Exportação",
-      image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=400&h=250&fit=crop"
-    },
-    {
-      title: "Sustentabilidade: Empresas Investem em Processos Verdes",
-      summary: "Indústria do alumínio adota práticas sustentáveis para reduzir impacto ambiental e atender demandas ESG.",
-      author: "João Oliveira",
-      date: "5h atrás",
-      category: "Sustentabilidade",
-      image: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=400&h=250&fit=crop"
-    }
-  ];
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="sticky top-0 z-50">
+          <Header />
+          <Navigation />
+        </div>
+        <div className="container mx-auto px-4 py-6">
+          <div className="animate-pulse space-y-6">
+            <div className="h-8 bg-muted rounded w-1/4"></div>
+            <div className="h-12 bg-muted rounded w-3/4"></div>
+            <div className="h-64 bg-muted rounded"></div>
+            <div className="h-96 bg-muted rounded"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (notFound || !noticia) {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="sticky top-0 z-50">
+          <Header />
+          <Navigation />
+        </div>
+        <div className="container mx-auto px-4 py-6">
+          <div className="text-center py-12">
+            <h1 className="text-2xl font-bold mb-4">Notícia não encontrada</h1>
+            <p className="text-muted-foreground mb-6">
+              A notícia que você está procurando não existe ou foi removida.
+            </p>
+            <Link to="/noticias">
+              <Button>Voltar para Notícias</Button>
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -93,6 +144,7 @@ const NoticiaIndividual = () => {
           <main className="flex-1">  
             {/* Banner 14 - Notícia Topo */}
             <AdBanner size="large" position="content" slotKey="noticia-top" className="mb-8" />
+            
             {/* Breadcrumb */}
             <div className="mb-6">
               <Link 
@@ -111,12 +163,12 @@ const NoticiaIndividual = () => {
                 <div className="flex items-center justify-between mb-4">
                   <Badge variant="secondary" className="bg-primary/10 text-primary">
                     <Tag className="h-3 w-3 mr-1" />
-                    {noticia.category}
+                    Notícia
                   </Badge>
                   <div className="flex items-center space-x-4 text-sm text-muted-foreground">
                     <div className="flex items-center space-x-1">
                       <Eye className="h-4 w-4" />
-                      <span>{noticia.views} visualizações</span>
+                      <span>{noticia.view_count || 0} visualizações</span>
                     </div>
                     <Button variant="ghost" size="sm">
                       <Share2 className="h-4 w-4 mr-1" />
@@ -129,29 +181,31 @@ const NoticiaIndividual = () => {
                   {noticia.title}
                 </h1>
 
-                <p className="text-lg text-muted-foreground mb-6">
-                  {noticia.summary}
-                </p>
+                {noticia.excerpt && (
+                  <p className="text-lg text-muted-foreground mb-6">
+                    {noticia.excerpt}
+                  </p>
+                )}
 
                 <div className="flex items-center justify-between text-sm text-muted-foreground border-b border-border pb-4">
                   <div className="flex items-center space-x-4">
                     <div className="flex items-center space-x-2">
                       <User className="h-4 w-4" />
-                      <span>Por {noticia.author}</span>
+                      <span>Portal da Fundição</span>
                     </div>
                     <div className="flex items-center space-x-2">
                       <Clock className="h-4 w-4" />
-                      <span>{noticia.date} • {noticia.timeAgo}</span>
+                      <span>{formatDate(noticia.published_at || noticia.created_at)}</span>
                     </div>
                   </div>
                 </div>
               </header>
 
               {/* Imagem Principal */}
-              {noticia.image && (
+              {noticia.featured_image_url && (
                 <div className="aspect-video w-full overflow-hidden rounded-lg">
                   <img 
-                    src={noticia.image} 
+                    src={noticia.featured_image_url} 
                     alt={noticia.title}
                     className="w-full h-full object-cover"
                   />
@@ -172,14 +226,25 @@ const NoticiaIndividual = () => {
             </article>
 
             {/* Notícias Relacionadas */}
-            <section className="mt-12">
-              <h2 className="text-2xl font-bold mb-6 text-lead">Outras Notícias</h2>
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {noticiasRelacionadas.map((news, index) => (
-                  <NewsCard key={index} {...news} />
-                ))}
-              </div>
-            </section>
+            {relatedNews.length > 0 && (
+              <section className="mt-12">
+                <h2 className="text-2xl font-bold mb-6 text-lead">Outras Notícias</h2>
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {relatedNews.map((news) => (
+                    <NewsCard 
+                      key={news.id}
+                      title={news.title}
+                      summary={news.excerpt || news.content.substring(0, 200) + '...'}
+                      author="Portal da Fundição"
+                      date={formatDate(news.published_at || news.created_at)}
+                      category="Notícia"
+                      image={news.featured_image_url || undefined}
+                      slug={news.slug}
+                    />
+                  ))}
+                </div>
+              </section>
+            )}
           </main>
 
           {/* Sidebar */}

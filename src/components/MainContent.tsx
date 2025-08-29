@@ -43,8 +43,8 @@ const MainContent = () => {
 
   return (
     <div className="space-y-12">
-      {/* Banner 1 - Home Topo */}
-      <AdBanner size="large" position="content" slotKey="home-top" />
+      {/* Banner 1 - Conteúdo Grande 1 */}
+      <AdBanner size="large" position="content" slotKey="content-1" />
 
       {/* Seção de Notícias */}
       <section>
@@ -83,8 +83,8 @@ const MainContent = () => {
         )}
       </section>
 
-      {/* Banner 2 - Home Meio */}
-      <AdBanner size="medium" position="content" slotKey="home-middle" />
+      {/* Banner 2 - Conteúdo Grande 2 */}
+      <AdBanner size="large" position="content" slotKey="content-2" />
 
       {/* Seção de Materiais Técnicos */}
       <section>
@@ -196,8 +196,11 @@ const MainContent = () => {
         )}
       </section>
 
-      {/* Banner 3 - Home Inferior */}
-      <AdBanner size="large" position="content" slotKey="home-bottom" />
+      {/* Banner 3 - Conteúdo Grande 3 */}
+      <AdBanner size="large" position="content" slotKey="content-3" />
+      
+      {/* Banner 4 - Conteúdo Grande 4 */}
+      <AdBanner size="large" position="content" slotKey="content-4" />
 
       {/* Seção de Eventos */}
       <section>
@@ -325,6 +328,9 @@ const MainContent = () => {
           </div>
         )}
       </section>
+
+      {/* Banner 5 - Conteúdo Grande 5 */}
+      <AdBanner size="large" position="content" slotKey="content-5" />
     </div>
   );
 };

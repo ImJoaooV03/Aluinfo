@@ -10,7 +10,8 @@ import {
   LogOut,
   Users,
   Settings,
-  Home
+  Home,
+  BookOpen
 } from "lucide-react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -36,6 +37,7 @@ const menuItems = [
   { title: "Dashboard", url: "/admin/dashboard", icon: LayoutDashboard },
   { title: "Notícias", url: "/admin/noticias", icon: Newspaper },
   { title: "Materiais Técnicos", url: "/admin/materiais", icon: FileText },
+  { title: "E-books", url: "/admin/ebooks", icon: BookOpen },
   { title: "Eventos", url: "/admin/eventos", icon: Calendar },
   { title: "Banners", url: "/admin/banners", icon: Image },
   { title: "Indicadores LME", url: "/admin/lme", icon: TrendingUp },

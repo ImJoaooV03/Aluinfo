@@ -50,7 +50,7 @@ export const useTechnicalMaterials = () => {
   useEffect(() => {
     fetchMaterials();
 
-    // Set up real-time subscription
+    // Set up real-time subscription para atualizações de download_count
     const channel = supabase
       .channel('technical-materials-changes')
       .on(
@@ -62,7 +62,17 @@ export const useTechnicalMaterials = () => {
         },
         (payload) => {
           console.log('Technical materials change detected:', payload);
-          fetchMaterials();
+          // Para updates, apenas atualize o material específico se possível
+          if (payload.eventType === 'UPDATE' && payload.new) {
+            setMaterials(prev => prev.map(material => 
+              material.id === payload.new.id 
+                ? { ...material, download_count: payload.new.download_count }
+                : material
+            ));
+          } else {
+            // Para outros eventos, refetch todos os dados
+            fetchMaterials();
+          }
         }
       )
       .subscribe();

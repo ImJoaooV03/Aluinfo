@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -66,6 +66,30 @@ const AdminMateriais = () => {
       return data as TechnicalMaterial[];
     }
   });
+
+  // Configurar atualização em tempo real para contadores de download
+  useEffect(() => {
+    const channel = supabase
+      .channel('technical-materials-realtime')
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'technical_materials'
+        },
+        (payload) => {
+          console.log('Technical material updated:', payload);
+          queryClient.invalidateQueries({ queryKey: ['admin-materials'] });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      console.log('Removing realtime channel for technical materials admin');
+      supabase.removeChannel(channel);
+    };
+  }, [queryClient]);
 
   const mapFileTypeToEnum = (file: File): string => {
     const extension = file.name.split('.').pop()?.toLowerCase();
@@ -390,7 +414,11 @@ const AdminMateriais = () => {
                     </Badge>
                   </TableCell>
                   <TableCell>{formatFileSize(material.file_size)}</TableCell>
-                  <TableCell>{material.download_count}</TableCell>
+                  <TableCell>
+                    <span className="font-medium text-primary">
+                      {material.download_count || 0}
+                    </span>
+                  </TableCell>
                   <TableCell>
                     {new Date(material.created_at).toLocaleDateString('pt-BR')}
                   </TableCell>

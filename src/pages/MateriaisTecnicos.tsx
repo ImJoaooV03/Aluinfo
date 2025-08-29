@@ -1,4 +1,3 @@
-
 import Header from "@/components/Header";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
@@ -9,9 +8,54 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Download, FileText, Video, Image } from "lucide-react";
 import { useTechnicalMaterials } from "@/hooks/useTechnicalMaterials";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 const MateriaisTecnicos = () => {
-  const { materials, loading } = useTechnicalMaterials();
+  const { materials, loading, refetch } = useTechnicalMaterials();
+  const { toast } = useToast();
+
+  const handleDownload = async (material: any) => {
+    try {
+      // Registra o download no analytics
+      const { error } = await supabase
+        .from('analytics_views')
+        .insert({
+          content_type: 'technical_materials',
+          content_id: material.id,
+          user_id: (await supabase.auth.getUser()).data.user?.id || null,
+          ip_address: null,
+          user_agent: window.navigator.userAgent,
+          referer: window.location.href
+        });
+
+      if (error) {
+        console.error('Erro ao registrar download:', error);
+        // Mesmo com erro no analytics, continua o download
+      }
+
+      // Abre o arquivo em nova aba
+      window.open(material.file_url, '_blank');
+      
+      // Atualiza a lista para mostrar o novo contador
+      setTimeout(() => {
+        refetch();
+      }, 500);
+
+      toast({
+        title: "Download iniciado",
+        description: `O arquivo "${material.title}" foi aberto em uma nova aba.`
+      });
+
+    } catch (error) {
+      console.error('Erro no download:', error);
+      toast({
+        title: "Erro no download",
+        description: "Não foi possível processar o download. Tente novamente.",
+        variant: "destructive"
+      });
+    }
+  };
 
   const getIconByType = (fileType: string | null) => {
     switch (fileType?.toLowerCase()) {
@@ -100,11 +144,12 @@ const MateriaisTecnicos = () => {
                           <span>{formatFileSize(material.file_size)}</span>
                           <span>{material.download_count || 0} downloads</span>
                         </div>
-                        <Button className="w-full" asChild>
-                          <a href={material.file_url} target="_blank" rel="noopener noreferrer">
-                            <Download className="h-4 w-4 mr-2" />
-                            Download
-                          </a>
+                        <Button 
+                          className="w-full" 
+                          onClick={() => handleDownload(material)}
+                        >
+                          <Download className="h-4 w-4 mr-2" />
+                          Download
                         </Button>
                       </CardContent>
                     </Card>

@@ -42,6 +42,8 @@ import {
 } from "lucide-react";
 import { Ebook } from "@/hooks/useEbooks";
 
+type EbookStatus = "draft" | "published" | "archived";
+
 const AdminEbooks = () => {
   const [ebooks, setEbooks] = useState<Ebook[]>([]);
   const [categories, setCategories] = useState([]);
@@ -59,7 +61,7 @@ const AdminEbooks = () => {
     price: "",
     pages_count: "",
     reading_time: "",
-    status: "published"
+    status: "published" as EbookStatus
   });
 
   const [coverFile, setCoverFile] = useState<File | null>(null);
@@ -176,7 +178,7 @@ const AdminEbooks = () => {
         price: formData.price ? parseFloat(formData.price) : null,
         pages_count: formData.pages_count ? parseInt(formData.pages_count) : null,
         reading_time: formData.reading_time ? parseInt(formData.reading_time) : null,
-        status: formData.status
+        status: formData.status as EbookStatus
       };
 
       let result;
@@ -188,7 +190,7 @@ const AdminEbooks = () => {
       } else {
         result = await supabase
           .from('ebooks')
-          .insert([ebookData]);
+          .insert(ebookData);
       }
 
       if (result.error) throw result.error;
@@ -222,7 +224,7 @@ const AdminEbooks = () => {
       price: ebook.price?.toString() || "",
       pages_count: ebook.pages_count?.toString() || "",
       reading_time: ebook.reading_time?.toString() || "",
-      status: ebook.status
+      status: ebook.status as EbookStatus
     });
     setDialogOpen(true);
   };
@@ -262,7 +264,7 @@ const AdminEbooks = () => {
       price: "",
       pages_count: "",
       reading_time: "",
-      status: "published"
+      status: "published" as EbookStatus
     });
     setCoverFile(null);
     setEbookFile(null);
@@ -368,7 +370,7 @@ const AdminEbooks = () => {
                   <Label htmlFor="status">Status</Label>
                   <Select
                     value={formData.status}
-                    onValueChange={(value) => setFormData(prev => ({...prev, status: value}))}
+                    onValueChange={(value: EbookStatus) => setFormData(prev => ({...prev, status: value}))}
                   >
                     <SelectTrigger>
                       <SelectValue />

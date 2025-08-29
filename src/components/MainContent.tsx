@@ -107,27 +107,29 @@ const MainContent = () => {
         ) : (
           <div className="grid gap-6 md:grid-cols-3 lg:grid-cols-3">
             {latestMaterials.map((material) => (
-              <Card key={material.id} className="hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <div className="flex items-center justify-between mb-2">
-                    <Badge variant="secondary">{material.file_type || 'PDF'}</Badge>
-                    <span className="text-sm text-muted-foreground">
-                      {material.download_count || 0} downloads
-                    </span>
-                  </div>
-                  <CardTitle className="line-clamp-2 text-base">
-                    {material.title}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
-                    {material.description || 'Material técnico disponível para download'}
-                  </p>
-                  <Button size="sm" className="w-full">
-                    Download
-                  </Button>
-                </CardContent>
-              </Card>
+              <Link key={material.id} to="/artigos-tecnicos" className="block">
+                <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+                  <CardHeader>
+                    <div className="flex items-center justify-between mb-2">
+                      <Badge variant="secondary">{material.file_type || 'PDF'}</Badge>
+                      <span className="text-sm text-muted-foreground">
+                        {material.download_count || 0} downloads
+                      </span>
+                    </div>
+                    <CardTitle className="line-clamp-2 text-base">
+                      {material.title}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
+                      {material.description || 'Material técnico disponível para download'}
+                    </p>
+                    <Button size="sm" className="w-full">
+                      Ver detalhes
+                    </Button>
+                  </CardContent>
+                </Card>
+              </Link>
             ))}
           </div>
         )}
@@ -157,43 +159,45 @@ const MainContent = () => {
         ) : (
           <div className="grid gap-6 md:grid-cols-3 lg:grid-cols-3">
             {latestEbooks.map((ebook) => (
-              <Card key={ebook.id} className="hover:shadow-lg transition-shadow">
-                {ebook.cover_image_url && (
-                  <div className="aspect-video bg-muted">
-                    <img 
-                      src={ebook.cover_image_url} 
-                      alt={ebook.title}
-                      className="w-full h-full object-cover rounded-t-lg"
-                    />
-                  </div>
-                )}
-                <CardHeader>
-                  <div className="flex items-center justify-between mb-2">
-                    <Badge variant="secondary">E-book</Badge>
-                    <span className="text-sm font-medium text-primary">
-                      {formatPrice(ebook.price)}
-                    </span>
-                  </div>
-                  <CardTitle className="line-clamp-2 text-base">
-                    {ebook.title}
-                  </CardTitle>
-                  <p className="text-sm text-muted-foreground">
-                    por {ebook.author}
-                  </p>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
-                    {ebook.description || 'E-book disponível para download'}
-                  </p>
-                  <div className="flex items-center justify-between text-xs text-muted-foreground mb-3">
-                    {ebook.pages_count && <span>{ebook.pages_count} páginas</span>}
-                    {ebook.download_count && <span>{ebook.download_count} downloads</span>}
-                  </div>
-                  <Button size="sm" className="w-full">
-                    {ebook.price && ebook.price > 0 ? 'Comprar' : 'Download'}
-                  </Button>
-                </CardContent>
-              </Card>
+              <Link key={ebook.id} to="/ebooks" className="block">
+                <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+                  {ebook.cover_image_url && (
+                    <div className="aspect-video bg-muted">
+                      <img 
+                        src={ebook.cover_image_url} 
+                        alt={ebook.title}
+                        className="w-full h-full object-cover rounded-t-lg"
+                      />
+                    </div>
+                  )}
+                  <CardHeader>
+                    <div className="flex items-center justify-between mb-2">
+                      <Badge variant="secondary">E-book</Badge>
+                      <span className="text-sm font-medium text-primary">
+                        {formatPrice(ebook.price)}
+                      </span>
+                    </div>
+                    <CardTitle className="line-clamp-2 text-base">
+                      {ebook.title}
+                    </CardTitle>
+                    <p className="text-sm text-muted-foreground">
+                      por {ebook.author}
+                    </p>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
+                      {ebook.description || 'E-book disponível para download'}
+                    </p>
+                    <div className="flex items-center justify-between text-xs text-muted-foreground mb-3">
+                      {ebook.pages_count && <span>{ebook.pages_count} páginas</span>}
+                      {ebook.download_count && <span>{ebook.download_count} downloads</span>}
+                    </div>
+                    <Button size="sm" className="w-full">
+                      Ver detalhes
+                    </Button>
+                  </CardContent>
+                </Card>
+              </Link>
             ))}
           </div>
         )}

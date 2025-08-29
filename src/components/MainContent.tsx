@@ -91,7 +91,7 @@ const MainContent = () => {
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-2">
             <Wrench className="h-6 w-6 text-primary" />
-            <h2 className="text-2xl font-bold text-foreground">Materiais Técnicos</h2>
+            <h2 className="text-2xl font-bold text-foreground">Artigos Técnicos</h2>
           </div>
           <Button variant="outline" asChild>
             <Link to="/materiais-tecnicos">Ver todos</Link>

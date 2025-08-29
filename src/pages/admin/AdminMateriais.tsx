@@ -67,6 +67,34 @@ const AdminMateriais = () => {
     }
   });
 
+  const mapFileTypeToEnum = (file: File): string => {
+    const extension = file.name.split('.').pop()?.toLowerCase();
+    const mimeType = file.type.toLowerCase();
+    
+    // Map video types
+    if (mimeType.startsWith('video/') || ['mp4', 'avi', 'mov', 'wmv', 'flv'].includes(extension || '')) {
+      return 'video';
+    }
+    
+    // Map presentation types
+    if (['ppt', 'pptx'].includes(extension || '') || mimeType.includes('presentation')) {
+      return 'presentation';
+    }
+    
+    // Map manual types (documents)
+    if (['doc', 'docx', 'rtf', 'txt'].includes(extension || '') || mimeType.includes('document')) {
+      return 'manual';
+    }
+    
+    // Map guide types (spreadsheets)
+    if (['xls', 'xlsx', 'csv'].includes(extension || '') || mimeType.includes('spreadsheet')) {
+      return 'guide';
+    }
+    
+    // Default to pdf for PDFs and other files
+    return 'pdf';
+  };
+
   const uploadFile = async (file: File): Promise<string> => {
     const fileExt = file.name.split('.').pop();
     const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
@@ -95,7 +123,7 @@ const AdminMateriais = () => {
         setUploading(true);
         fileUrl = await uploadFile(file);
         fileSize = file.size;
-        fileType = file.type;
+        fileType = mapFileTypeToEnum(file);
       }
 
       const slug = data.title
@@ -151,7 +179,7 @@ const AdminMateriais = () => {
         setUploading(true);
         updateData.file_url = await uploadFile(file);
         updateData.file_size = file.size;
-        updateData.file_type = file.type;
+        updateData.file_type = mapFileTypeToEnum(file);
       }
 
       const { error } = await supabase

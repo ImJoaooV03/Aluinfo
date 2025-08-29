@@ -13,7 +13,7 @@ import { useToast } from "@/hooks/use-toast";
 import { enforceHttps } from "@/utils/httpsUtils";
 import { useState } from "react";
 
-const MateriaisTecnicos = () => {
+const ArtigosTecnicos = () => {
   const { materials, loading, refetch } = useTechnicalMaterials();
   const { toast } = useToast();
   const [downloadCounts, setDownloadCounts] = useState<Record<string, number>>({});
@@ -153,12 +153,12 @@ const MateriaisTecnicos = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="flex gap-6">
           <main className="flex-1">
-            {/* Banner 13 - Materiais Técnicos Topo */}
+            {/* Banner 13 - Artigos Técnicos Topo */}
             <AdBanner size="large" position="content" slotKey="materiais-top" className="mb-8" />
             <div className="mb-8">
-              <h1 className="text-4xl font-bold text-foreground mb-4">Materiais Técnicos</h1>
+              <h1 className="text-4xl font-bold text-foreground mb-4">Artigos Técnicos</h1>
               <p className="text-muted-foreground text-lg">
-                Acesse documentos técnicos, manuais e ferramentas especializadas para o setor de fundição
+                Acesse artigos técnicos, estudos e documentação especializada para o setor de fundição
               </p>
             </div>
 
@@ -190,7 +190,7 @@ const MateriaisTecnicos = () => {
                             <IconComponent className="h-6 w-6 text-primary" />
                             <Badge variant="secondary">{material.file_type || 'PDF'}</Badge>
                           </div>
-                          <Badge variant="outline">Material</Badge>
+                          <Badge variant="outline">Artigo</Badge>
                         </div>
                         <CardTitle className="line-clamp-2">
                           {material.title}
@@ -198,7 +198,7 @@ const MateriaisTecnicos = () => {
                       </CardHeader>
                       <CardContent>
                         <p className="text-muted-foreground line-clamp-3 mb-4">
-                          {material.description || 'Material técnico disponível para download'}
+                          {material.description || 'Artigo técnico disponível para download'}
                         </p>
                          <div className="flex items-center justify-between text-sm text-muted-foreground mb-4">
                            <span>{formatFileSize(material.file_size)}</span>
@@ -222,9 +222,9 @@ const MateriaisTecnicos = () => {
             {!loading && materials.length === 0 && (
               <div className="text-center py-12">
                 <FileText className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-xl font-semibold mb-2">Nenhum material encontrado</h3>
+                <h3 className="text-xl font-semibold mb-2">Nenhum artigo encontrado</h3>
                 <p className="text-muted-foreground">
-                  Ainda não há materiais técnicos disponíveis. Volte em breve!
+                  Ainda não há artigos técnicos disponíveis. Volte em breve!
                 </p>
               </div>
             )}
@@ -239,4 +239,4 @@ const MateriaisTecnicos = () => {
   );
 };
 
-export default MateriaisTecnicos;
+export default ArtigosTecnicos;

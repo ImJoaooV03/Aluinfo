@@ -9,7 +9,7 @@ import Index from "./pages/Index";
 import Noticias from "./pages/Noticias";
 import NoticiaIndividual from "./pages/NoticiaIndividual";
 import Ebooks from "./pages/Ebooks";
-import MateriaisTecnicos from "./pages/MateriaisTecnicos";
+import ArtigosTecnicos from "./pages/ArtigosTecnicos";
 import LME from "./pages/LME";
 import Fundicoes from "./pages/Fundicoes";
 import Fornecedores from "./pages/Fornecedores";
@@ -43,7 +43,8 @@ function App() {
             <Route path="/noticias" element={<Noticias />} />
             <Route path="/noticia/:slug" element={<NoticiaIndividual />} />
             <Route path="/ebooks" element={<Ebooks />} />
-            <Route path="/materiais-tecnicos" element={<MateriaisTecnicos />} />
+            <Route path="/artigos-tecnicos" element={<ArtigosTecnicos />} />
+            <Route path="/materiais-tecnicos" element={<ArtigosTecnicos />} />
             <Route path="/lme" element={<LME />} />
             <Route path="/fundicoes" element={<Fundicoes />} />
             <Route path="/fornecedores" element={<Fornecedores />} />

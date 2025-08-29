@@ -94,7 +94,7 @@ const MainContent = () => {
             <h2 className="text-2xl font-bold text-foreground">Artigos Técnicos</h2>
           </div>
           <Button variant="outline" asChild>
-            <Link to="/materiais-tecnicos">Ver todos</Link>
+            <Link to="/artigos-tecnicos">Ver todos</Link>
           </Button>
         </div>
 

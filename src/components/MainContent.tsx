@@ -76,7 +76,7 @@ const MainContent = () => {
                 category="Notícias"
                 image={item.featured_image_url || undefined}
                 featured={index === 0}
-                href={`/noticia/${item.id}`}
+                newsId={item.id}
               />
             ))}
           </div>

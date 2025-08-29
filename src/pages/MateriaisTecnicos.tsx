@@ -10,49 +10,69 @@ import { Download, FileText, Video, Image } from "lucide-react";
 import { useTechnicalMaterials } from "@/hooks/useTechnicalMaterials";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-
+import { enforceHttps } from "@/utils/httpsUtils";
 const MateriaisTecnicos = () => {
   const { materials, loading, refetch } = useTechnicalMaterials();
   const { toast } = useToast();
 
   const handleDownload = async (material: any) => {
     try {
-      // Registra o download no analytics
-      const { error } = await supabase
+      // Preabre uma aba para evitar bloqueio de pop-up
+      const fileUrl = enforceHttps(material.file_url);
+      let newWindow: Window | null = null;
+      try {
+        newWindow = window.open('about:blank', '_blank');
+      } catch (e) {
+        newWindow = null;
+      }
+
+      // Registra o download no analytics sem bloquear a navegação
+      const { data: userData } = await supabase.auth.getUser();
+      supabase
         .from('analytics_views')
         .insert({
           content_type: 'technical_materials',
           content_id: material.id,
-          user_id: (await supabase.auth.getUser()).data.user?.id || null,
+          user_id: userData?.user?.id || null,
           ip_address: null,
           user_agent: window.navigator.userAgent,
-          referer: window.location.href
+          referer: window.location.href,
+        })
+        .then(
+          () => {
+            // Atualiza a lista para mostrar o novo contador após registrar
+            setTimeout(() => {
+              refetch();
+            }, 300);
+          },
+          (err) => {
+            console.error('Erro ao registrar download:', err);
+            // Mesmo com erro no analytics, continua o download
+          }
+        );
+
+      // Abre/navega para o arquivo
+      if (newWindow) {
+        try {
+          newWindow.location.href = fileUrl;
+        } catch {
+          window.open(fileUrl, '_blank');
+        }
+        toast({
+          title: "Download iniciado",
+          description: `O arquivo "${material.title}" foi aberto em uma nova aba.`,
         });
-
-      if (error) {
-        console.error('Erro ao registrar download:', error);
-        // Mesmo com erro no analytics, continua o download
+      } else {
+        // Fallback: se a nova aba foi bloqueada, abre no mesmo separador
+        window.location.href = fileUrl;
       }
-
-      // Abre o arquivo em nova aba
-      window.open(material.file_url, '_blank');
-      
-      // Atualiza a lista para mostrar o novo contador
-      setTimeout(() => {
-        refetch();
-      }, 500);
-
-      toast({
-        title: "Download iniciado",
-        description: `O arquivo "${material.title}" foi aberto em uma nova aba.`
-      });
 
     } catch (error) {
       console.error('Erro no download:', error);
       toast({
         title: "Erro no download",
         description: "Não foi possível processar o download. Tente novamente.",
-        variant: "destructive"
+        variant: "destructive",
       });
     }
   };

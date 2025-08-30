@@ -413,252 +413,236 @@ export default function AdminNoticias() {
             Gerencie as notícias do portal
           </p>
         </div>
-
-        <div className="flex gap-2">
-          <Dialog open={dialogOpen} onOpenChange={(open) => {
-            setDialogOpen(open);
-            if (!open) resetForm();
-          }}>
-            <DialogTrigger asChild>
-              <Button>
-                <Plus className="mr-2 h-4 w-4" />
-                Nova Notícia
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle>
-                  {editingNews ? "Editar Notícia" : "Nova Notícia"}
-                </DialogTitle>
-                <DialogDescription>
-                  {editingNews 
-                    ? "Atualize as informações da notícia" 
-                    : "Preencha os dados para criar uma nova notícia"
-                  }
-                </DialogDescription>
-              </DialogHeader>
-
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="title">Título</Label>
-                  <Input
-                    id="title"
-                    value={formData.title}
-                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="excerpt">Resumo</Label>
-                  <Textarea
-                    id="excerpt"
-                    value={formData.excerpt}
-                    onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
-                    rows={3}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="content">Conteúdo</Label>
-                  <Textarea
-                    id="content"
-                    value={formData.content}
-                    onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                    rows={8}
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="featured_image">URL da Imagem</Label>
-                  <Input
-                    id="featured_image"
-                    value={formData.featured_image_url}
-                    onChange={(e) => setFormData({ ...formData, featured_image_url: e.target.value })}
-                    placeholder="https://exemplo.com/imagem.jpg"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="category">Categoria</Label>
-                  <Select 
-                    value={formData.category_id} 
-                    onValueChange={(value) => setFormData({ ...formData, category_id: value })}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione uma categoria" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {categories.map((category) => (
-                        <SelectItem key={category.id} value={category.id}>
-                          {category.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="status">Status</Label>
-                  <Select 
-                    value={formData.status} 
-                    onValueChange={(value: 'draft' | 'published' | 'archived') => 
-                      setFormData({ ...formData, status: value })
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="draft">Rascunho</SelectItem>
-                      <SelectItem value="published">Publicado</SelectItem>
-                      <SelectItem value="archived">Arquivado</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="flex justify-end space-x-2">
-                  <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
-                    Cancelar
-                  </Button>
-                  <Button type="submit">
-                    {editingNews ? "Atualizar" : "Criar"}
-                  </Button>
-                </div>
-              </form>
-            </DialogContent>
-          </Dialog>
-          
-          <CategoryDialog onCategoryCreated={refetchCategories} />
-        </div>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Lista de Notícias</CardTitle>
-          <CardDescription>
-            {news.length} notícia{news.length !== 1 ? 's' : ''} cadastrada{news.length !== 1 ? 's' : ''}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Título</TableHead>
-                <TableHead>Categoria</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Visualizações</TableHead>
-                <TableHead>Data</TableHead>
-                <TableHead className="text-right">Ações</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {news.map((item) => (
-                <TableRow key={item.id}>
-                  <TableCell className="font-medium">
-                    {item.title}
-                  </TableCell>
-                  <TableCell>
-                    {item.news_categories?.name || "Sem categoria"}
-                  </TableCell>
-                  <TableCell>
-                    {getStatusBadge(item.status)}
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center">
-                      <Eye className="mr-1 h-4 w-4" />
-                      {item.view_count}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    {new Date(item.created_at).toLocaleDateString('pt-BR')}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-end space-x-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleEdit(item)}
+      <Tabs defaultValue="news" className="space-y-4">
+        <TabsList>
+          <TabsTrigger value="news">Notícias</TabsTrigger>
+          <TabsTrigger value="categories">Categorias</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="news" className="space-y-4">
+          <div className="flex justify-between items-center">
+            <h2 className="text-xl font-semibold">Notícias ({news.length})</h2>
+            <Dialog open={dialogOpen} onOpenChange={(open) => {
+              setDialogOpen(open);
+              if (!open) resetForm();
+            }}>
+              <DialogTrigger asChild>
+                <Button>
+                  <Plus className="mr-2 h-4 w-4" />
+                  Nova Notícia
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>
+                    {editingNews ? "Editar Notícia" : "Nova Notícia"}
+                  </DialogTitle>
+                  <DialogDescription>
+                    {editingNews 
+                      ? "Atualize as informações da notícia" 
+                      : "Preencha os dados para criar uma nova notícia"
+                    }
+                  </DialogDescription>
+                </DialogHeader>
+
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="title">Título</Label>
+                    <Input
+                      id="title"
+                      value={formData.title}
+                      onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="excerpt">Resumo</Label>
+                    <Textarea
+                      id="excerpt"
+                      value={formData.excerpt}
+                      onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
+                      rows={3}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="content">Conteúdo</Label>
+                    <Textarea
+                      id="content"
+                      value={formData.content}
+                      onChange={(e) => setFormData({ ...formData, content: e.target.value })}
+                      rows={8}
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="featured_image">URL da Imagem</Label>
+                    <Input
+                      id="featured_image"
+                      value={formData.featured_image_url}
+                      onChange={(e) => setFormData({ ...formData, featured_image_url: e.target.value })}
+                      placeholder="https://exemplo.com/imagem.jpg"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="category">Categoria</Label>
+                      <Select 
+                        value={formData.category_id} 
+                        onValueChange={(value) => setFormData({ ...formData, category_id: value })}
                       >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione uma categoria" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {categories.map((category) => (
+                            <SelectItem key={category.id} value={category.id}>
+                              {category.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="status">Status</Label>
+                      <Select 
+                        value={formData.status} 
+                        onValueChange={(value: 'draft' | 'published' | 'archived') => setFormData({ ...formData, status: value })}
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="published">Publicado</SelectItem>
+                          <SelectItem value="draft">Rascunho</SelectItem>
+                          <SelectItem value="archived">Arquivado</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-end space-x-2">
+                    <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
+                      Cancelar
+                    </Button>
+                    <Button type="submit">
+                      {editingNews ? "Atualizar" : "Criar"} Notícia
+                    </Button>
+                  </div>
+                </form>
+              </DialogContent>
+            </Dialog>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {news.map((newsItem) => (
+              <Card key={newsItem.id}>
+                <CardHeader className="pb-3">
+                  <div className="flex justify-between items-start">
+                    <div className="flex items-center space-x-3">
+                      {newsItem.featured_image_url ? (
+                        <img 
+                          src={newsItem.featured_image_url} 
+                          alt={newsItem.title}
+                          className="w-10 h-10 rounded object-cover"
+                        />
+                      ) : (
+                        <div className="w-10 h-10 rounded bg-muted flex items-center justify-center">
+                          <ImageIcon className="h-5 w-5" />
+                        </div>
+                      )}
+                      <div className="flex-1">
+                        <CardTitle className="text-lg line-clamp-2">{newsItem.title}</CardTitle>
+                        {newsItem.news_categories && (
+                          <Badge variant="outline" className="text-xs">
+                            {newsItem.news_categories.name}
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+                    {getStatusBadge(newsItem.status)}
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {newsItem.excerpt && (
+                    <p className="text-sm text-muted-foreground line-clamp-3">{newsItem.excerpt}</p>
+                  )}
+                  
+                  <div className="space-y-2">
+                    <div className="flex items-center text-sm text-muted-foreground">
+                      <Eye className="h-4 w-4 mr-2" />
+                      {newsItem.view_count || 0} visualizações
+                    </div>
+                    
+                    {newsItem.published_at && (
+                      <div className="flex items-center text-sm text-muted-foreground">
+                        <Calendar className="h-4 w-4 mr-2" />
+                        {new Date(newsItem.published_at).toLocaleDateString('pt-BR')}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex justify-between items-center pt-3">
+                    <div className="text-xs text-muted-foreground">
+                      {new Date(newsItem.created_at).toLocaleDateString('pt-BR')}
+                    </div>
+                    <div className="flex space-x-1">
+                      <Button size="sm" variant="outline" onClick={() => handleEdit(newsItem)}>
                         <Edit className="h-4 w-4" />
                       </Button>
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        onClick={() => handleDelete(item.id)}
-                      >
+                      <Button size="sm" variant="destructive" onClick={() => handleDelete(newsItem.id)}>
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </TabsContent>
 
-      {/* Categories Management */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Categorias</CardTitle>
-          <CardDescription>
-            Gerencie as categorias das notícias
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {categoriesLoading ? (
-            <div>Carregando categorias...</div>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Nome</TableHead>
-                  <TableHead>Slug</TableHead>
-                  <TableHead>Descrição</TableHead>
-                  <TableHead>Criado em</TableHead>
-                  <TableHead className="text-right">Ações</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {categories.map((category) => (
-                  <TableRow key={category.id}>
-                    <TableCell className="font-medium">
-                      {category.name}
-                    </TableCell>
-                    <TableCell className="font-mono text-sm">
-                      {category.slug}
-                    </TableCell>
-                    <TableCell>
-                      {category.description || "—"}
-                    </TableCell>
-                    <TableCell>
+        <TabsContent value="categories" className="space-y-4">
+          <div className="flex justify-between items-center">
+            <h2 className="text-xl font-semibold">Categorias ({categories.length})</h2>
+            <CategoryDialog onCategoryCreated={refetchCategories} />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {categories.map((category) => (
+              <Card key={category.id}>
+                <CardHeader>
+                  <CardTitle className="text-lg">{category.name}</CardTitle>
+                  <Badge variant="outline" className="w-fit">{category.slug}</Badge>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <p className="text-sm text-muted-foreground">
+                    {category.description || "Sem descrição"}
+                  </p>
+                  
+                  <div className="flex justify-between items-center pt-3">
+                    <div className="text-xs text-muted-foreground">
                       {new Date(category.created_at).toLocaleDateString('pt-BR')}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        onClick={() => handleDeleteCategory(category.id, category.name)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-                {categories.length === 0 && (
-                  <TableRow>
-                    <TableCell colSpan={5} className="text-center text-muted-foreground">
-                      Nenhuma categoria cadastrada
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          )}
-        </CardContent>
-      </Card>
+                    </div>
+                    <Button 
+                      size="sm" 
+                      variant="destructive" 
+                      onClick={() => handleDeleteCategory(category.id, category.name)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

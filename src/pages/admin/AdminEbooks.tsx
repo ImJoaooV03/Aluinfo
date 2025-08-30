@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -280,267 +279,316 @@ const AdminEbooks = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Gerenciar E-books</h1>
-        <Dialog open={dialogOpen} onOpenChange={(open) => {
-          setDialogOpen(open);
-          if (!open) resetForm();
-        }}>
-          <DialogTrigger asChild>
-            <Button>
-              <Plus className="h-4 w-4 mr-2" />
-              Novo E-book
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>
-                {editingEbook ? 'Editar E-book' : 'Criar Novo E-book'}
-              </DialogTitle>
-            </DialogHeader>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="title">Título *</Label>
-                  <Input
-                    id="title"
-                    value={formData.title}
-                    onChange={(e) => setFormData(prev => ({...prev, title: e.target.value}))}
-                    required
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="author">Autor *</Label>
-                  <Input
-                    id="author"
-                    value={formData.author}
-                    onChange={(e) => setFormData(prev => ({...prev, author: e.target.value}))}
-                    required
-                  />
-                </div>
-              </div>
-
-              <div>
-                <Label htmlFor="description">Descrição</Label>
-                <Textarea
-                  id="description"
-                  value={formData.description}
-                  onChange={(e) => setFormData(prev => ({...prev, description: e.target.value}))}
-                  rows={3}
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="category">Categoria</Label>
-                  <Select
-                    value={formData.category_id}
-                    onValueChange={(value) => setFormData(prev => ({...prev, category_id: value}))}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione uma categoria" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {categories.map((category: any) => (
-                        <SelectItem key={category.id} value={category.id}>
-                          {category.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label htmlFor="status">Status</Label>
-                  <Select
-                    value={formData.status}
-                    onValueChange={(value: EbookStatus) => setFormData(prev => ({...prev, status: value}))}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="published">Publicado</SelectItem>
-                      <SelectItem value="draft">Rascunho</SelectItem>
-                      <SelectItem value="archived">Arquivado</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-3 gap-4">
-                <div>
-                  <Label htmlFor="price">Preço (R$)</Label>
-                  <Input
-                    id="price"
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    value={formData.price}
-                    onChange={(e) => setFormData(prev => ({...prev, price: e.target.value}))}
-                    placeholder="0.00 (gratuito)"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="pages">Páginas</Label>
-                  <Input
-                    id="pages"
-                    type="number"
-                    min="1"
-                    value={formData.pages_count}
-                    onChange={(e) => setFormData(prev => ({...prev, pages_count: e.target.value}))}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="reading_time">Tempo de Leitura (min)</Label>
-                  <Input
-                    id="reading_time"
-                    type="number"
-                    min="1"
-                    value={formData.reading_time}
-                    onChange={(e) => setFormData(prev => ({...prev, reading_time: e.target.value}))}
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="cover">Capa do E-book</Label>
-                  <Input
-                    id="cover"
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => setCoverFile(e.target.files?.[0] || null)}
-                  />
-                  {editingEbook?.cover_image_url && (
-                    <p className="text-sm text-muted-foreground mt-1">
-                      Capa atual: {editingEbook.cover_image_url.split('/').pop()}
-                    </p>
-                  )}
-                </div>
-                <div>
-                  <Label htmlFor="file">Arquivo do E-book *</Label>
-                  <Input
-                    id="file"
-                    type="file"
-                    accept=".pdf,.epub,.mobi"
-                    onChange={(e) => setEbookFile(e.target.files?.[0] || null)}
-                    required={!editingEbook}
-                  />
-                  {editingEbook?.file_url && (
-                    <p className="text-sm text-muted-foreground mt-1">
-                      Arquivo atual: {editingEbook.file_url.split('/').pop()}
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              <div className="flex justify-end space-x-2 pt-4">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setDialogOpen(false)}
-                >
-                  Cancelar
-                </Button>
-                <Button type="submit" disabled={uploading}>
-                  {uploading ? (
-                    <>
-                      <Upload className="h-4 w-4 mr-2 animate-spin" />
-                      {editingEbook ? 'Atualizando...' : 'Criando...'}
-                    </>
-                  ) : (
-                    editingEbook ? 'Atualizar E-book' : 'Criar E-book'
-                  )}
-                </Button>
-              </div>
-            </form>
-          </DialogContent>
-        </Dialog>
+        <div>
+          <h1 className="text-3xl font-bold">Gestão de E-books</h1>
+          <p className="text-muted-foreground">Gerencie livros digitais e publicações</p>
+        </div>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Lista de E-books</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Título</TableHead>
-                <TableHead>Autor</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Preço</TableHead>
-                <TableHead>Downloads</TableHead>
-                <TableHead>Avaliação</TableHead>
-                <TableHead>Ações</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {ebooks.map((ebook) => (
-                <TableRow key={ebook.id}>
-                  <TableCell className="font-medium">
-                    <div className="flex items-center space-x-2">
+      <Tabs defaultValue="ebooks" className="space-y-4">
+        <TabsList>
+          <TabsTrigger value="ebooks">E-books</TabsTrigger>
+          <TabsTrigger value="categories">Categorias</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="ebooks" className="space-y-4">
+          <div className="flex justify-between items-center">
+            <h2 className="text-xl font-semibold">E-books ({ebooks.length})</h2>
+            <Dialog open={dialogOpen} onOpenChange={(open) => {
+              setDialogOpen(open);
+              if (!open) resetForm();
+            }}>
+              <DialogTrigger asChild>
+                <Button>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Novo E-book
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>
+                    {editingEbook ? 'Editar E-book' : 'Criar Novo E-book'}
+                  </DialogTitle>
+                </DialogHeader>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="title">Título *</Label>
+                      <Input
+                        id="title"
+                        value={formData.title}
+                        onChange={(e) => setFormData(prev => ({...prev, title: e.target.value}))}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="author">Autor *</Label>
+                      <Input
+                        id="author"
+                        value={formData.author}
+                        onChange={(e) => setFormData(prev => ({...prev, author: e.target.value}))}
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="description">Descrição</Label>
+                    <Textarea
+                      id="description"
+                      value={formData.description}
+                      onChange={(e) => setFormData(prev => ({...prev, description: e.target.value}))}
+                      rows={3}
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="category">Categoria</Label>
+                      <Select
+                        value={formData.category_id}
+                        onValueChange={(value) => setFormData(prev => ({...prev, category_id: value}))}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione uma categoria" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {categories.map((category: any) => (
+                            <SelectItem key={category.id} value={category.id}>
+                              {category.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label htmlFor="status">Status</Label>
+                      <Select
+                        value={formData.status}
+                        onValueChange={(value: EbookStatus) => setFormData(prev => ({...prev, status: value}))}
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="published">Publicado</SelectItem>
+                          <SelectItem value="draft">Rascunho</SelectItem>
+                          <SelectItem value="archived">Arquivado</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-4">
+                    <div>
+                      <Label htmlFor="price">Preço (R$)</Label>
+                      <Input
+                        id="price"
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        value={formData.price}
+                        onChange={(e) => setFormData(prev => ({...prev, price: e.target.value}))}
+                        placeholder="0.00 (gratuito)"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="pages">Páginas</Label>
+                      <Input
+                        id="pages"
+                        type="number"
+                        min="1"
+                        value={formData.pages_count}
+                        onChange={(e) => setFormData(prev => ({...prev, pages_count: e.target.value}))}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="reading_time">Tempo de Leitura (min)</Label>
+                      <Input
+                        id="reading_time"
+                        type="number"
+                        min="1"
+                        value={formData.reading_time}
+                        onChange={(e) => setFormData(prev => ({...prev, reading_time: e.target.value}))}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="cover">Capa do E-book</Label>
+                      <Input
+                        id="cover"
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => setCoverFile(e.target.files?.[0] || null)}
+                      />
+                      {editingEbook?.cover_image_url && (
+                        <p className="text-sm text-muted-foreground mt-1">
+                          Capa atual: {editingEbook.cover_image_url.split('/').pop()}
+                        </p>
+                      )}
+                    </div>
+                    <div>
+                      <Label htmlFor="file">Arquivo do E-book *</Label>
+                      <Input
+                        id="file"
+                        type="file"
+                        accept=".pdf,.epub,.mobi"
+                        onChange={(e) => setEbookFile(e.target.files?.[0] || null)}
+                        required={!editingEbook}
+                      />
+                      {editingEbook?.file_url && (
+                        <p className="text-sm text-muted-foreground mt-1">
+                          Arquivo atual: {editingEbook.file_url.split('/').pop()}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex justify-end space-x-2 pt-4">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => setDialogOpen(false)}
+                    >
+                      Cancelar
+                    </Button>
+                    <Button type="submit" disabled={uploading}>
+                      {uploading ? (
+                        <>
+                          <Upload className="h-4 w-4 mr-2 animate-spin" />
+                          {editingEbook ? 'Atualizando...' : 'Criando...'}
+                        </>
+                      ) : (
+                        editingEbook ? 'Atualizar E-book' : 'Criar E-book'
+                      )}
+                    </Button>
+                  </div>
+                </form>
+              </DialogContent>
+            </Dialog>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {ebooks.map((ebook) => (
+              <Card key={ebook.id}>
+                <CardHeader className="pb-3">
+                  <div className="flex justify-between items-start">
+                    <div className="flex items-center space-x-3">
                       {ebook.cover_image_url ? (
                         <img 
                           src={ebook.cover_image_url} 
                           alt={ebook.title}
-                          className="w-8 h-10 object-cover rounded"
+                          className="w-10 h-10 rounded object-cover"
                         />
                       ) : (
-                        <div className="w-8 h-10 bg-muted rounded flex items-center justify-center">
-                          <FileText className="h-4 w-4" />
+                        <div className="w-10 h-10 rounded bg-muted flex items-center justify-center">
+                          <FileText className="h-5 w-5" />
                         </div>
                       )}
-                      <span>{ebook.title}</span>
+                      <div>
+                        <CardTitle className="text-lg">{ebook.title}</CardTitle>
+                        <p className="text-sm text-muted-foreground">{ebook.author}</p>
+                      </div>
                     </div>
-                  </TableCell>
-                  <TableCell>{ebook.author}</TableCell>
-                  <TableCell>{getStatusBadge(ebook.status)}</TableCell>
-                  <TableCell>
-                    {ebook.price ? `R$ ${ebook.price.toFixed(2)}` : 'Gratuito'}
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center space-x-1">
-                      <Download className="h-4 w-4" />
-                      <span>{ebook.download_count || 0}</span>
+                    {getStatusBadge(ebook.status)}
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="space-y-2">
+                    {ebook.price && ebook.price > 0 ? (
+                      <div className="flex items-center text-sm">
+                        <DollarSign className="h-4 w-4 mr-2" />
+                        R$ {ebook.price.toFixed(2)}
+                      </div>
+                    ) : (
+                      <div className="flex items-center text-sm text-green-600">
+                        <DollarSign className="h-4 w-4 mr-2" />
+                        Gratuito
+                      </div>
+                    )}
+                    
+                    {ebook.pages_count && (
+                      <div className="flex items-center text-sm text-muted-foreground">
+                        <BookOpen className="h-4 w-4 mr-2" />
+                        {ebook.pages_count} páginas
+                      </div>
+                    )}
+
+                    {ebook.reading_time && (
+                      <div className="flex items-center text-sm text-muted-foreground">
+                        <Clock className="h-4 w-4 mr-2" />
+                        {ebook.reading_time} min de leitura
+                      </div>
+                    )}
+
+                    {ebook.download_count && (
+                      <div className="flex items-center text-sm text-muted-foreground">
+                        <Download className="h-4 w-4 mr-2" />
+                        {ebook.download_count} downloads
+                      </div>
+                    )}
+
+                    {ebook.rating && (
+                      <div className="flex items-center text-sm">
+                        <Star className="h-4 w-4 mr-1 fill-yellow-400 text-yellow-400" />
+                        {ebook.rating}/5
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex justify-between items-center pt-3">
+                    <div className="text-xs text-muted-foreground">
+                      {new Date(ebook.created_at).toLocaleDateString('pt-BR')}
                     </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center space-x-1">
-                      <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                      <span>{ebook.rating || 0}</span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex space-x-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleEdit(ebook)}
-                      >
+                    <div className="flex space-x-1">
+                      <Button size="sm" variant="outline" onClick={() => handleEdit(ebook)}>
                         <Edit className="h-4 w-4" />
                       </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleDelete(ebook.id)}
-                      >
+                      <Button size="sm" variant="destructive" onClick={() => handleDelete(ebook.id)}>
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-              {ebooks.length === 0 && (
-                <TableRow>
-                  <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
-                    Nenhum e-book encontrado. Crie o primeiro e-book para começar.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="categories" className="space-y-4">
+          <div className="flex justify-between items-center">
+            <h2 className="text-xl font-semibold">Categorias ({categories.length})</h2>
+            <Button onClick={() => refetchCategories()}>
+              <Plus className="h-4 w-4 mr-2" />
+              Gerenciar Categorias
+            </Button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {categories.map((category) => (
+              <Card key={category.id}>
+                <CardHeader>
+                  <CardTitle className="text-lg">{category.name}</CardTitle>
+                  <Badge variant="outline" className="w-fit">{category.slug}</Badge>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <p className="text-sm text-muted-foreground">
+                    {category.description || "Sem descrição"}
+                  </p>
+                  
+                  <div className="flex justify-between items-center pt-3">
+                    <div className="text-xs text-muted-foreground">
+                      {new Date(category.created_at).toLocaleDateString('pt-BR')}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

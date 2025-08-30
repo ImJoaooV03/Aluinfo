@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useLocation, Link } from "react-router-dom";
 import Header from "@/components/Header";
@@ -12,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Clock, User, Search as SearchIcon, Tag } from "lucide-react";
 import { useUniversalSearch } from "@/hooks/useUniversalSearch";
 import { useNews } from "@/hooks/useNews";
-import { useCategories } from "@/hooks/useCategories";
+import { useNewsCategories } from "@/hooks/useNewsCategories";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
@@ -24,7 +23,7 @@ const Noticias = () => {
 
   const { results: searchResults, loading: searchLoading } = useUniversalSearch(searchTerm || '');
   const { news, loading: newsLoading } = useNews();
-  const { categories } = useCategories();
+  const { categories } = useNewsCategories();
 
   const formatDate = (dateString: string) => {
     try {
@@ -230,7 +229,7 @@ const Noticias = () => {
                           <div className="flex items-center gap-2">
                             <Badge variant="secondary">
                               <Tag className="h-3 w-3 mr-1" />
-                              {noticia.categories?.name || 'Sem categoria'}
+                              {noticia.news_categories?.name || 'Sem categoria'}
                             </Badge>
                           </div>
                           <div className="flex items-center text-sm text-muted-foreground">

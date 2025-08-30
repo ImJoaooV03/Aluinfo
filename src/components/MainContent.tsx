@@ -1,4 +1,3 @@
-
 import { Wrench, TrendingUp, Calendar, BookOpen, FileText, Clock } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -82,7 +81,7 @@ const MainContent = () => {
                 summary={item.excerpt || item.content.substring(0, 200) + '...'}
                 author="Portal da Fundição"
                 date={formatDate(item.published_at || item.created_at)}
-                category={item.categories?.name || 'Notícias'}
+                category={item.news_categories?.name || 'Notícias'}
                 image={item.featured_image_url || undefined}
                 featured={index === 0}
                 slug={item.slug}

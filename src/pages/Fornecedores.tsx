@@ -7,12 +7,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { MapPin, Phone, Mail, Globe, Star, Users, Loader2, Shield, Building } from "lucide-react";
+import { useState } from "react";
 import { useSuppliers } from "@/hooks/useSuppliers";
+import { useCategories } from "@/hooks/useCategories";
 
 const Fornecedores = () => {
-  const { suppliers, loading, error } = useSuppliers();
-  
-  const categorias = ["Todos", "Equipamentos", "Materiais", "Ferramentas", "Ambiental", "Automação", "Segurança"];
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
+  const { suppliers, loading, error } = useSuppliers(selectedCategoryId || undefined);
+  const { categories } = useCategories();
 
   if (loading) {
     return (
@@ -63,9 +65,22 @@ const Fornecedores = () => {
 
             <div className="mb-6">
               <div className="flex flex-wrap gap-2">
-                {categorias.map((categoria) => (
-                  <Button key={categoria} variant="outline" size="sm">
-                    {categoria}
+                <Button 
+                  key="todos" 
+                  variant={selectedCategoryId === "" ? "default" : "outline"} 
+                  size="sm"
+                  onClick={() => setSelectedCategoryId("")}
+                >
+                  Todos
+                </Button>
+                {categories.map((category) => (
+                  <Button 
+                    key={category.id} 
+                    variant={selectedCategoryId === category.id ? "default" : "outline"} 
+                    size="sm"
+                    onClick={() => setSelectedCategoryId(category.id)}
+                  >
+                    {category.name}
                   </Button>
                 ))}
               </div>

@@ -27,6 +27,7 @@ import AdminBanners from "./pages/admin/AdminBanners";
 import AdminLME from "./pages/admin/AdminLME";
 import AdminNewsletter from "./pages/admin/AdminNewsletter";
 import AdminDownloads from "./pages/admin/AdminDownloads";
+import AdminFornecedores from "./pages/admin/AdminFornecedores";
 import EditarBanners from "./pages/EditarBanners";
 
 const queryClient = new QueryClient();
@@ -62,6 +63,7 @@ function App() {
             <Route path="/admin/materiais" element={<AdminLayout><AdminMateriais /></AdminLayout>} />
             <Route path="/admin/ebooks" element={<AdminLayout><AdminEbooks /></AdminLayout>} />
             <Route path="/admin/eventos" element={<AdminLayout><AdminEventos /></AdminLayout>} />
+            <Route path="/admin/fornecedores" element={<AdminLayout><AdminFornecedores /></AdminLayout>} />
             <Route path="/admin/banners" element={<AdminLayout><AdminBanners /></AdminLayout>} />
             <Route path="/admin/lme" element={<AdminLayout><AdminLME /></AdminLayout>} />
             <Route path="/admin/downloads" element={<AdminLayout><AdminDownloads /></AdminLayout>} />

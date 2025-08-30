@@ -38,23 +38,36 @@ export const useSuppliers = (categoryId?: string) => {
       setLoading(true);
       setError(null);
 
-      // Fetch suppliers data WITHOUT sensitive contact information
-      let query = supabase
-        .from('suppliers')
-        .select('id, name, slug, specialty, description, logo_url, country, state, city, website, rating, employees_count, category_id, status, created_at, updated_at')
-        .eq('status', 'published');
+      // Check if user is authenticated to determine access level
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      let suppliersData: any[] = [];
+      
+      if (session?.user) {
+        // Authenticated users get full access including contact info
+        let query = supabase
+          .from('suppliers')
+          .select('id, name, slug, specialty, description, logo_url, country, state, city, website, rating, employees_count, category_id, status, created_at, updated_at, email, phone')
+          .eq('status', 'published');
 
-      if (categoryId) {
-        query = query.eq('category_id', categoryId);
+        if (categoryId) {
+          query = query.eq('category_id', categoryId);
+        }
+
+        const { data, error: suppliersError } = await query.order('name');
+        if (suppliersError) throw suppliersError;
+        suppliersData = data || [];
+      } else {
+        // Unauthenticated users get safe public data only
+        const { data, error: suppliersError } = await supabase.rpc(
+          'get_public_suppliers',
+          { category_filter: categoryId || null }
+        );
+        if (suppliersError) throw suppliersError;
+        suppliersData = data || [];
       }
 
-      const { data: suppliersData, error: suppliersError } = await query.order('name');
-
-      if (suppliersError) {
-        throw suppliersError;
-      }
-
-      // Fetch contact info for each supplier
+      // Fetch contact info for each supplier using the existing RPC function
       const suppliersWithContact = await Promise.all(
         (suppliersData || []).map(async (supplier) => {
           const { data: contactData } = await supabase.rpc(

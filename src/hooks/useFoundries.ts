@@ -41,22 +41,36 @@ export const useFoundries = (categoryId?: string) => {
       setLoading(true);
       setError(null);
 
-      let query = supabase
-        .from('foundries')
-        .select('id, name, slug, specialty, description, logo_url, country, state, city, address, email, phone, website, rating, employees_count, category_id, status, created_at, updated_at')
-        .eq('status', 'published');
+      // Check if user is authenticated to determine access level
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      let foundriesData: any[] = [];
+      
+      if (session?.user) {
+        // Authenticated users get full access including contact info
+        let query = supabase
+          .from('foundries')
+          .select('id, name, slug, specialty, description, logo_url, country, state, city, address, website, rating, employees_count, category_id, status, created_at, updated_at, email, phone')
+          .eq('status', 'published');
 
-      if (categoryId) {
-        query = query.eq('category_id', categoryId);
+        if (categoryId) {
+          query = query.eq('category_id', categoryId);
+        }
+
+        const { data, error: foundriesError } = await query.order('name');
+        if (foundriesError) throw foundriesError;
+        foundriesData = data || [];
+      } else {
+        // Unauthenticated users get safe public data only
+        const { data, error: foundriesError } = await supabase.rpc(
+          'get_public_foundries',
+          { category_filter: categoryId || null }
+        );
+        if (foundriesError) throw foundriesError;
+        foundriesData = data || [];
       }
 
-      const { data: foundriesData, error: foundriesError } = await query.order('name');
-
-      if (foundriesError) {
-        throw foundriesError;
-      }
-
-      // Fetch contact info for each foundry
+      // Fetch contact info for each foundry using the existing RPC function
       const foundriesWithContact = await Promise.all(
         (foundriesData || []).map(async (foundry) => {
           const { data: contactData } = await supabase.rpc(

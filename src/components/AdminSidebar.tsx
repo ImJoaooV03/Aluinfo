@@ -11,7 +11,8 @@ import {
   Users,
   Settings,
   Home,
-  BookOpen
+  BookOpen,
+  Download
 } from "lucide-react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -41,6 +42,7 @@ const menuItems = [
   { title: "Eventos", url: "/admin/eventos", icon: Calendar },
   { title: "Banners", url: "/admin/banners", icon: Image },
   { title: "Indicadores LME", url: "/admin/lme", icon: TrendingUp },
+  { title: "Downloads", url: "/admin/downloads", icon: Download },
   { title: "Newsletter", url: "/admin/newsletter", icon: Users },
 ];
 

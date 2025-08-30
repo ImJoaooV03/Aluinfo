@@ -26,6 +26,7 @@ import AdminEventos from "./pages/admin/AdminEventos";
 import AdminBanners from "./pages/admin/AdminBanners";
 import AdminLME from "./pages/admin/AdminLME";
 import AdminNewsletter from "./pages/admin/AdminNewsletter";
+import AdminDownloads from "./pages/admin/AdminDownloads";
 import EditarBanners from "./pages/EditarBanners";
 
 const queryClient = new QueryClient();
@@ -63,6 +64,7 @@ function App() {
             <Route path="/admin/eventos" element={<AdminLayout><AdminEventos /></AdminLayout>} />
             <Route path="/admin/banners" element={<AdminLayout><AdminBanners /></AdminLayout>} />
             <Route path="/admin/lme" element={<AdminLayout><AdminLME /></AdminLayout>} />
+            <Route path="/admin/downloads" element={<AdminLayout><AdminDownloads /></AdminLayout>} />
             <Route path="/admin/newsletter" element={<AdminLayout><AdminNewsletter /></AdminLayout>} />
             
             {/* 404 Route */}

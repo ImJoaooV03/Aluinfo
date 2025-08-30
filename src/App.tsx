@@ -27,7 +27,7 @@ import AdminLME from "./pages/admin/AdminLME";
 import AdminDownloads from "./pages/admin/AdminDownloads";
 import AdminNewsletter from "./pages/admin/AdminNewsletter";
 import AdminAuth from "./pages/AdminAuth";
-import CreateAdmin from "./pages/CreateAdmin";
+
 import EditarBanners from "./pages/EditarBanners";
 
 const queryClient = new QueryClient();
@@ -63,7 +63,6 @@ function App() {
 
             {/* Rotas administrativas sem layout */}
             <Route path="/admin/auth" element={<AdminAuth />} />
-            <Route path="/create-admin" element={<CreateAdmin />} />
             
             {/* Rotas administrativas com layout */}
             <Route path="/admin" element={<AdminLayoutWrapper />}>

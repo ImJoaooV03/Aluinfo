@@ -743,8 +743,8 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      ensure_admin_self: {
-        Args: Record<PropertyKey, never>
+      create_admin_user: {
+        Args: { target_email: string }
         Returns: undefined
       }
       get_foundry_contact_info: {

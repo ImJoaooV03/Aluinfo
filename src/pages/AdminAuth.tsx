@@ -111,20 +111,10 @@ export default function AdminAuth() {
         return;
       }
 
-      console.log('Login bem-sucedido, chamando ensure_admin_self...');
+      console.log('Login bem-sucedido, verificando permissões...');
 
-      // Chamar a função para garantir o papel de admin
-      try {
-        const { error: adminError } = await supabase.rpc('ensure_admin_self');
-        
-        if (adminError) {
-          console.error('Erro ao definir papel de admin:', adminError);
-        } else {
-          console.log('Papel de admin definido com sucesso');
-        }
-      } catch (rpcError) {
-        console.error('Erro ao chamar ensure_admin_self:', rpcError);
-      }
+      // Note: Admin role must now be set manually by an existing admin
+      // The auto-admin backdoor has been removed for security
 
       // Verificar o perfil atualizado
       const { data: profile, error: profileError } = await supabase

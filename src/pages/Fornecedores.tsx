@@ -10,11 +10,71 @@ import { MapPin, Phone, Mail, Globe, Star, Users, Loader2, Shield, Building } fr
 import { useState } from "react";
 import { useSuppliers } from "@/hooks/useSuppliers";
 import { useSupplierCategories } from "@/hooks/useSupplierCategories";
+import { useToast } from "@/hooks/use-toast";
 
 const Fornecedores = () => {
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
   const { suppliers, loading, error } = useSuppliers(selectedCategoryId || undefined);
   const { categories } = useSupplierCategories();
+  const { toast } = useToast();
+
+  const handlePhoneClick = (supplier: any) => {
+    if (supplier.contact_info?.masked) {
+      toast({
+        title: "Login necessário",
+        description: "Faça login para ver as informações de contato completas",
+        variant: "default",
+      });
+      return;
+    }
+
+    if (!supplier.contact_info?.phone) {
+      toast({
+        title: "Telefone não disponível",
+        description: "Este fornecedor não possui telefone cadastrado",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    window.location.href = `tel:${supplier.contact_info.phone}`;
+  };
+
+  const handleEmailClick = (supplier: any) => {
+    if (supplier.contact_info?.masked) {
+      toast({
+        title: "Login necessário",
+        description: "Faça login para ver as informações de contato completas",
+        variant: "default",
+      });
+      return;
+    }
+
+    if (!supplier.contact_info?.email) {
+      toast({
+        title: "Email não disponível",
+        description: "Este fornecedor não possui email cadastrado",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    window.location.href = `mailto:${supplier.contact_info.email}`;
+  };
+
+  const handleWebsiteClick = (website: string) => {
+    if (!website) {
+      toast({
+        title: "Website não disponível",
+        description: "Este fornecedor não possui website cadastrado",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const url = website.startsWith('http') ? website : `https://${website}`;
+    window.open(url, '_blank');
+  };
 
   if (loading) {
     return (
@@ -145,26 +205,31 @@ const Fornecedores = () => {
                       <Button 
                         size="sm" 
                         variant="outline"
-                        title={supplier.contact_info?.phone || 'Telefone não disponível'}
+                        onClick={() => handlePhoneClick(supplier)}
+                        title={supplier.contact_info?.masked ? "Login necessário" : supplier.contact_info?.phone || 'Telefone não disponível'}
+                        aria-label="Ligar para fornecedor"
                       >
                         <Phone className="h-3 w-3" />
                       </Button>
                       <Button 
                         size="sm" 
                         variant="outline"
-                        title={supplier.contact_info?.email || 'Email não disponível'}
+                        onClick={() => handleEmailClick(supplier)}
+                        title={supplier.contact_info?.masked ? "Login necessário" : supplier.contact_info?.email || 'Email não disponível'}
+                        aria-label="Enviar email para fornecedor"
                       >
                         <Mail className="h-3 w-3" />
                       </Button>
-                      {supplier.website && (
-                        <Button 
-                          size="sm" 
-                          variant="outline"
-                          onClick={() => window.open(`https://${supplier.website}`, '_blank')}
-                        >
-                          <Globe className="h-3 w-3" />
-                        </Button>
-                      )}
+                      <Button 
+                        size="sm" 
+                        variant="outline"
+                        onClick={() => handleWebsiteClick(supplier.website)}
+                        title={supplier.website ? `Visitar ${supplier.website}` : 'Website não disponível'}
+                        aria-label="Visitar website do fornecedor"
+                        disabled={!supplier.website}
+                      >
+                        <Globe className="h-3 w-3" />
+                      </Button>
                     </div>
 
                     {supplier.contact_info && !supplier.contact_info.masked && (

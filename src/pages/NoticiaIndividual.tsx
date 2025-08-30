@@ -1,7 +1,7 @@
 import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, Clock, User, Tag, Share2, Eye } from "lucide-react";
 import DOMPurify from "dompurify";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import Header from "@/components/Header";
 import Navigation from "@/components/Navigation";
@@ -37,6 +37,7 @@ const NoticiaIndividual = () => {
   const [relatedNews, setRelatedNews] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  const viewTrackedRef = useRef(false);
 
   useEffect(() => {
     const fetchNews = async () => {
@@ -60,27 +61,24 @@ const NoticiaIndividual = () => {
 
         setNoticia(newsData);
 
-        // Track the view
-        try {
-          await supabase
-            .from('analytics_views')
-            .insert({
-              content_id: newsData.id,
-              content_type: 'news',
-              user_id: null, // Could be set if user is authenticated
-              ip_address: null, // Could be captured if needed
-              user_agent: navigator.userAgent,
-              referer: document.referrer || null
-            });
-
-          // Update local view count immediately
-          setNoticia(prev => prev ? {
-            ...prev,
-            view_count: (prev.view_count || 0) + 1
-          } : null);
-        } catch (viewError) {
-          console.error('Error tracking view:', viewError);
-          // Don't fail the whole page if view tracking fails
+        // Track the view only once per page load
+        if (!viewTrackedRef.current) {
+          viewTrackedRef.current = true;
+          try {
+            await supabase
+              .from('analytics_views')
+              .insert({
+                content_id: newsData.id,
+                content_type: 'news',
+                user_id: null, // Could be set if user is authenticated
+                ip_address: null, // Could be captured if needed
+                user_agent: navigator.userAgent,
+                referer: document.referrer || null
+              });
+          } catch (viewError) {
+            console.error('Error tracking view:', viewError);
+            // Don't fail the whole page if view tracking fails
+          }
         }
 
         // Fetch related news (exclude current article)

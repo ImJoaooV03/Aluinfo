@@ -7,10 +7,10 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Edit, Trash2, Building, Star } from "lucide-react";
+import { Plus, Edit, Trash2, Building, Star, MapPin, Users, Mail, Phone } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useSupplierCategories } from "@/hooks/useSupplierCategories";
 import { SupplierCategoryDialog } from "@/components/admin/SupplierCategoryDialog";
@@ -305,367 +305,342 @@ export default function AdminFornecedores() {
             Gerencie os fornecedores do portal
           </p>
         </div>
+      </div>
 
-        <div className="flex gap-2">
-          <SupplierCategoryDialog onCategoryCreated={refetchCategories} />
-          
-          <Dialog open={dialogOpen} onOpenChange={(open) => {
-            setDialogOpen(open);
-            if (!open) resetForm();
-          }}>
-            <DialogTrigger asChild>
-              <Button>
-                <Plus className="mr-2 h-4 w-4" />
-                Novo Fornecedor
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle>
-                  {editingSupplier ? "Editar Fornecedor" : "Novo Fornecedor"}
-                </DialogTitle>
-                <DialogDescription>
-                  {editingSupplier 
-                    ? "Atualize as informações do fornecedor" 
-                    : "Preencha os dados para cadastrar um novo fornecedor"
-                  }
-                </DialogDescription>
-              </DialogHeader>
+      <Tabs defaultValue="suppliers" className="space-y-4">
+        <TabsList>
+          <TabsTrigger value="suppliers">Fornecedores</TabsTrigger>
+          <TabsTrigger value="categories">Categorias</TabsTrigger>
+        </TabsList>
 
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
+        <TabsContent value="suppliers" className="space-y-4">
+          <div className="flex justify-between items-center">
+            <h2 className="text-xl font-semibold">Fornecedores ({suppliers.length})</h2>
+            <Dialog open={dialogOpen} onOpenChange={(open) => {
+              setDialogOpen(open);
+              if (!open) resetForm();
+            }}>
+              <DialogTrigger asChild>
+                <Button>
+                  <Plus className="mr-2 h-4 w-4" />
+                  Novo Fornecedor
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>
+                    {editingSupplier ? "Editar Fornecedor" : "Novo Fornecedor"}
+                  </DialogTitle>
+                  <DialogDescription>
+                    {editingSupplier 
+                      ? "Atualize as informações do fornecedor" 
+                      : "Preencha os dados para cadastrar um novo fornecedor"
+                    }
+                  </DialogDescription>
+                </DialogHeader>
+
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="name">Nome da Empresa *</Label>
+                      <Input
+                        id="name"
+                        value={formData.name}
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        required
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="specialty">Especialidade</Label>
+                      <Input
+                        id="specialty"
+                        value={formData.specialty}
+                        onChange={(e) => setFormData({ ...formData, specialty: e.target.value })}
+                        placeholder="Ex: Equipamentos industriais"
+                      />
+                    </div>
+                  </div>
+
                   <div className="space-y-2">
-                    <Label htmlFor="name">Nome da Empresa *</Label>
-                    <Input
-                      id="name"
-                      value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      required
+                    <Label htmlFor="description">Descrição</Label>
+                    <Textarea
+                      id="description"
+                      value={formData.description}
+                      onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                      rows={3}
+                      placeholder="Descrição da empresa e seus produtos/serviços"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="specialty">Especialidade</Label>
+                    <Label htmlFor="logo_url">URL do Logo</Label>
                     <Input
-                      id="specialty"
-                      value={formData.specialty}
-                      onChange={(e) => setFormData({ ...formData, specialty: e.target.value })}
-                      placeholder="Ex: Equipamentos industriais"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="description">Descrição</Label>
-                  <Textarea
-                    id="description"
-                    value={formData.description}
-                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    rows={3}
-                    placeholder="Descrição da empresa e seus produtos/serviços"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="logo_url">URL do Logo</Label>
-                  <Input
-                    id="logo_url"
-                    value={formData.logo_url}
-                    onChange={(e) => setFormData({ ...formData, logo_url: e.target.value })}
-                    placeholder="https://exemplo.com/logo.jpg"
-                  />
-                </div>
-
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="country">País</Label>
-                    <Input
-                      id="country"
-                      value={formData.country}
-                      onChange={(e) => setFormData({ ...formData, country: e.target.value })}
+                      id="logo_url"
+                      value={formData.logo_url}
+                      onChange={(e) => setFormData({ ...formData, logo_url: e.target.value })}
+                      placeholder="https://exemplo.com/logo.jpg"
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="state">Estado</Label>
-                    <Input
-                      id="state"
-                      value={formData.state}
-                      onChange={(e) => setFormData({ ...formData, state: e.target.value })}
-                      placeholder="Ex: SP, RJ, MG"
-                    />
+                  <div className="grid grid-cols-3 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="country">País</Label>
+                      <Input
+                        id="country"
+                        value={formData.country}
+                        onChange={(e) => setFormData({ ...formData, country: e.target.value })}
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="state">Estado</Label>
+                      <Input
+                        id="state"
+                        value={formData.state}
+                        onChange={(e) => setFormData({ ...formData, state: e.target.value })}
+                        placeholder="Ex: SP, RJ, MG"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="city">Cidade</Label>
+                      <Input
+                        id="city"
+                        value={formData.city}
+                        onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                      />
+                    </div>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="city">Cidade</Label>
+                    <Label htmlFor="address">Endereço</Label>
                     <Input
-                      id="city"
-                      value={formData.city}
-                      onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="address">Endereço</Label>
-                  <Input
-                    id="address"
-                    value={formData.address}
-                    onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                    placeholder="Endereço completo"
-                  />
-                </div>
-
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="website">Website</Label>
-                    <Input
-                      id="website"
-                      value={formData.website}
-                      onChange={(e) => setFormData({ ...formData, website: e.target.value })}
-                      placeholder="www.empresa.com"
+                      id="address"
+                      value={formData.address}
+                      onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                      placeholder="Endereço completo"
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      placeholder="contato@empresa.com"
-                    />
+                  <div className="grid grid-cols-3 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="website">Website</Label>
+                      <Input
+                        id="website"
+                        value={formData.website}
+                        onChange={(e) => setFormData({ ...formData, website: e.target.value })}
+                        placeholder="www.empresa.com"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="email">Email</Label>
+                      <Input
+                        id="email"
+                        type="email"
+                        value={formData.email}
+                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        placeholder="contato@empresa.com"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="phone">Telefone</Label>
+                      <Input
+                        id="phone"
+                        value={formData.phone}
+                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                        placeholder="(11) 99999-9999"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="rating">Avaliação (0-5)</Label>
+                      <Input
+                        id="rating"
+                        type="number"
+                        min="0"
+                        max="5"
+                        step="0.1"
+                        value={formData.rating}
+                        onChange={(e) => setFormData({ ...formData, rating: e.target.value })}
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="employees_count">Nº de Funcionários</Label>
+                      <Input
+                        id="employees_count"
+                        type="number"
+                        min="1"
+                        value={formData.employees_count}
+                        onChange={(e) => setFormData({ ...formData, employees_count: e.target.value })}
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="category">Categoria</Label>
+                      <Select 
+                        value={formData.category_id} 
+                        onValueChange={(value) => setFormData({ ...formData, category_id: value })}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione uma categoria" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {categories.map((category) => (
+                            <SelectItem key={category.id} value={category.id}>
+                              {category.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="phone">Telefone</Label>
-                    <Input
-                      id="phone"
-                      value={formData.phone}
-                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      placeholder="(11) 99999-9999"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="rating">Avaliação (0-5)</Label>
-                    <Input
-                      id="rating"
-                      type="number"
-                      min="0"
-                      max="5"
-                      step="0.1"
-                      value={formData.rating}
-                      onChange={(e) => setFormData({ ...formData, rating: e.target.value })}
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="employees_count">Nº de Funcionários</Label>
-                    <Input
-                      id="employees_count"
-                      type="number"
-                      min="1"
-                      value={formData.employees_count}
-                      onChange={(e) => setFormData({ ...formData, employees_count: e.target.value })}
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="category">Categoria</Label>
+                    <Label htmlFor="status">Status</Label>
                     <Select 
-                      value={formData.category_id} 
-                      onValueChange={(value) => setFormData({ ...formData, category_id: value })}
+                      value={formData.status} 
+                      onValueChange={(value: 'draft' | 'published' | 'archived') => 
+                        setFormData({ ...formData, status: value })
+                      }
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="Selecione uma categoria" />
+                        <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        {categories.map((category) => (
-                          <SelectItem key={category.id} value={category.id}>
-                            {category.name}
-                          </SelectItem>
-                        ))}
+                        <SelectItem value="published">Publicado</SelectItem>
+                        <SelectItem value="draft">Rascunho</SelectItem>
+                        <SelectItem value="archived">Arquivado</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
-                </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="status">Status</Label>
-                  <Select 
-                    value={formData.status} 
-                    onValueChange={(value: 'draft' | 'published' | 'archived') => 
-                      setFormData({ ...formData, status: value })
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="draft">Rascunho</SelectItem>
-                      <SelectItem value="published">Publicado</SelectItem>
-                      <SelectItem value="archived">Arquivado</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+                  <div className="flex justify-end space-x-2">
+                    <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
+                      Cancelar
+                    </Button>
+                    <Button type="submit">
+                      {editingSupplier ? "Atualizar" : "Criar"} Fornecedor
+                    </Button>
+                  </div>
+                </form>
+              </DialogContent>
+            </Dialog>
+          </div>
 
-                <div className="flex justify-end space-x-2 pt-4">
-                  <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
-                    Cancelar
-                  </Button>
-                  <Button type="submit">
-                    {editingSupplier ? "Atualizar" : "Criar"} Fornecedor
-                  </Button>
-                </div>
-              </form>
-            </DialogContent>
-          </Dialog>
-        </div>
-      </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Categorias de Fornecedores</CardTitle>
-          <CardDescription>
-            Gerencie as categorias para organizar os fornecedores
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Nome</TableHead>
-                <TableHead>Slug</TableHead>
-                <TableHead>Descrição</TableHead>
-                <TableHead className="text-right">Ações</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {categories.map((category) => (
-                <TableRow key={category.id}>
-                  <TableCell className="font-medium">{category.name}</TableCell>
-                  <TableCell className="text-muted-foreground">{category.slug}</TableCell>
-                  <TableCell className="text-muted-foreground">
-                    {category.description || '-'}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-end space-x-2">
-                      <SupplierCategoryDialog 
-                        category={category}
-                        onCategoryCreated={refetchCategories}
-                        trigger={
-                          <Button variant="outline" size="sm">
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                        }
-                      />
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleDeleteCategory(category.id)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Fornecedores Cadastrados</CardTitle>
-          <CardDescription>
-            Lista de todos os fornecedores cadastrados no sistema
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Nome</TableHead>
-                <TableHead>Especialidade</TableHead>
-                <TableHead>Categoria</TableHead>
-                <TableHead>Localização</TableHead>
-                <TableHead>Avaliação</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-right">Ações</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {suppliers.map((supplier) => (
-                <TableRow key={supplier.id}>
-                  <TableCell>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {suppliers.map((supplier) => (
+              <Card key={supplier.id} className="relative">
+                <CardHeader className="pb-3">
+                  <div className="flex justify-between items-start">
                     <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-muted rounded-lg flex items-center justify-center">
-                        {supplier.logo_url ? (
-                          <img 
-                            src={supplier.logo_url} 
-                            alt={supplier.name}
-                            className="w-8 h-8 object-contain rounded"
-                          />
-                        ) : (
-                          <Building className="h-5 w-5 text-muted-foreground" />
+                      {supplier.logo_url && (
+                        <img 
+                          src={supplier.logo_url} 
+                          alt={supplier.name}
+                          className="w-10 h-10 rounded object-cover"
+                        />
+                      )}
+                      <div>
+                        <CardTitle className="text-lg">{supplier.name}</CardTitle>
+                        {supplier.supplier_categories && (
+                          <Badge variant="outline" className="text-xs">
+                            {supplier.supplier_categories.name}
+                          </Badge>
                         )}
                       </div>
-                      <div>
-                        <div className="font-medium">{supplier.name}</div>
-                        <div className="text-sm text-muted-foreground">
-                          {supplier.employees_count && `${supplier.employees_count} funcionários`}
-                        </div>
-                      </div>
                     </div>
-                  </TableCell>
-                  <TableCell>{supplier.specialty || '-'}</TableCell>
-                  <TableCell>
-                    {supplier.supplier_categories?.name || 'Sem categoria'}
-                  </TableCell>
-                  <TableCell>
-                    {supplier.city && supplier.state 
-                      ? `${supplier.city}, ${supplier.state}` 
-                      : supplier.country || '-'
-                    }
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center space-x-1">
-                      <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                      <span>{supplier.rating || 0}</span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
                     {getStatusBadge(supplier.status)}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-end space-x-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleEdit(supplier)}
-                      >
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {supplier.specialty && (
+                    <p className="text-sm text-muted-foreground">{supplier.specialty}</p>
+                  )}
+                  
+                  <div className="space-y-2">
+                    {(supplier.city || supplier.state) && (
+                      <div className="flex items-center text-sm text-muted-foreground">
+                        <MapPin className="h-4 w-4 mr-2" />
+                        {[supplier.city, supplier.state].filter(Boolean).join(', ')}
+                      </div>
+                    )}
+                    
+                    {supplier.employees_count && (
+                      <div className="flex items-center text-sm text-muted-foreground">
+                        <Users className="h-4 w-4 mr-2" />
+                        {supplier.employees_count} funcionários
+                      </div>
+                    )}
+
+                    {supplier.rating && (
+                      <div className="flex items-center text-sm">
+                        <Star className="h-4 w-4 mr-1 fill-yellow-400 text-yellow-400" />
+                        {supplier.rating}/5
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex justify-between items-center pt-3">
+                    <div className="text-xs text-muted-foreground">
+                      {new Date(supplier.created_at).toLocaleDateString('pt-BR')}
+                    </div>
+                    <div className="flex space-x-1">
+                      <Button size="sm" variant="outline" onClick={() => handleEdit(supplier)}>
                         <Edit className="h-4 w-4" />
                       </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleDelete(supplier.id)}
-                      >
+                      <Button size="sm" variant="destructive" onClick={() => handleDelete(supplier.id)}>
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="categories" className="space-y-4">
+          <div className="flex justify-between items-center">
+            <h2 className="text-xl font-semibold">Categorias ({categories.length})</h2>
+            <SupplierCategoryDialog onCategoryCreated={refetchCategories} />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {categories.map((category) => (
+              <Card key={category.id}>
+                <CardHeader>
+                  <CardTitle className="text-lg">{category.name}</CardTitle>
+                  <Badge variant="outline" className="w-fit">{category.slug}</Badge>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <p className="text-sm text-muted-foreground">
+                    {category.description || "Sem descrição"}
+                  </p>
+                  
+                  <div className="flex justify-between items-center pt-3">
+                    <div className="text-xs text-muted-foreground">
+                      {new Date(category.created_at).toLocaleDateString('pt-BR')}
+                    </div>
+                    <Button 
+                      size="sm" 
+                      variant="destructive" 
+                      onClick={() => handleDeleteCategory(category.id)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

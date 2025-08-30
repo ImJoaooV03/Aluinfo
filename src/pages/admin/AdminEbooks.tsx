@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { 
   Select, 
@@ -15,14 +16,6 @@ import {
   SelectTrigger, 
   SelectValue 
 } from "@/components/ui/select";
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from "@/components/ui/table";
 import { 
   Dialog, 
   DialogContent, 
@@ -38,20 +31,24 @@ import {
   FileText, 
   Image as ImageIcon,
   Star,
-  Download
+  Download,
+  DollarSign,
+  BookOpen,
+  Clock
 } from "lucide-react";
 import { Ebook } from "@/hooks/useEbooks";
+import { useCategories } from "@/hooks/useCategories";
 
 type EbookStatus = "draft" | "published" | "archived";
 
 const AdminEbooks = () => {
   const [ebooks, setEbooks] = useState<Ebook[]>([]);
-  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingEbook, setEditingEbook] = useState<Ebook | null>(null);
   const { toast } = useToast();
+  const { categories, refetch: refetchCategories } = useCategories();
 
   const [formData, setFormData] = useState({
     title: "",
@@ -69,7 +66,6 @@ const AdminEbooks = () => {
 
   useEffect(() => {
     fetchEbooks();
-    fetchCategories();
   }, []);
 
   const fetchEbooks = async () => {
@@ -89,20 +85,6 @@ const AdminEbooks = () => {
       });
     } finally {
       setLoading(false);
-    }
-  };
-
-  const fetchCategories = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('categories')
-        .select('*')
-        .order('name');
-
-      if (error) throw error;
-      setCategories(data || []);
-    } catch (error: any) {
-      console.error('Erro ao carregar categorias:', error);
     }
   };
 

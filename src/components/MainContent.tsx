@@ -31,7 +31,7 @@ const MainContent = () => {
   } | null>(null);
 
   // Get latest items for each section
-  const latestNews = news.slice(0, 4);
+  const latestNews = news.slice(0, 2);
   const latestMaterials = materials.slice(0, 3);
   const latestEbooks = ebooks.slice(0, 3);
   const upcomingEvents = events.slice(0, 3);
@@ -69,7 +69,7 @@ const MainContent = () => {
 
         {newsLoading ? (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
-            {[...Array(4)].map((_, i) => (
+            {[...Array(2)].map((_, i) => (
               <div key={i} className="h-64 bg-muted animate-pulse rounded-lg" />
             ))}
           </div>
@@ -82,7 +82,7 @@ const MainContent = () => {
                 summary={item.excerpt || item.content.substring(0, 200) + '...'}
                 author="Portal da Fundição"
                 date={formatDate(item.published_at || item.created_at)}
-                category="Notícias"
+                category={item.categories?.name || 'Notícias'}
                 image={item.featured_image_url || undefined}
                 featured={index === 0}
                 slug={item.slug}

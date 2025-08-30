@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Edit, Trash2, Eye, Tags } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { useCategories } from "@/hooks/useCategories";
 
 interface CategoryDialogProps {
   onCategoryCreated: () => void;
@@ -160,10 +161,10 @@ interface Category {
 
 export default function AdminNoticias() {
   const [news, setNews] = useState<News[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingNews, setEditingNews] = useState<News | null>(null);
+  const { categories, loading: categoriesLoading, refetch: refetchCategories } = useCategories();
   const { toast } = useToast();
 
   const [formData, setFormData] = useState({
@@ -177,7 +178,6 @@ export default function AdminNoticias() {
 
   useEffect(() => {
     loadNews();
-    loadCategories();
   }, []);
 
   const loadNews = async () => {
@@ -203,17 +203,30 @@ export default function AdminNoticias() {
     }
   };
 
-  const loadCategories = async () => {
+  const handleDeleteCategory = async (categoryId: string, categoryName: string) => {
+    if (!confirm(`Tem certeza que deseja excluir a categoria "${categoryName}"? As notícias desta categoria ficarão sem categoria.`)) return;
+
     try {
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('categories')
-        .select('*')
-        .order('name');
+        .delete()
+        .eq('id', categoryId);
 
       if (error) throw error;
-      setCategories(data || []);
+      
+      toast({
+        title: "Sucesso",
+        description: "Categoria excluída com sucesso!",
+      });
+      
+      refetchCategories();
+      loadNews(); // Reload news to update category display
     } catch (error: any) {
-      console.error('Error loading categories:', error);
+      toast({
+        title: "Erro",
+        description: error.message,
+        variant: "destructive",
+      });
     }
   };
 
@@ -495,9 +508,70 @@ export default function AdminNoticias() {
             </DialogContent>
           </Dialog>
           
-          <CategoryDialog onCategoryCreated={loadCategories} />
+          <CategoryDialog onCategoryCreated={refetchCategories} />
         </div>
       </div>
+
+      {/* Categories Management */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Categorias</CardTitle>
+          <CardDescription>
+            Gerencie as categorias das notícias
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {categoriesLoading ? (
+            <div>Carregando categorias...</div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Nome</TableHead>
+                  <TableHead>Slug</TableHead>
+                  <TableHead>Descrição</TableHead>
+                  <TableHead>Criado em</TableHead>
+                  <TableHead className="text-right">Ações</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {categories.map((category) => (
+                  <TableRow key={category.id}>
+                    <TableCell className="font-medium">
+                      {category.name}
+                    </TableCell>
+                    <TableCell className="font-mono text-sm">
+                      {category.slug}
+                    </TableCell>
+                    <TableCell>
+                      {category.description || "—"}
+                    </TableCell>
+                    <TableCell>
+                      {new Date(category.created_at).toLocaleDateString('pt-BR')}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => handleDeleteCategory(category.id, category.name)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+                {categories.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={5} className="text-center text-muted-foreground">
+                      Nenhuma categoria cadastrada
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          )}
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>

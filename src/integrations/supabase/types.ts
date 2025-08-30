@@ -751,6 +751,10 @@ export type Database = {
         Args: { foundry_id: string }
         Returns: Json
       }
+      get_my_newsletter_subscription: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
+      }
       get_public_foundries: {
         Args: { category_filter?: string }
         Returns: {
@@ -809,6 +813,14 @@ export type Database = {
       mask_phone: {
         Args: { phone_number: string }
         Returns: string
+      }
+      subscribe_to_newsletter: {
+        Args: { subscriber_email: string; subscriber_name?: string }
+        Returns: Json
+      }
+      unsubscribe_from_newsletter: {
+        Args: { subscriber_email: string; unsubscribe_token?: string }
+        Returns: Json
       }
     }
     Enums: {

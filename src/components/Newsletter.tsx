@@ -1,12 +1,70 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Mail, Send } from "lucide-react";
+import { Mail, Send, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 const Newsletter = () => {
-  const handleSubmit = (e: React.FormEvent) => {
+  const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Newsletter subscription logic would go here
-    console.log("Newsletter subscription submitted");
+    if (!email.trim()) return;
+
+    setIsLoading(true);
+    
+    try {
+      // Use the secure subscription function
+      const { data, error } = await supabase.rpc('subscribe_to_newsletter', {
+        subscriber_email: email.trim(),
+        subscriber_name: name.trim() || null
+      });
+
+      if (error) {
+        console.error('Newsletter subscription error:', error);
+        toast({
+          title: "Erro",
+          description: "Erro ao processar inscrição na newsletter. Tente novamente.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Handle different response types
+      const result = data as { success: boolean; message: string; already_subscribed?: boolean; reactivated?: boolean };
+      
+      if (result.success) {
+        toast({
+          title: "Sucesso!",
+          description: result.message,
+        });
+        
+        // Clear form only for new subscriptions
+        if (!result.already_subscribed) {
+          setEmail("");
+          setName("");
+        }
+      } else {
+        toast({
+          title: "Erro",
+          description: result.message || "Erro ao processar inscrição",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error('Newsletter subscription error:', error);
+      toast({
+        title: "Erro",
+        description: "Erro inesperado ao processar inscrição",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -27,24 +85,42 @@ const Newsletter = () => {
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="max-w-md mx-auto">
-            <div className="flex flex-col sm:flex-row gap-3">
-              <div className="flex-1">
-                <Input
-                  type="email"
-                  placeholder="Seu melhor e-mail"
-                  className="h-12 text-base"
-                  required
-                />
+          <form onSubmit={handleSubmit} className="max-w-md mx-auto space-y-3">
+            <div className="flex flex-col gap-3">
+              <Input
+                type="text"
+                placeholder="Seu nome (opcional)"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="h-12 text-base bg-white/10 border-white/20 text-white placeholder:text-white/60"
+                disabled={isLoading}
+              />
+              <div className="flex flex-col sm:flex-row gap-3">
+                <div className="flex-1">
+                  <Input
+                    type="email"
+                    placeholder="Seu melhor e-mail"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="h-12 text-base bg-white/10 border-white/20 text-white placeholder:text-white/60"
+                    required
+                    disabled={isLoading}
+                  />
+                </div>
+                <Button 
+                  type="submit" 
+                  size="lg" 
+                  className="h-12 px-8 bg-orange-500 hover:bg-orange-600 text-white"
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  ) : (
+                    <Send className="h-4 w-4 mr-2" />
+                  )}
+                  {isLoading ? "Processando..." : "Assinar"}
+                </Button>
               </div>
-              <Button 
-                type="submit" 
-                size="lg" 
-                className="h-12 px-8 bg-orange-500 hover:bg-orange-600 text-white"
-              >
-                <Send className="h-4 w-4 mr-2" />
-                Assinar
-              </Button>
             </div>
             <p className="text-sm text-slate-400 mt-3">
               Ao assinar, você concorda com nossa política de privacidade. 

@@ -28,7 +28,6 @@ import AdminNewsletter from "./pages/admin/AdminNewsletter";
 import AdminAuth from "./pages/AdminAuth";
 import CreateAdmin from "./pages/CreateAdmin";
 import EditarBanners from "./pages/EditarBanners";
-import "./App.css";
 
 const queryClient = new QueryClient();
 

@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -27,7 +28,7 @@ export interface Foundry {
   contact_info?: FoundryContactInfo;
 }
 
-export const useFoundries = () => {
+export const useFoundries = (categoryId?: string) => {
   const [foundries, setFoundries] = useState<Foundry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -37,12 +38,16 @@ export const useFoundries = () => {
       setLoading(true);
       setError(null);
 
-      // Fetch foundries data WITHOUT sensitive contact information
-      const { data: foundriesData, error: foundriesError } = await supabase
+      let query = supabase
         .from('foundries')
         .select('id, name, slug, specialty, description, logo_url, country, state, city, website, rating, employees_count, category_id, status, created_at, updated_at')
-        .eq('status', 'published')
-        .order('name');
+        .eq('status', 'published');
+
+      if (categoryId) {
+        query = query.eq('category_id', categoryId);
+      }
+
+      const { data: foundriesData, error: foundriesError } = await query.order('name');
 
       if (foundriesError) {
         throw foundriesError;
@@ -72,14 +77,71 @@ export const useFoundries = () => {
     }
   };
 
+  const createFoundry = async (foundryData: Omit<Foundry, 'id' | 'created_at' | 'updated_at' | 'contact_info'>) => {
+    try {
+      const { data, error: createError } = await supabase
+        .from('foundries')
+        .insert([foundryData])
+        .select()
+        .single();
+
+      if (createError) throw createError;
+
+      await fetchFoundries();
+      return { data, error: null };
+    } catch (err) {
+      console.error('Error creating foundry:', err);
+      return { data: null, error: err instanceof Error ? err.message : 'An error occurred' };
+    }
+  };
+
+  const updateFoundry = async (id: string, updates: Partial<Omit<Foundry, 'id' | 'created_at' | 'updated_at' | 'contact_info'>>) => {
+    try {
+      const { data, error: updateError } = await supabase
+        .from('foundries')
+        .update(updates)
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (updateError) throw updateError;
+
+      await fetchFoundries();
+      return { data, error: null };
+    } catch (err) {
+      console.error('Error updating foundry:', err);
+      return { data: null, error: err instanceof Error ? err.message : 'An error occurred' };
+    }
+  };
+
+  const deleteFoundry = async (id: string) => {
+    try {
+      const { error: deleteError } = await supabase
+        .from('foundries')
+        .delete()
+        .eq('id', id);
+
+      if (deleteError) throw deleteError;
+
+      await fetchFoundries();
+      return { error: null };
+    } catch (err) {
+      console.error('Error deleting foundry:', err);
+      return { error: err instanceof Error ? err.message : 'An error occurred' };
+    }
+  };
+
   useEffect(() => {
     fetchFoundries();
-  }, []);
+  }, [categoryId]);
 
   return {
     foundries,
     loading,
     error,
     refetch: fetchFoundries,
+    createFoundry,
+    updateFoundry,
+    deleteFoundry,
   };
 };

@@ -1,3 +1,4 @@
+
 import Header from "@/components/Header";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
@@ -7,12 +8,74 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { MapPin, Phone, Mail, Globe, Star, Factory, Loader2, Shield } from "lucide-react";
+import { useState } from "react";
 import { useFoundries } from "@/hooks/useFoundries";
+import { useFoundryCategories } from "@/hooks/useFoundryCategories";
+import { useToast } from "@/hooks/use-toast";
 
 const Fundicoes = () => {
-  const { foundries, loading, error } = useFoundries();
-  
-  const categorias = ["Todos", "Ferro Fundido", "Alumínio", "Bronze/Latão", "Microfusão", "Grande Porte", "Sustentável"];
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
+  const { foundries, loading, error } = useFoundries(selectedCategoryId || undefined);
+  const { categories } = useFoundryCategories();
+  const { toast } = useToast();
+
+  const handlePhoneClick = (foundry: any) => {
+    if (foundry.contact_info?.masked) {
+      toast({
+        title: "Login necessário",
+        description: "Faça login para ver as informações de contato completas",
+        variant: "default",
+      });
+      return;
+    }
+
+    if (!foundry.contact_info?.phone) {
+      toast({
+        title: "Telefone não disponível",
+        description: "Esta fundição não possui telefone cadastrado",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    window.location.href = `tel:${foundry.contact_info.phone}`;
+  };
+
+  const handleEmailClick = (foundry: any) => {
+    if (foundry.contact_info?.masked) {
+      toast({
+        title: "Login necessário",
+        description: "Faça login para ver as informações de contato completas",
+        variant: "default",
+      });
+      return;
+    }
+
+    if (!foundry.contact_info?.email) {
+      toast({
+        title: "Email não disponível",
+        description: "Esta fundição não possui email cadastrado",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    window.location.href = `mailto:${foundry.contact_info.email}`;
+  };
+
+  const handleWebsiteClick = (website: string) => {
+    if (!website) {
+      toast({
+        title: "Website não disponível",
+        description: "Esta fundição não possui website cadastrado",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const url = website.startsWith('http') ? website : `https://${website}`;
+    window.open(url, '_blank');
+  };
 
   if (loading) {
     return (
@@ -61,11 +124,24 @@ const Fundicoes = () => {
               </p>
             </div>
 
+            {/* Filtros por categoria */}
             <div className="mb-6">
               <div className="flex flex-wrap gap-2">
-                {categorias.map((categoria) => (
-                  <Button key={categoria} variant="outline" size="sm">
-                    {categoria}
+                <Button
+                  variant={selectedCategoryId === "" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setSelectedCategoryId("")}
+                >
+                  Todas
+                </Button>
+                {categories.map((category) => (
+                  <Button
+                    key={category.id}
+                    variant={selectedCategoryId === category.id ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setSelectedCategoryId(category.id)}
+                  >
+                    {category.name}
                   </Button>
                 ))}
               </div>
@@ -131,26 +207,31 @@ const Fundicoes = () => {
                       <Button 
                         size="sm" 
                         variant="outline"
-                        title={foundry.contact_info?.phone || 'Telefone não disponível'}
+                        onClick={() => handlePhoneClick(foundry)}
+                        title={foundry.contact_info?.masked ? "Login necessário" : foundry.contact_info?.phone || 'Telefone não disponível'}
+                        aria-label="Ligar para fundição"
                       >
                         <Phone className="h-3 w-3" />
                       </Button>
                       <Button 
                         size="sm" 
                         variant="outline"
-                        title={foundry.contact_info?.email || 'Email não disponível'}
+                        onClick={() => handleEmailClick(foundry)}
+                        title={foundry.contact_info?.masked ? "Login necessário" : foundry.contact_info?.email || 'Email não disponível'}
+                        aria-label="Enviar email para fundição"
                       >
                         <Mail className="h-3 w-3" />
                       </Button>
-                      {foundry.website && (
-                        <Button 
-                          size="sm" 
-                          variant="outline"
-                          onClick={() => window.open(`https://${foundry.website}`, '_blank')}
-                        >
-                          <Globe className="h-3 w-3" />
-                        </Button>
-                      )}
+                      <Button 
+                        size="sm" 
+                        variant="outline"
+                        onClick={() => handleWebsiteClick(foundry.website)}
+                        title={foundry.website ? `Visitar ${foundry.website}` : 'Website não disponível'}
+                        aria-label="Visitar website da fundição"
+                        disabled={!foundry.website}
+                      >
+                        <Globe className="h-3 w-3" />
+                      </Button>
                     </div>
 
                     {foundry.contact_info && !foundry.contact_info.masked && (

@@ -1,4 +1,5 @@
 
+import { useState } from "react";
 import { useLocation, Link } from "react-router-dom";
 import Header from "@/components/Header";
 import Navigation from "@/components/Navigation";
@@ -8,9 +9,10 @@ import Sidebar from "@/components/Sidebar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Clock, User, Search as SearchIcon } from "lucide-react";
+import { Clock, User, Search as SearchIcon, Tag } from "lucide-react";
 import { useUniversalSearch } from "@/hooks/useUniversalSearch";
 import { useNews } from "@/hooks/useNews";
+import { useCategories } from "@/hooks/useCategories";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
@@ -18,9 +20,11 @@ const Noticias = () => {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const searchTerm = searchParams.get('search');
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
   const { results: searchResults, loading: searchLoading } = useUniversalSearch(searchTerm || '');
   const { news, loading: newsLoading } = useNews();
+  const { categories } = useCategories();
 
   const formatDate = (dateString: string) => {
     try {
@@ -178,9 +182,22 @@ const Noticias = () => {
 
             <div className="mb-6">
               <div className="flex flex-wrap gap-2">
-                {["Todos", "Tecnologia", "Sustentabilidade", "Mercado"].map((categoria) => (
-                  <Button key={categoria} variant="outline" size="sm">
-                    {categoria}
+                <Button 
+                  key="all"
+                  variant={selectedCategory === 'all' ? 'default' : 'outline'} 
+                  size="sm"
+                  onClick={() => setSelectedCategory('all')}
+                >
+                  Todos
+                </Button>
+                {categories.map((categoria) => (
+                  <Button 
+                    key={categoria.id}
+                    variant={selectedCategory === categoria.id ? 'default' : 'outline'} 
+                    size="sm"
+                    onClick={() => setSelectedCategory(categoria.id)}
+                  >
+                    {categoria.name}
                   </Button>
                 ))}
               </div>
@@ -194,7 +211,9 @@ const Noticias = () => {
               </div>
             ) : (
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
-                {news.map((noticia) => (
+                {news
+                  .filter((noticia) => selectedCategory === 'all' || noticia.category_id === selectedCategory)
+                  .map((noticia) => (
                   <Link key={noticia.id} to={`/noticia/${noticia.slug}`}>
                     <Card className="overflow-hidden hover:shadow-lg transition-shadow">
                       {noticia.featured_image_url && (
@@ -208,7 +227,12 @@ const Noticias = () => {
                       )}
                       <CardHeader>
                         <div className="flex items-center justify-between mb-2">
-                          <Badge variant="secondary">Notícia</Badge>
+                          <div className="flex items-center gap-2">
+                            <Badge variant="secondary">
+                              <Tag className="h-3 w-3 mr-1" />
+                              {noticia.categories?.name || 'Sem categoria'}
+                            </Badge>
+                          </div>
                           <div className="flex items-center text-sm text-muted-foreground">
                             <Clock className="h-4 w-4 mr-1" />
                             {formatDate(noticia.published_at || noticia.created_at)}

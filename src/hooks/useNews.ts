@@ -16,6 +16,11 @@ export interface News {
   author_id: string | null;
   created_at: string;
   updated_at: string;
+  categories?: {
+    id: string;
+    name: string;
+    slug: string;
+  } | null;
 }
 
 export const useNews = () => {
@@ -30,7 +35,14 @@ export const useNews = () => {
 
       const { data, error } = await supabase
         .from('news')
-        .select('*')
+        .select(`
+          *,
+          categories(
+            id,
+            name,
+            slug
+          )
+        `)
         .eq('status', 'published')
         .order('published_at', { ascending: false });
 

@@ -60,6 +60,29 @@ const NoticiaIndividual = () => {
 
         setNoticia(newsData);
 
+        // Track the view
+        try {
+          await supabase
+            .from('analytics_views')
+            .insert({
+              content_id: newsData.id,
+              content_type: 'news',
+              user_id: null, // Could be set if user is authenticated
+              ip_address: null, // Could be captured if needed
+              user_agent: navigator.userAgent,
+              referer: document.referrer || null
+            });
+
+          // Update local view count immediately
+          setNoticia(prev => prev ? {
+            ...prev,
+            view_count: (prev.view_count || 0) + 1
+          } : null);
+        } catch (viewError) {
+          console.error('Error tracking view:', viewError);
+          // Don't fail the whole page if view tracking fails
+        }
+
         // Fetch related news (exclude current article)
         const { data: relatedData } = await supabase
           .from('news')

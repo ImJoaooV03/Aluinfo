@@ -178,6 +178,28 @@ export default function AdminNoticias() {
 
   useEffect(() => {
     loadNews();
+
+    // Set up real-time subscription for news updates
+    const channel = supabase
+      .channel('admin-news-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'news'
+        },
+        (payload) => {
+          console.log('News change detected:', payload);
+          loadNews(); // Reload news to get updated view counts
+        }
+      )
+      .subscribe();
+
+    return () => {
+      console.log('Removing realtime channel for admin news');
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const loadNews = async () => {

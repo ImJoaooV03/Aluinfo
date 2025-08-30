@@ -9,12 +9,12 @@ import { Button } from "@/components/ui/button";
 import { MapPin, Phone, Mail, Globe, Star, Users, Loader2, Shield, Building } from "lucide-react";
 import { useState } from "react";
 import { useSuppliers } from "@/hooks/useSuppliers";
-import { useCategories } from "@/hooks/useCategories";
+import { useSupplierCategories } from "@/hooks/useSupplierCategories";
 
 const Fornecedores = () => {
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
   const { suppliers, loading, error } = useSuppliers(selectedCategoryId || undefined);
-  const { categories } = useCategories();
+  const { categories } = useSupplierCategories();
 
   if (loading) {
     return (
@@ -54,7 +54,6 @@ const Fornecedores = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="flex gap-6">
           <main className="flex-1">
-            {/* Banner 11 - Fornecedores Topo */}
             <AdBanner size="large" position="content" slotKey="fornecedores-top" className="mb-8" />
             <div className="mb-8">
               <h1 className="text-4xl font-bold text-foreground mb-4">Fornecedores</h1>
@@ -182,7 +181,6 @@ const Fornecedores = () => {
             </div>
           </main>
 
-          {/* Sidebar */}
           <Sidebar />
         </div>
       </div>

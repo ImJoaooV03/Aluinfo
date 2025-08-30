@@ -10,133 +10,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Edit, Trash2, Tags, Building, Star } from "lucide-react";
+import { Plus, Edit, Trash2, Building, Star } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { useCategories } from "@/hooks/useCategories";
-
-interface CategoryDialogProps {
-  onCategoryCreated: () => void;
-}
-
-const CategoryDialog = ({ onCategoryCreated }: CategoryDialogProps) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [formData, setFormData] = useState({
-    name: "",
-    description: "",
-  });
-  const { toast } = useToast();
-
-  const generateSlug = (name: string) => {
-    return name
-      .toLowerCase()
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .replace(/[^a-z0-9\s-]/g, '')
-      .replace(/\s+/g, '-')
-      .replace(/-+/g, '-')
-      .trim();
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    try {
-      const slug = generateSlug(formData.name);
-      
-      const { data: existing } = await supabase
-        .from('categories')
-        .select('id')
-        .eq('slug', slug)
-        .single();
-        
-      if (existing) {
-        toast({
-          title: "Erro",
-          description: "Já existe uma categoria com esse nome",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      const { error } = await supabase
-        .from('categories')
-        .insert([{
-          name: formData.name,
-          slug,
-          description: formData.description || null,
-        }]);
-
-      if (error) throw error;
-      
-      toast({
-        title: "Sucesso",
-        description: "Categoria criada com sucesso!",
-      });
-
-      setIsOpen(false);
-      setFormData({ name: "", description: "" });
-      onCategoryCreated();
-    } catch (error: any) {
-      toast({
-        title: "Erro",
-        description: error.message,
-        variant: "destructive",
-      });
-    }
-  };
-
-  return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
-        <Button variant="outline">
-          <Tags className="mr-2 h-4 w-4" />
-          Nova Categoria
-        </Button>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Nova Categoria</DialogTitle>
-          <DialogDescription>
-            Crie uma nova categoria para organizar os fornecedores
-          </DialogDescription>
-        </DialogHeader>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="category-name">Nome</Label>
-            <Input
-              id="category-name"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              placeholder="Ex: Equipamentos, Materiais, Ferramentas"
-              required
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="category-description">Descrição (opcional)</Label>
-            <Textarea
-              id="category-description"
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              placeholder="Breve descrição da categoria"
-              rows={3}
-            />
-          </div>
-
-          <div className="flex justify-end space-x-2">
-            <Button type="button" variant="outline" onClick={() => setIsOpen(false)}>
-              Cancelar
-            </Button>
-            <Button type="submit">
-              Criar Categoria
-            </Button>
-          </div>
-        </form>
-      </DialogContent>
-    </Dialog>
-  );
-};
+import { useSupplierCategories } from "@/hooks/useSupplierCategories";
+import { SupplierCategoryDialog } from "@/components/admin/SupplierCategoryDialog";
 
 interface Supplier {
   id: string;
@@ -157,7 +34,7 @@ interface Supplier {
   category_id: string | null;
   status: 'draft' | 'published' | 'archived';
   created_at: string;
-  categories?: { name: string };
+  supplier_categories?: { name: string };
 }
 
 export default function AdminFornecedores() {
@@ -165,7 +42,7 @@ export default function AdminFornecedores() {
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingSupplier, setEditingSupplier] = useState<Supplier | null>(null);
-  const { categories, loading: categoriesLoading, refetch: refetchCategories } = useCategories();
+  const { categories, refetch: refetchCategories } = useSupplierCategories();
   const { toast } = useToast();
 
   const [formData, setFormData] = useState({
@@ -196,7 +73,7 @@ export default function AdminFornecedores() {
         .from('suppliers')
         .select(`
           *,
-          categories(name)
+          supplier_categories(name)
         `)
         .order('created_at', { ascending: false });
 
@@ -210,6 +87,32 @@ export default function AdminFornecedores() {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDeleteCategory = async (categoryId: string) => {
+    if (!confirm('Tem certeza que deseja excluir esta categoria? Os fornecedores associados ficarão sem categoria.')) return;
+
+    try {
+      const { error } = await supabase
+        .from('supplier_categories')
+        .delete()
+        .eq('id', categoryId);
+
+      if (error) throw error;
+      
+      toast({
+        title: "Sucesso",
+        description: "Categoria excluída com sucesso!",
+      });
+      
+      refetchCategories();
+    } catch (error: any) {
+      toast({
+        title: "Erro",
+        description: error.message,
+        variant: "destructive",
+      });
     }
   };
 
@@ -404,7 +307,7 @@ export default function AdminFornecedores() {
         </div>
 
         <div className="flex gap-2">
-          <CategoryDialog onCategoryCreated={refetchCategories} />
+          <SupplierCategoryDialog onCategoryCreated={refetchCategories} />
           
           <Dialog open={dialogOpen} onOpenChange={(open) => {
             setDialogOpen(open);
@@ -626,6 +529,58 @@ export default function AdminFornecedores() {
 
       <Card>
         <CardHeader>
+          <CardTitle>Categorias de Fornecedores</CardTitle>
+          <CardDescription>
+            Gerencie as categorias para organizar os fornecedores
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Nome</TableHead>
+                <TableHead>Slug</TableHead>
+                <TableHead>Descrição</TableHead>
+                <TableHead className="text-right">Ações</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {categories.map((category) => (
+                <TableRow key={category.id}>
+                  <TableCell className="font-medium">{category.name}</TableCell>
+                  <TableCell className="text-muted-foreground">{category.slug}</TableCell>
+                  <TableCell className="text-muted-foreground">
+                    {category.description || '-'}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex justify-end space-x-2">
+                      <SupplierCategoryDialog 
+                        category={category}
+                        onCategoryCreated={refetchCategories}
+                        trigger={
+                          <Button variant="outline" size="sm">
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                        }
+                      />
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleDeleteCategory(category.id)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
           <CardTitle>Fornecedores Cadastrados</CardTitle>
           <CardDescription>
             Lista de todos os fornecedores cadastrados no sistema
@@ -670,7 +625,7 @@ export default function AdminFornecedores() {
                   </TableCell>
                   <TableCell>{supplier.specialty || '-'}</TableCell>
                   <TableCell>
-                    {supplier.categories?.name || 'Sem categoria'}
+                    {supplier.supplier_categories?.name || 'Sem categoria'}
                   </TableCell>
                   <TableCell>
                     {supplier.city && supplier.state 

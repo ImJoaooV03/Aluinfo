@@ -39,6 +39,7 @@ const AdminFundicoes = () => {
     rating: "",
     category_id: "",
     status: "published" as const,
+    logo_url: "",
   });
 
   // Estados para categorias
@@ -67,6 +68,7 @@ const AdminFundicoes = () => {
       rating: "",
       category_id: "",
       status: "published",
+      logo_url: "",
     });
     setEditingFoundry(null);
   };
@@ -165,6 +167,7 @@ const AdminFundicoes = () => {
       rating: foundry.rating?.toString() || "",
       category_id: foundry.category_id || "",
       status: foundry.status || "published",
+      logo_url: foundry.logo_url || "",
     });
     setEditingFoundry(foundry);
     setIsFoundryDialogOpen(true);
@@ -347,6 +350,15 @@ const AdminFundicoes = () => {
                       />
                     </div>
 
+                    <div>
+                      <Label htmlFor="address">Endereço</Label>
+                      <Input
+                        id="address"
+                        value={foundryForm.address}
+                        onChange={(e) => setFoundryForm({ ...foundryForm, address: e.target.value })}
+                      />
+                    </div>
+
                     <div className="grid grid-cols-3 gap-4">
                       <div>
                         <Label htmlFor="city">Cidade</Label>
@@ -441,16 +453,16 @@ const AdminFundicoes = () => {
                           <span>{foundry.city}, {foundry.state}</span>
                         </div>
                       )}
-                      {foundry.phone && (
+                      {foundry.contact_info?.phone && (
                         <div className="flex items-center space-x-1">
                           <Phone className="h-3 w-3" />
-                          <span>{foundry.phone}</span>
+                          <span>{foundry.contact_info.phone}</span>
                         </div>
                       )}
-                      {foundry.email && (
+                      {foundry.contact_info?.email && (
                         <div className="flex items-center space-x-1">
                           <Mail className="h-3 w-3" />
-                          <span>{foundry.email}</span>
+                          <span>{foundry.contact_info.email}</span>
                         </div>
                       )}
                       {foundry.website && (

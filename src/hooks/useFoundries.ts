@@ -18,11 +18,14 @@ export interface Foundry {
   country: string | null;
   state: string | null;
   city: string | null;
+  address: string | null;
+  email: string | null;
+  phone: string | null;
   website: string | null;
   rating: number | null;
   employees_count: number | null;
   category_id: string | null;
-  status: string;
+  status: 'draft' | 'published' | 'archived';
   created_at: string;
   updated_at: string;
   contact_info?: FoundryContactInfo;
@@ -40,7 +43,7 @@ export const useFoundries = (categoryId?: string) => {
 
       let query = supabase
         .from('foundries')
-        .select('id, name, slug, specialty, description, logo_url, country, state, city, website, rating, employees_count, category_id, status, created_at, updated_at')
+        .select('id, name, slug, specialty, description, logo_url, country, state, city, address, email, phone, website, rating, employees_count, category_id, status, created_at, updated_at')
         .eq('status', 'published');
 
       if (categoryId) {

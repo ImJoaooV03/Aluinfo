@@ -1,6 +1,5 @@
 
 import { useState } from "react";
-import { AdminLayout } from "@/components/AdminLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -228,16 +227,15 @@ const AdminFundicoes = () => {
   };
 
   return (
-    <AdminLayout>
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-3xl font-bold tracking-tight">Gerenciar Fundições</h2>
-            <p className="text-muted-foreground">
-              Gerencie fundições e suas categorias
-            </p>
-          </div>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-3xl font-bold tracking-tight">Gerenciar Fundições</h2>
+          <p className="text-muted-foreground">
+            Gerencie fundições e suas categorias
+          </p>
         </div>
+      </div>
 
         <Tabs defaultValue="foundries" className="space-y-4">
           <TabsList>
@@ -577,8 +575,7 @@ const AdminFundicoes = () => {
             </div>
           </TabsContent>
         </Tabs>
-      </div>
-    </AdminLayout>
+    </div>
   );
 };
 

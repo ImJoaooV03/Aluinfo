@@ -3,7 +3,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
+import { AdminLayout } from "@/components/AdminLayout";
 import Index from "./pages/Index";
 import Noticias from "./pages/Noticias";
 import NoticiaIndividual from "./pages/NoticiaIndividual";
@@ -31,6 +32,15 @@ import EditarBanners from "./pages/EditarBanners";
 
 const queryClient = new QueryClient();
 
+// AdminLayoutWrapper component to wrap admin routes
+function AdminLayoutWrapper() {
+  return (
+    <AdminLayout>
+      <Outlet />
+    </AdminLayout>
+  );
+}
+
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
@@ -51,20 +61,24 @@ function App() {
             <Route path="/patrocinadas" element={<Patrocinadas />} />
             <Route path="/editar-banners" element={<EditarBanners />} />
 
-            {/* Rotas administrativas */}
+            {/* Rotas administrativas sem layout */}
             <Route path="/admin/auth" element={<AdminAuth />} />
             <Route path="/create-admin" element={<CreateAdmin />} />
-            <Route path="/admin/dashboard" element={<Dashboard />} />
-            <Route path="/admin/noticias" element={<AdminNoticias />} />
-            <Route path="/admin/materiais" element={<AdminMateriais />} />
-            <Route path="/admin/ebooks" element={<AdminEbooks />} />
-            <Route path="/admin/eventos" element={<AdminEventos />} />
-            <Route path="/admin/fornecedores" element={<AdminFornecedores />} />
-            <Route path="/admin/fundicoes" element={<AdminFundicoes />} />
-            <Route path="/admin/banners" element={<AdminBanners />} />
-            <Route path="/admin/lme" element={<AdminLME />} />
-            <Route path="/admin/downloads" element={<AdminDownloads />} />
-            <Route path="/admin/newsletter" element={<AdminNewsletter />} />
+            
+            {/* Rotas administrativas com layout */}
+            <Route path="/admin" element={<AdminLayoutWrapper />}>
+              <Route path="dashboard" element={<Dashboard />} />
+              <Route path="noticias" element={<AdminNoticias />} />
+              <Route path="materiais" element={<AdminMateriais />} />
+              <Route path="ebooks" element={<AdminEbooks />} />
+              <Route path="eventos" element={<AdminEventos />} />
+              <Route path="fornecedores" element={<AdminFornecedores />} />
+              <Route path="fundicoes" element={<AdminFundicoes />} />
+              <Route path="banners" element={<AdminBanners />} />
+              <Route path="lme" element={<AdminLME />} />
+              <Route path="downloads" element={<AdminDownloads />} />
+              <Route path="newsletter" element={<AdminNewsletter />} />
+            </Route>
 
             {/* Rota 404 */}
             <Route path="*" element={<NotFound />} />

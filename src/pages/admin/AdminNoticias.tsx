@@ -512,67 +512,6 @@ export default function AdminNoticias() {
         </div>
       </div>
 
-      {/* Categories Management */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Categorias</CardTitle>
-          <CardDescription>
-            Gerencie as categorias das notícias
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {categoriesLoading ? (
-            <div>Carregando categorias...</div>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Nome</TableHead>
-                  <TableHead>Slug</TableHead>
-                  <TableHead>Descrição</TableHead>
-                  <TableHead>Criado em</TableHead>
-                  <TableHead className="text-right">Ações</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {categories.map((category) => (
-                  <TableRow key={category.id}>
-                    <TableCell className="font-medium">
-                      {category.name}
-                    </TableCell>
-                    <TableCell className="font-mono text-sm">
-                      {category.slug}
-                    </TableCell>
-                    <TableCell>
-                      {category.description || "—"}
-                    </TableCell>
-                    <TableCell>
-                      {new Date(category.created_at).toLocaleDateString('pt-BR')}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        onClick={() => handleDeleteCategory(category.id, category.name)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-                {categories.length === 0 && (
-                  <TableRow>
-                    <TableCell colSpan={5} className="text-center text-muted-foreground">
-                      Nenhuma categoria cadastrada
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          )}
-        </CardContent>
-      </Card>
-
       <Card>
         <CardHeader>
           <CardTitle>Lista de Notícias</CardTitle>
@@ -635,6 +574,67 @@ export default function AdminNoticias() {
               ))}
             </TableBody>
           </Table>
+        </CardContent>
+      </Card>
+
+      {/* Categories Management */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Categorias</CardTitle>
+          <CardDescription>
+            Gerencie as categorias das notícias
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {categoriesLoading ? (
+            <div>Carregando categorias...</div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Nome</TableHead>
+                  <TableHead>Slug</TableHead>
+                  <TableHead>Descrição</TableHead>
+                  <TableHead>Criado em</TableHead>
+                  <TableHead className="text-right">Ações</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {categories.map((category) => (
+                  <TableRow key={category.id}>
+                    <TableCell className="font-medium">
+                      {category.name}
+                    </TableCell>
+                    <TableCell className="font-mono text-sm">
+                      {category.slug}
+                    </TableCell>
+                    <TableCell>
+                      {category.description || "—"}
+                    </TableCell>
+                    <TableCell>
+                      {new Date(category.created_at).toLocaleDateString('pt-BR')}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => handleDeleteCategory(category.id, category.name)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+                {categories.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={5} className="text-center text-muted-foreground">
+                      Nenhuma categoria cadastrada
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          )}
         </CardContent>
       </Card>
     </div>

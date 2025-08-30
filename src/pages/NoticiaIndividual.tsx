@@ -238,7 +238,7 @@ const NoticiaIndividual = () => {
 
               {/* Conteúdo do Artigo */}
               <div 
-                className="prose prose-lg max-w-none"
+                className="prose prose-lg max-w-none whitespace-pre-line"
                 dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(noticia.content) }}
               />
 

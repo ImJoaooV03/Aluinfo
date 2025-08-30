@@ -16,7 +16,7 @@ export interface News {
   author_id: string | null;
   created_at: string;
   updated_at: string;
-  categories?: {
+  news_categories?: {
     id: string;
     name: string;
     slug: string;
@@ -37,7 +37,7 @@ export const useNews = () => {
         .from('news')
         .select(`
           *,
-          categories(
+          news_categories(
             id,
             name,
             slug

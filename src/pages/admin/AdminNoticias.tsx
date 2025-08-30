@@ -12,7 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Edit, Trash2, Eye, Tags } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { useCategories } from "@/hooks/useCategories";
+import { useNewsCategories } from "@/hooks/useNewsCategories";
 
 interface CategoryDialogProps {
   onCategoryCreated: () => void;
@@ -45,7 +45,7 @@ const CategoryDialog = ({ onCategoryCreated }: CategoryDialogProps) => {
       
       // Check if slug already exists
       const { data: existing } = await supabase
-        .from('categories')
+        .from('news_categories')
         .select('id')
         .eq('slug', slug)
         .single();
@@ -60,7 +60,7 @@ const CategoryDialog = ({ onCategoryCreated }: CategoryDialogProps) => {
       }
 
       const { error } = await supabase
-        .from('categories')
+        .from('news_categories')
         .insert([{
           name: formData.name,
           slug,
@@ -151,7 +151,7 @@ interface News {
   published_at: string | null;
   created_at: string;
   category_id: string | null;
-  categories?: { name: string };
+  news_categories?: { name: string };
 }
 
 interface Category {
@@ -164,7 +164,7 @@ export default function AdminNoticias() {
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingNews, setEditingNews] = useState<News | null>(null);
-  const { categories, loading: categoriesLoading, refetch: refetchCategories } = useCategories();
+  const { categories, loading: categoriesLoading, refetch: refetchCategories } = useNewsCategories();
   const { toast } = useToast();
 
   const [formData, setFormData] = useState({
@@ -208,7 +208,7 @@ export default function AdminNoticias() {
         .from('news')
         .select(`
           *,
-          categories(name)
+          news_categories(name)
         `)
         .order('created_at', { ascending: false });
 
@@ -230,7 +230,7 @@ export default function AdminNoticias() {
 
     try {
       const { error } = await supabase
-        .from('categories')
+        .from('news_categories')
         .delete()
         .eq('id', categoryId);
 
@@ -560,7 +560,7 @@ export default function AdminNoticias() {
                     {item.title}
                   </TableCell>
                   <TableCell>
-                    {item.categories?.name || "Sem categoria"}
+                    {item.news_categories?.name || "Sem categoria"}
                   </TableCell>
                   <TableCell>
                     {getStatusBadge(item.status)}

@@ -53,6 +53,8 @@ function App() {
             <Route path="/" element={<Index />} />
             <Route path="/noticias" element={<Noticias />} />
             <Route path="/noticias/:slug" element={<NoticiaIndividual />} />
+            {/* Compatibility route for old singular URLs */}
+            <Route path="/noticia/:slug" element={<NoticiaIndividual />} />
             <Route path="/artigos-tecnicos" element={<ArtigosTecnicos />} />
             <Route path="/ebooks" element={<Ebooks />} />
             <Route path="/fornecedores" element={<Fornecedores />} />

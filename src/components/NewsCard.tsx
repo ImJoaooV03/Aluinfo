@@ -28,7 +28,7 @@ const NewsCard = ({
   newsId
 }: NewsCardProps) => {
   // Create link based on slug or ID
-  const linkTo = slug ? `/noticia/${slug}` : `/noticia/${newsId || '1'}`;
+  const linkTo = slug ? `/noticias/${slug}` : `/noticias/${newsId || '1'}`;
 
   return (
     <Link to={linkTo} className="block">

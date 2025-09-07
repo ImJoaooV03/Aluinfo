@@ -323,14 +323,9 @@ const MainContent = () => {
 
       {/* Seção de Indicadores LME */}
       <section>
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center space-x-2">
-            <TrendingUp className="h-6 w-6 text-primary" />
-            <h2 className="text-2xl font-bold text-foreground">Indicadores LME</h2>
-          </div>
-          <Button variant="outline" asChild>
-            <Link to="/lme">Ver todos</Link>
-          </Button>
+        <div className="flex items-center space-x-2 mb-6">
+          <TrendingUp className="h-6 w-6 text-primary" />
+          <h2 className="text-2xl font-bold text-foreground">Indicadores LME</h2>
         </div>
 
         {indicatorsLoading ? (

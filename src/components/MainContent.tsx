@@ -290,9 +290,21 @@ const MainContent = () => {
                         {formatPrice(event.price)}
                       </span>
                     )}
-                    <Button size="sm" className="ml-auto">
-                      Saiba mais
-                    </Button>
+                    {(event.registration_url || event.website_url) ? (
+                      <Button size="sm" className="ml-auto" asChild>
+                        <a 
+                          href={event.registration_url || event.website_url} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                        >
+                          Saiba mais
+                        </a>
+                      </Button>
+                    ) : (
+                      <Button size="sm" className="ml-auto" disabled>
+                        Saiba mais
+                      </Button>
+                    )}
                   </div>
                 </CardContent>
               </Card>

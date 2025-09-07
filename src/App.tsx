@@ -11,6 +11,7 @@ import Noticias from "./pages/Noticias";
 import NoticiaIndividual from "./pages/NoticiaIndividual";
 import ArtigosTecnicos from "./pages/ArtigosTecnicos";
 import Ebooks from "./pages/Ebooks";
+import Eventos from "./pages/Eventos";
 import Fornecedores from "./pages/Fornecedores";
 import Fundicoes from "./pages/Fundicoes";
 import LME from "./pages/LME";
@@ -59,6 +60,7 @@ function App() {
             <Route path="/noticia/:slug" element={<NoticiaIndividual />} />
             <Route path="/artigos-tecnicos" element={<ArtigosTecnicos />} />
             <Route path="/ebooks" element={<Ebooks />} />
+            <Route path="/eventos" element={<Eventos />} />
             <Route path="/fornecedores" element={<Fornecedores />} />
             <Route path="/fundicoes" element={<Fundicoes />} />
             <Route path="/lme" element={<LME />} />

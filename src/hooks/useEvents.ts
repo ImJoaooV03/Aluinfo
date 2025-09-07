@@ -7,7 +7,9 @@ export interface Event {
   title: string;
   slug: string;
   description: string | null;
-  event_date: string;
+  start_date: string;
+  end_date: string;
+  event_date: string; // Legacy field, kept for compatibility
   venue: string | null;
   location: string | null;
   price: number | null;
@@ -35,7 +37,7 @@ export const useEvents = () => {
         .from('events')
         .select('*')
         .eq('status', 'published')
-        .order('event_date', { ascending: true });
+        .order('start_date', { ascending: true });
 
       if (error) {
         throw error;

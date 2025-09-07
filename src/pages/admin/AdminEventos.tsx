@@ -27,7 +27,8 @@ interface Event {
   image_url: string | null;
   location: string | null;
   venue: string | null;
-  event_date: string;
+  start_date: string;
+  end_date: string;
   price: number | null;
   max_attendees: number | null;
   website_url: string | null;
@@ -50,7 +51,8 @@ const AdminEventos = () => {
     description: '',
     location: '',
     venue: '',
-    event_date: '',
+    start_date: '',
+    end_date: '',
     price: '',
     max_attendees: '',
     website_url: '',
@@ -67,7 +69,7 @@ const AdminEventos = () => {
       const { data, error } = await supabase
         .from('events')
         .select('*')
-        .order('event_date', { ascending: false });
+        .order('start_date', { ascending: false });
       
       if (error) throw error;
       return data as Event[];
@@ -119,7 +121,9 @@ const AdminEventos = () => {
           image_url: imageUrl,
           location: data.location,
           venue: data.venue,
-          event_date: data.event_date,
+          start_date: data.start_date,
+          end_date: data.end_date,
+          event_date: data.start_date, // Legacy field populated with start_date
           price: data.price ? parseFloat(data.price) : null,
           max_attendees: data.max_attendees ? parseInt(data.max_attendees) : null,
           website_url: data.website_url,
@@ -154,7 +158,8 @@ const AdminEventos = () => {
         description: data.description,
         location: data.location,
         venue: data.venue,
-        event_date: data.event_date,
+        start_date: data.start_date,
+        end_date: data.end_date,
         price: data.price ? parseFloat(data.price) : null,
         max_attendees: data.max_attendees ? parseInt(data.max_attendees) : null,
         website_url: data.website_url,
@@ -220,7 +225,8 @@ const AdminEventos = () => {
       description: '',
       location: '',
       venue: '',
-      event_date: '',
+      start_date: '',
+      end_date: '',
       price: '',
       max_attendees: '',
       website_url: '',
@@ -239,7 +245,8 @@ const AdminEventos = () => {
       description: event.description || '',
       location: event.location || '',
       venue: event.venue || '',
-      event_date: event.event_date ? new Date(event.event_date).toISOString().slice(0, 16) : '',
+      start_date: event.start_date ? new Date(event.start_date).toISOString().slice(0, 16) : '',
+      end_date: event.end_date ? new Date(event.end_date).toISOString().slice(0, 16) : '',
       price: event.price?.toString() || '',
       max_attendees: event.max_attendees?.toString() || '',
       website_url: event.website_url || '',
@@ -349,16 +356,26 @@ const AdminEventos = () => {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                      <label className="text-sm font-medium">Data e Hora</label>
-                      <Input
-                        type="datetime-local"
-                        value={formData.event_date}
-                        onChange={(e) => setFormData({ ...formData, event_date: e.target.value })}
-                        required
-                      />
-                    </div>
+                   <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                     <div>
+                       <label className="text-sm font-medium">Início</label>
+                       <Input
+                         type="datetime-local"
+                         value={formData.start_date}
+                         onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
+                         required
+                       />
+                     </div>
+                     
+                     <div>
+                       <label className="text-sm font-medium">Término</label>
+                       <Input
+                         type="datetime-local"
+                         value={formData.end_date}
+                         onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
+                         required
+                       />
+                     </div>
                     
                     <div>
                       <label className="text-sm font-medium">Preço (R$)</label>
@@ -489,16 +506,27 @@ const AdminEventos = () => {
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div className="space-y-2">
-                    <div className="flex items-center text-sm text-muted-foreground">
-                      <Calendar className="h-4 w-4 mr-2" />
-                      {new Date(event.event_date).toLocaleDateString('pt-BR', {
-                        day: '2-digit',
-                        month: '2-digit',
-                        year: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                      })}
-                    </div>
+                     <div className="flex items-center text-sm text-muted-foreground">
+                       <Calendar className="h-4 w-4 mr-2" />
+                       {new Date(event.start_date).toLocaleDateString('pt-BR', {
+                         day: '2-digit',
+                         month: '2-digit',
+                         year: 'numeric',
+                         hour: '2-digit',
+                         minute: '2-digit'
+                       })}
+                       {event.start_date !== event.end_date && (
+                         <span className="ml-2">
+                           até {new Date(event.end_date).toLocaleDateString('pt-BR', {
+                             day: '2-digit',
+                             month: '2-digit',
+                             year: 'numeric',
+                             hour: '2-digit',
+                             minute: '2-digit'
+                           })}
+                         </span>
+                       )}
+                     </div>
                     
                     {event.location && (
                       <div className="flex items-center text-sm text-muted-foreground">

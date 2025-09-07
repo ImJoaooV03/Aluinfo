@@ -227,6 +227,7 @@ export type Database = {
           category_id: string | null
           created_at: string | null
           description: string | null
+          end_date: string
           event_date: string
           id: string
           image_url: string | null
@@ -235,6 +236,7 @@ export type Database = {
           price: number | null
           registration_url: string | null
           slug: string
+          start_date: string
           status: Database["public"]["Enums"]["content_status"] | null
           title: string
           updated_at: string | null
@@ -245,6 +247,7 @@ export type Database = {
           category_id?: string | null
           created_at?: string | null
           description?: string | null
+          end_date: string
           event_date: string
           id?: string
           image_url?: string | null
@@ -253,6 +256,7 @@ export type Database = {
           price?: number | null
           registration_url?: string | null
           slug: string
+          start_date: string
           status?: Database["public"]["Enums"]["content_status"] | null
           title: string
           updated_at?: string | null
@@ -263,6 +267,7 @@ export type Database = {
           category_id?: string | null
           created_at?: string | null
           description?: string | null
+          end_date?: string
           event_date?: string
           id?: string
           image_url?: string | null
@@ -271,6 +276,7 @@ export type Database = {
           price?: number | null
           registration_url?: string | null
           slug?: string
+          start_date?: string
           status?: Database["public"]["Enums"]["content_status"] | null
           title?: string
           updated_at?: string | null

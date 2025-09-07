@@ -266,10 +266,13 @@ const MainContent = () => {
                 <CardHeader>
                   <div className="flex items-center justify-between mb-2">
                     <Badge variant="secondary">Evento</Badge>
-                    <div className="flex items-center text-sm text-muted-foreground">
-                      <Calendar className="h-3 w-3 mr-1" />
-                      {formatDate(event.event_date)}
-                    </div>
+                     <div className="flex items-center text-sm text-muted-foreground">
+                       <Calendar className="h-3 w-3 mr-1" />
+                       {formatDate(event.start_date)}
+                       {event.start_date !== event.end_date && (
+                         <span className="ml-1">até {formatDate(event.end_date)}</span>
+                       )}
+                     </div>
                   </div>
                   <CardTitle className="line-clamp-2 text-base">
                     {event.title}

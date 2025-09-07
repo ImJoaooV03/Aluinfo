@@ -280,12 +280,14 @@ const MainContent = () => {
                       📍 {event.location}
                     </p>
                   )}
-                  <div className="flex items-center text-xs text-muted-foreground mb-3">
-                    <Calendar className="h-3 w-3 mr-1" />
-                    {formatDate(event.start_date)}
-                    {event.start_date !== event.end_date && (
-                      <span className="ml-1">até {formatDate(event.end_date)}</span>
-                    )}
+                  <div className="flex items-center text-xs text-muted-foreground mb-3 min-w-0">
+                    <Calendar className="h-3 w-3 mr-1 shrink-0" />
+                    <span className="truncate">
+                      {formatDate(event.start_date)}
+                      {event.start_date !== event.end_date && (
+                        <span className="ml-1">até {formatDate(event.end_date)}</span>
+                      )}
+                    </span>
                   </div>
                   <div className="flex items-center justify-between">
                     {event.price && (

@@ -102,12 +102,14 @@ const Eventos = () => {
                         📍 {event.venue}
                       </div>
                     )}
-                    <div className="flex items-center text-sm text-muted-foreground">
-                      <Calendar className="h-4 w-4 mr-2" />
-                      {formatDate(event.start_date)}
-                      {event.start_date !== event.end_date && (
-                        <span className="ml-1">até {formatDate(event.end_date)}</span>
-                      )}
+                    <div className="flex items-center text-sm text-muted-foreground min-w-0">
+                      <Calendar className="h-4 w-4 mr-2 shrink-0" />
+                      <span className="truncate">
+                        {formatDate(event.start_date)}
+                        {event.start_date !== event.end_date && (
+                          <span className="ml-1">até {formatDate(event.end_date)}</span>
+                        )}
+                      </span>
                     </div>
                     {event.max_attendees && (
                       <div className="flex items-center text-sm text-muted-foreground">

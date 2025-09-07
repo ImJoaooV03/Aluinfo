@@ -10,7 +10,8 @@ import {
   Users, 
   Factory,
   TrendingUp,
-  ChevronDown
+  ChevronDown,
+  Megaphone
 } from "lucide-react";
 
 const Navigation = () => {
@@ -24,6 +25,7 @@ const Navigation = () => {
     { id: "ebooks", label: "E-books", icon: BookOpen, path: "/ebooks" },
     { id: "fornecedores", label: "Fornecedores", icon: Users, path: "/fornecedores" },
     { id: "fundicoes", label: "Fundições", icon: Factory, path: "/fundicoes" },
+    { id: "anuncie", label: "Anuncie", icon: Megaphone, path: "/anuncie" },
   ];
 
   const isActive = (path: string) => location.pathname === path;

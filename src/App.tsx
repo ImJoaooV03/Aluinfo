@@ -16,6 +16,7 @@ import Fornecedores from "./pages/Fornecedores";
 import Fundicoes from "./pages/Fundicoes";
 import LME from "./pages/LME";
 import Patrocinadas from "./pages/Patrocinadas";
+import Anuncie from "./pages/Anuncie";
 import NotFound from "./pages/NotFound";
 import Dashboard from "./pages/admin/Dashboard";
 import AdminNoticias from "./pages/admin/AdminNoticias";
@@ -65,6 +66,7 @@ function App() {
             <Route path="/fundicoes" element={<Fundicoes />} />
             <Route path="/lme" element={<LME />} />
             <Route path="/patrocinadas" element={<Patrocinadas />} />
+            <Route path="/anuncie" element={<Anuncie />} />
             <Route path="/editar-banners" element={<EditarBanners />} />
 
             {/* Rotas administrativas sem layout */}

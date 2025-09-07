@@ -975,7 +975,142 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      foundries_public: {
+        Row: {
+          address: string | null
+          category_id: string | null
+          city: string | null
+          country: string | null
+          created_at: string | null
+          description: string | null
+          employees_count: number | null
+          id: string | null
+          logo_url: string | null
+          name: string | null
+          rating: number | null
+          slug: string | null
+          specialty: string | null
+          state: string | null
+          status: Database["public"]["Enums"]["content_status"] | null
+          updated_at: string | null
+          website: string | null
+        }
+        Insert: {
+          address?: string | null
+          category_id?: string | null
+          city?: string | null
+          country?: string | null
+          created_at?: string | null
+          description?: string | null
+          employees_count?: number | null
+          id?: string | null
+          logo_url?: string | null
+          name?: string | null
+          rating?: number | null
+          slug?: string | null
+          specialty?: string | null
+          state?: string | null
+          status?: Database["public"]["Enums"]["content_status"] | null
+          updated_at?: string | null
+          website?: string | null
+        }
+        Update: {
+          address?: string | null
+          category_id?: string | null
+          city?: string | null
+          country?: string | null
+          created_at?: string | null
+          description?: string | null
+          employees_count?: number | null
+          id?: string | null
+          logo_url?: string | null
+          name?: string | null
+          rating?: number | null
+          slug?: string | null
+          specialty?: string | null
+          state?: string | null
+          status?: Database["public"]["Enums"]["content_status"] | null
+          updated_at?: string | null
+          website?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "foundries_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "foundry_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      suppliers_public: {
+        Row: {
+          address: string | null
+          category_id: string | null
+          city: string | null
+          country: string | null
+          created_at: string | null
+          description: string | null
+          employees_count: number | null
+          id: string | null
+          logo_url: string | null
+          name: string | null
+          rating: number | null
+          slug: string | null
+          specialty: string | null
+          state: string | null
+          status: Database["public"]["Enums"]["content_status"] | null
+          updated_at: string | null
+          website: string | null
+        }
+        Insert: {
+          address?: string | null
+          category_id?: string | null
+          city?: string | null
+          country?: string | null
+          created_at?: string | null
+          description?: string | null
+          employees_count?: number | null
+          id?: string | null
+          logo_url?: string | null
+          name?: string | null
+          rating?: number | null
+          slug?: string | null
+          specialty?: string | null
+          state?: string | null
+          status?: Database["public"]["Enums"]["content_status"] | null
+          updated_at?: string | null
+          website?: string | null
+        }
+        Update: {
+          address?: string | null
+          category_id?: string | null
+          city?: string | null
+          country?: string | null
+          created_at?: string | null
+          description?: string | null
+          employees_count?: number | null
+          id?: string | null
+          logo_url?: string | null
+          name?: string | null
+          rating?: number | null
+          slug?: string | null
+          specialty?: string | null
+          state?: string | null
+          status?: Database["public"]["Enums"]["content_status"] | null
+          updated_at?: string | null
+          website?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "suppliers_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "supplier_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       create_admin_user: {

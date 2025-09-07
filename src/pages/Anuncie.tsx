@@ -104,7 +104,7 @@ const Anuncie = () => {
               size="lg" 
               variant="outline"
               onClick={handleDownloadMediaKit}
-              className="border-white text-white hover:bg-white hover:text-primary px-8 py-4 text-lg font-semibold"
+              className="border-white text-white hover:bg-white hover:text-primary hover:border-white transition-all duration-300 px-8 py-4 text-lg font-semibold"
             >
               <Download className="mr-2 h-5 w-5" />
               Baixe o Mídia Kit
@@ -226,7 +226,7 @@ const Anuncie = () => {
               size="lg" 
               variant="outline"
               onClick={handleDownloadMediaKit}
-              className="border-white text-white hover:bg-white hover:text-primary px-8 py-4 text-lg font-semibold"
+              className="border-white text-white hover:bg-white hover:text-primary hover:border-white transition-all duration-300 px-8 py-4 text-lg font-semibold"
             >
               <Download className="mr-2 h-5 w-5" />
               Baixe o Mídia Kit

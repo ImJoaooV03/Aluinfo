@@ -6,6 +6,9 @@ export interface BannerSlot {
 }
 
 export const BANNER_SLOTS: BannerSlot[] = [
+  // Home hero slider
+  { id: 0, label: "0 — Home Slider", key: "home-slider", description: "Slider principal da página inicial" },
+  
   // Sidebar banners (1-4)
   { id: 1, label: "1 — Sidebar 1", key: "sidebar-1", description: "Primeiro banner da sidebar" },
   { id: 2, label: "2 — Sidebar 2", key: "sidebar-2", description: "Segundo banner da sidebar" },

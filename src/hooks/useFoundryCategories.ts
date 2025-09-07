@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { useTranslation } from 'react-i18next';
 
 export interface FoundryCategory {
   id: string;
@@ -11,6 +12,7 @@ export interface FoundryCategory {
 }
 
 export const useFoundryCategories = () => {
+  const { i18n } = useTranslation();
   const [categories, setCategories] = useState<FoundryCategory[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -20,14 +22,36 @@ export const useFoundryCategories = () => {
       setLoading(true);
       setError(null);
 
+      const currentLang = i18n.language || 'pt';
+      
       const { data, error: fetchError } = await supabase
         .from('foundry_categories')
-        .select('*')
+        .select(`
+          *,
+          foundry_categories_translations!inner (
+            name,
+            description
+          )
+        `)
+        .eq('foundry_categories_translations.lang', currentLang)
         .order('name');
 
       if (fetchError) throw fetchError;
 
-      setCategories(data || []);
+      // Merge base data with translations
+      const categoriesWithTranslations = (data || []).map((category: any) => {
+        const translation = category.foundry_categories_translations?.[0];
+        
+        return {
+          ...category,
+          name: translation?.name || category.name,
+          description: translation?.description || category.description,
+          // Remove translation array after merging
+          foundry_categories_translations: undefined,
+        };
+      });
+
+      setCategories(categoriesWithTranslations);
     } catch (err) {
       console.error('Error fetching foundry categories:', err);
       setError(err instanceof Error ? err.message : 'An error occurred');
@@ -92,7 +116,7 @@ export const useFoundryCategories = () => {
 
   useEffect(() => {
     fetchCategories();
-  }, []);
+  }, [i18n.language]);
 
   return {
     categories,

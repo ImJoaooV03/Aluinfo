@@ -37,17 +37,35 @@ export const useEbooks = () => {
       
       const { data, error } = await supabase
         .from('ebooks')
-        .select('*')
+        .select(`
+          *,
+          ebooks_translations!inner (
+            title,
+            description
+          )
+        `)
         .eq('status', 'published')
+        .eq('ebooks_translations.lang', currentLang)
         .order('created_at', { ascending: false });
 
       if (error) {
         throw error;
       }
 
-      // TODO: Fetch translations once types are updated
-      // For now, return original content
-      setEbooks(data || []);
+      // Merge base data with translations
+      const ebooksWithTranslations = (data || []).map((ebook: any) => {
+        const translation = ebook.ebooks_translations?.[0];
+        
+        return {
+          ...ebook,
+          title: translation?.title || ebook.title,
+          description: translation?.description || ebook.description,
+          // Remove translation array after merging
+          ebooks_translations: undefined,
+        };
+      });
+
+      setEbooks(ebooksWithTranslations);
     } catch (err) {
       console.error('Error fetching ebooks:', err);
       setError(err instanceof Error ? err.message : 'Erro ao carregar e-books');

@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { useTranslation } from 'react-i18next';
 
 export interface SupplierContactInfo {
   email: string;
@@ -29,6 +30,7 @@ export interface Supplier {
 }
 
 export const useSuppliers = (categoryId?: string) => {
+  const { i18n } = useTranslation();
   const [suppliers, setSuppliers] = useState<Supplier[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -38,54 +40,59 @@ export const useSuppliers = (categoryId?: string) => {
       setLoading(true);
       setError(null);
 
-      // Check if user is authenticated to determine access level
-      const { data: { session } } = await supabase.auth.getSession();
+      const currentLang = i18n.language || 'pt';
       
-      let suppliersData: any[] = [];
-      
-      if (session?.user) {
-        // Authenticated users get full access including contact info
-        let query = supabase
-          .from('suppliers')
-          .select('id, name, slug, specialty, description, logo_url, country, state, city, website, rating, employees_count, category_id, status, created_at, updated_at, email, phone')
-          .eq('status', 'published');
+      // Fetch suppliers with translations
+      const { data, error } = await supabase
+        .from('suppliers')
+        .select(`
+          *,
+          suppliers_translations!inner (
+            name,
+            description,
+            specialty
+          )
+        `)
+        .eq('status', 'published')
+        .eq('suppliers_translations.lang', currentLang)
+        .order('name');
 
-        if (categoryId) {
-          query = query.eq('category_id', categoryId);
-        }
-
-        const { data, error: suppliersError } = await query.order('name');
-        if (suppliersError) throw suppliersError;
-        suppliersData = data || [];
-      } else {
-        // Unauthenticated users get safe public data only
-        const { data, error: suppliersError } = await supabase.rpc(
-          'get_public_suppliers',
-          { category_filter: categoryId || null }
-        );
-        if (suppliersError) throw suppliersError;
-        suppliersData = data || [];
+      if (error) {
+        throw error;
       }
 
-      // Fetch contact info for each supplier using the existing RPC function
-      const suppliersWithContact = await Promise.all(
-        (suppliersData || []).map(async (supplier) => {
+      // Filter by category if selected and merge translations
+      let filteredData = data || [];
+      if (categoryId) {
+        filteredData = filteredData.filter(supplier => supplier.category_id === categoryId);
+      }
+
+      const suppliersWithTranslations = await Promise.all(
+        filteredData.map(async (supplier: any) => {
+          const translation = supplier.suppliers_translations?.[0];
+          
+          // Fetch contact info for each supplier using the existing RPC function
           const { data: contactData } = await supabase.rpc(
             'get_supplier_contact_info',
             { supplier_id: supplier.id }
           );
-
+          
           return {
             ...supplier,
+            name: translation?.name || supplier.name,
+            description: translation?.description || supplier.description,
+            specialty: translation?.specialty || supplier.specialty,
             contact_info: contactData as unknown as SupplierContactInfo,
+            // Remove translation array after merging
+            suppliers_translations: undefined,
           };
         })
       );
 
-      setSuppliers(suppliersWithContact);
+      setSuppliers(suppliersWithTranslations);
     } catch (err) {
       console.error('Error fetching suppliers:', err);
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      setError(err instanceof Error ? err.message : 'Erro ao carregar fornecedores');
     } finally {
       setLoading(false);
     }
@@ -93,7 +100,7 @@ export const useSuppliers = (categoryId?: string) => {
 
   useEffect(() => {
     fetchSuppliers();
-  }, [categoryId]);
+  }, [categoryId, i18n.language]);
 
   return {
     suppliers,

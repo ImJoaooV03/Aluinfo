@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { useTranslation } from 'react-i18next';
 
 export interface FoundryContactInfo {
   email: string;
@@ -32,6 +33,7 @@ export interface Foundry {
 }
 
 export const useFoundries = (categoryId?: string) => {
+  const { i18n } = useTranslation();
   const [foundries, setFoundries] = useState<Foundry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -41,54 +43,59 @@ export const useFoundries = (categoryId?: string) => {
       setLoading(true);
       setError(null);
 
-      // Check if user is authenticated to determine access level
-      const { data: { session } } = await supabase.auth.getSession();
+      const currentLang = i18n.language || 'pt';
       
-      let foundriesData: any[] = [];
-      
-      if (session?.user) {
-        // Authenticated users get full access including contact info
-        let query = supabase
-          .from('foundries')
-          .select('id, name, slug, specialty, description, logo_url, country, state, city, address, website, rating, employees_count, category_id, status, created_at, updated_at, email, phone')
-          .eq('status', 'published');
+      // Fetch foundries with translations
+      const { data, error } = await supabase
+        .from('foundries')
+        .select(`
+          *,
+          foundries_translations!inner (
+            name,
+            description,
+            specialty
+          )
+        `)
+        .eq('status', 'published')
+        .eq('foundries_translations.lang', currentLang)
+        .order('name');
 
-        if (categoryId) {
-          query = query.eq('category_id', categoryId);
-        }
-
-        const { data, error: foundriesError } = await query.order('name');
-        if (foundriesError) throw foundriesError;
-        foundriesData = data || [];
-      } else {
-        // Unauthenticated users get safe public data only
-        const { data, error: foundriesError } = await supabase.rpc(
-          'get_public_foundries',
-          { category_filter: categoryId || null }
-        );
-        if (foundriesError) throw foundriesError;
-        foundriesData = data || [];
+      if (error) {
+        throw error;
       }
 
-      // Fetch contact info for each foundry using the existing RPC function
-      const foundriesWithContact = await Promise.all(
-        (foundriesData || []).map(async (foundry) => {
+      // Filter by category if selected and merge translations
+      let filteredData = data || [];
+      if (categoryId) {
+        filteredData = filteredData.filter(foundry => foundry.category_id === categoryId);
+      }
+
+      const foundriesWithTranslations = await Promise.all(
+        filteredData.map(async (foundry: any) => {
+          const translation = foundry.foundries_translations?.[0];
+          
+          // Fetch contact info for each foundry using the existing RPC function
           const { data: contactData } = await supabase.rpc(
             'get_foundry_contact_info',
             { foundry_id: foundry.id }
           );
-
+          
           return {
             ...foundry,
+            name: translation?.name || foundry.name,
+            description: translation?.description || foundry.description,
+            specialty: translation?.specialty || foundry.specialty,
             contact_info: contactData as unknown as FoundryContactInfo,
+            // Remove translation array after merging
+            foundries_translations: undefined,
           };
         })
       );
 
-      setFoundries(foundriesWithContact);
+      setFoundries(foundriesWithTranslations);
     } catch (err) {
       console.error('Error fetching foundries:', err);
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      setError(err instanceof Error ? err.message : 'Erro ao carregar fundições');
     } finally {
       setLoading(false);
     }
@@ -150,7 +157,7 @@ export const useFoundries = (categoryId?: string) => {
 
   useEffect(() => {
     fetchFoundries();
-  }, [categoryId]);
+  }, [categoryId, i18n.language]);
 
   return {
     foundries,

@@ -26,14 +26,32 @@ export const useNewsCategories = () => {
       
       const { data, error: fetchError } = await supabase
         .from('news_categories')
-        .select('*')
+        .select(`
+          *,
+          news_categories_translations!inner (
+            name,
+            description
+          )
+        `)
+        .eq('news_categories_translations.lang', currentLang)
         .order('name');
 
       if (fetchError) throw fetchError;
 
-      // TODO: Fetch translations once types are updated
-      // For now, return original content
-      setCategories(data || []);
+      // Merge base data with translations
+      const categoriesWithTranslations = (data || []).map((category: any) => {
+        const translation = category.news_categories_translations?.[0];
+        
+        return {
+          ...category,
+          name: translation?.name || category.name,
+          description: translation?.description || category.description,
+          // Remove translation array after merging
+          news_categories_translations: undefined,
+        };
+      });
+
+      setCategories(categoriesWithTranslations);
     } catch (err) {
       console.error('Error fetching news categories:', err);
       setError(err instanceof Error ? err.message : 'An error occurred');

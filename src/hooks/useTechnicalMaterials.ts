@@ -34,17 +34,35 @@ export const useTechnicalMaterials = () => {
       
       const { data, error } = await supabase
         .from('technical_materials')
-        .select('*')
+        .select(`
+          *,
+          technical_materials_translations!inner (
+            title,
+            description
+          )
+        `)
         .eq('status', 'published')
+        .eq('technical_materials_translations.lang', currentLang)
         .order('created_at', { ascending: false });
 
       if (error) {
         throw error;
       }
 
-      // TODO: Fetch translations once types are updated
-      // For now, return original content
-      setMaterials(data || []);
+      // Merge base data with translations
+      const materialsWithTranslations = (data || []).map((material: any) => {
+        const translation = material.technical_materials_translations?.[0];
+        
+        return {
+          ...material,
+          title: translation?.title || material.title,
+          description: translation?.description || material.description,
+          // Remove translation array after merging
+          technical_materials_translations: undefined,
+        };
+      });
+
+      setMaterials(materialsWithTranslations);
     } catch (err) {
       console.error('Error fetching technical materials:', err);
       setError(err instanceof Error ? err.message : 'Erro ao carregar materiais técnicos');

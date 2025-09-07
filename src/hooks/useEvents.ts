@@ -39,17 +39,39 @@ export const useEvents = () => {
       
       const { data, error } = await supabase
         .from('events')
-        .select('*')
+        .select(`
+          *,
+          events_translations!inner (
+            title,
+            description,
+            location,
+            venue
+          )
+        `)
         .eq('status', 'published')
+        .eq('events_translations.lang', currentLang)
         .order('start_date', { ascending: true });
 
       if (error) {
         throw error;
       }
 
-      // TODO: Fetch translations once types are updated
-      // For now, return original content
-      setEvents(data || []);
+      // Merge base data with translations
+      const eventsWithTranslations = (data || []).map((event: any) => {
+        const translation = event.events_translations?.[0];
+        
+        return {
+          ...event,
+          title: translation?.title || event.title,
+          description: translation?.description || event.description,
+          location: translation?.location || event.location,
+          venue: translation?.venue || event.venue,
+          // Remove translation array after merging
+          events_translations: undefined,
+        };
+      });
+
+      setEvents(eventsWithTranslations);
     } catch (err) {
       console.error('Error fetching events:', err);
       setError(err instanceof Error ? err.message : 'Erro ao carregar eventos');

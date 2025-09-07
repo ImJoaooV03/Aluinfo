@@ -37,26 +37,57 @@ export const useNews = () => {
 
       const currentLang = i18n.language || 'pt';
       
+      // Fetch news with translations
       const { data, error } = await supabase
         .from('news')
         .select(`
           *,
-          news_categories(
+          news_categories (
             id,
             name,
-            slug
+            slug,
+            news_categories_translations!inner (
+              name,
+              description
+            )
+          ),
+          news_translations!inner (
+            title,
+            excerpt,
+            content
           )
         `)
         .eq('status', 'published')
+        .eq('news_translations.lang', currentLang)
+        .eq('news_categories.news_categories_translations.lang', currentLang)
         .order('published_at', { ascending: false });
 
       if (error) {
         throw error;
       }
 
-      // TODO: Fetch translations once types are updated
-      // For now, return original content
-      setNews(data || []);
+      // Merge base data with translations
+      const newsWithTranslations = (data || []).map((item: any) => {
+        const translation = item.news_translations?.[0];
+        const categoryTranslation = item.news_categories?.news_categories_translations?.[0];
+        
+        return {
+          ...item,
+          title: translation?.title || item.title,
+          excerpt: translation?.excerpt || item.excerpt,
+          content: translation?.content || item.content,
+          news_categories: item.news_categories ? {
+            ...item.news_categories,
+            name: categoryTranslation?.name || item.news_categories.name,
+            description: categoryTranslation?.description || item.news_categories.description,
+            news_categories_translations: undefined,
+          } : null,
+          // Remove translation arrays after merging
+          news_translations: undefined,
+        };
+      });
+
+      setNews(newsWithTranslations);
     } catch (err) {
       console.error('Error fetching news:', err);
       setError(err instanceof Error ? err.message : 'Erro ao carregar notícias');

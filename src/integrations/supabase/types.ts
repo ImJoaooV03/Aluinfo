@@ -855,7 +855,7 @@ export type Database = {
         Returns: Json
       }
       unsubscribe_from_newsletter: {
-        Args: { subscriber_email: string; unsubscribe_token?: string }
+        Args: { subscriber_email: string; unsubscribe_token: string }
         Returns: Json
       }
     }

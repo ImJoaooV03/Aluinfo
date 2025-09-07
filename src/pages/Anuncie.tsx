@@ -20,8 +20,6 @@ import {
 } from "lucide-react";
 
 const Anuncie = () => {
-  const [isHovered, setIsHovered] = useState(false);
-
   const handleContactSpecialist = () => {
     // Default WhatsApp contact - can be made configurable later
     const phoneNumber = "5511999999999"; // Replace with actual number
@@ -93,18 +91,15 @@ const Anuncie = () => {
             <Button 
               size="lg" 
               onClick={handleContactSpecialist}
-              className="bg-white text-primary hover:bg-white/90 px-8 py-4 text-lg font-semibold"
-              onMouseEnter={() => setIsHovered(true)}
-              onMouseLeave={() => setIsHovered(false)}
+              className="bg-white text-orange-600 hover:bg-white/90 hover:text-orange-700 px-8 py-4 text-lg font-semibold transition-all duration-300"
             >
               <MessageCircle className="mr-2 h-5 w-5" />
               Fale com um Especialista
             </Button>
             <Button 
               size="lg" 
-              variant="outline"
               onClick={handleDownloadMediaKit}
-              className="border-white text-white hover:bg-white hover:text-primary hover:border-white transition-all duration-300 px-8 py-4 text-lg font-semibold"
+              className="bg-white text-orange-600 hover:bg-white/90 hover:text-orange-700 px-8 py-4 text-lg font-semibold transition-all duration-300"
             >
               <Download className="mr-2 h-5 w-5" />
               Baixe o Mídia Kit
@@ -204,7 +199,7 @@ const Anuncie = () => {
       </section>
 
       {/* CTA Final */}
-      <section className="py-16 px-4 bg-primary">
+      <section className="py-16 px-4 bg-gradient-to-br from-primary to-primary/80">
         <div className="container mx-auto text-center">
           <h2 className="text-3xl font-bold text-white mb-6">
             Pronto para Impulsionar seu Negócio?
@@ -217,16 +212,15 @@ const Anuncie = () => {
             <Button 
               size="lg" 
               onClick={handleContactSpecialist}
-              className="bg-white text-primary hover:bg-white/90 px-8 py-4 text-lg font-semibold"
+              className="bg-white text-orange-600 hover:bg-white/90 hover:text-orange-700 px-8 py-4 text-lg font-semibold transition-all duration-300"
             >
               <MessageCircle className="mr-2 h-5 w-5" />
               Fale com um Especialista
             </Button>
             <Button 
               size="lg" 
-              variant="outline"
               onClick={handleDownloadMediaKit}
-              className="border-white text-white hover:bg-white hover:text-primary hover:border-white transition-all duration-300 px-8 py-4 text-lg font-semibold"
+              className="bg-white text-orange-600 hover:bg-white/90 hover:text-orange-700 px-8 py-4 text-lg font-semibold transition-all duration-300"
             >
               <Download className="mr-2 h-5 w-5" />
               Baixe o Mídia Kit

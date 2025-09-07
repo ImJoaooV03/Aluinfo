@@ -222,6 +222,44 @@ export type Database = {
           },
         ]
       }
+      ebooks_translations: {
+        Row: {
+          created_at: string
+          description: string | null
+          ebook_id: string
+          id: string
+          lang: Database["public"]["Enums"]["language_code"]
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          ebook_id: string
+          id?: string
+          lang: Database["public"]["Enums"]["language_code"]
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          ebook_id?: string
+          id?: string
+          lang?: Database["public"]["Enums"]["language_code"]
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ebooks_translations_ebook_id_fkey"
+            columns: ["ebook_id"]
+            isOneToOne: false
+            referencedRelation: "ebooks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       events: {
         Row: {
           category_id: string | null
@@ -289,6 +327,50 @@ export type Database = {
             columns: ["category_id"]
             isOneToOne: false
             referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      events_translations: {
+        Row: {
+          created_at: string
+          description: string | null
+          event_id: string
+          id: string
+          lang: Database["public"]["Enums"]["language_code"]
+          location: string | null
+          title: string | null
+          updated_at: string
+          venue: string | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          event_id: string
+          id?: string
+          lang: Database["public"]["Enums"]["language_code"]
+          location?: string | null
+          title?: string | null
+          updated_at?: string
+          venue?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          event_id?: string
+          id?: string
+          lang?: Database["public"]["Enums"]["language_code"]
+          location?: string | null
+          title?: string | null
+          updated_at?: string
+          venue?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "events_translations_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
             referencedColumns: ["id"]
           },
         ]
@@ -547,6 +629,85 @@ export type Database = {
         }
         Relationships: []
       }
+      news_categories_translations: {
+        Row: {
+          category_id: string
+          created_at: string
+          description: string | null
+          id: string
+          lang: Database["public"]["Enums"]["language_code"]
+          name: string | null
+          updated_at: string
+        }
+        Insert: {
+          category_id: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          lang: Database["public"]["Enums"]["language_code"]
+          name?: string | null
+          updated_at?: string
+        }
+        Update: {
+          category_id?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          lang?: Database["public"]["Enums"]["language_code"]
+          name?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "news_categories_translations_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "news_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      news_translations: {
+        Row: {
+          content: string | null
+          created_at: string
+          excerpt: string | null
+          id: string
+          lang: Database["public"]["Enums"]["language_code"]
+          news_id: string
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          lang: Database["public"]["Enums"]["language_code"]
+          news_id: string
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          content?: string | null
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          lang?: Database["public"]["Enums"]["language_code"]
+          news_id?: string
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "news_translations_news_id_fkey"
+            columns: ["news_id"]
+            isOneToOne: false
+            referencedRelation: "news"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       newsletter_subscribers: {
         Row: {
           created_at: string | null
@@ -774,6 +935,44 @@ export type Database = {
           },
         ]
       }
+      technical_materials_translations: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          lang: Database["public"]["Enums"]["language_code"]
+          material_id: string
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          lang: Database["public"]["Enums"]["language_code"]
+          material_id: string
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          lang?: Database["public"]["Enums"]["language_code"]
+          material_id?: string
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "technical_materials_translations_material_id_fkey"
+            columns: ["material_id"]
+            isOneToOne: false
+            referencedRelation: "technical_materials"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -861,6 +1060,7 @@ export type Database = {
     }
     Enums: {
       content_status: "draft" | "published" | "archived"
+      language_code: "pt" | "es" | "en"
       material_type: "pdf" | "video" | "presentation" | "guide" | "manual"
       user_role: "admin" | "user"
     }
@@ -991,6 +1191,7 @@ export const Constants = {
   public: {
     Enums: {
       content_status: ["draft", "published", "archived"],
+      language_code: ["pt", "es", "en"],
       material_type: ["pdf", "video", "presentation", "guide", "manual"],
       user_role: ["admin", "user"],
     },

@@ -22,13 +22,13 @@ export const useNewsCategories = () => {
       setLoading(true);
       setError(null);
 
-      const currentLang = i18n.language || 'pt';
+      const currentLang = (i18n.language || 'pt') as 'pt' | 'es' | 'en';
       
       const { data, error: fetchError } = await supabase
         .from('news_categories')
         .select(`
           *,
-          news_categories_translations!inner (
+          news_categories_translations!left (
             name,
             description
           )
@@ -38,18 +38,27 @@ export const useNewsCategories = () => {
 
       if (fetchError) throw fetchError;
 
-      // Merge base data with translations
-      const categoriesWithTranslations = (data || []).map((category: any) => {
-        const translation = category.news_categories_translations?.[0];
+      // Merge base data with translations, fallback to PT
+      const categoriesWithTranslations = await Promise.all((data || []).map(async (category: any) => {
+        let translation = category.news_categories_translations?.[0];
+        
+        if (!translation && currentLang !== 'pt') {
+          const { data: ptData } = await supabase
+            .from('news_categories_translations')
+            .select('name, description')
+            .eq('category_id', category.id)
+            .eq('lang', 'pt' as 'pt' | 'es' | 'en')
+            .single();
+          translation = ptData;
+        }
         
         return {
           ...category,
           name: translation?.name || category.name,
           description: translation?.description || category.description,
-          // Remove translation array after merging
           news_categories_translations: undefined,
         };
-      });
+      }));
 
       setCategories(categoriesWithTranslations);
     } catch (err) {

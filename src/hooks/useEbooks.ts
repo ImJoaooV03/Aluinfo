@@ -33,13 +33,13 @@ export const useEbooks = () => {
       setLoading(true);
       setError(null);
 
-      const currentLang = i18n.language || 'pt';
+      const currentLang = (i18n.language || 'pt') as 'pt' | 'es' | 'en';
       
       const { data, error } = await supabase
         .from('ebooks')
         .select(`
           *,
-          ebooks_translations!inner (
+          ebooks_translations!left (
             title,
             description
           )
@@ -52,18 +52,27 @@ export const useEbooks = () => {
         throw error;
       }
 
-      // Merge base data with translations
-      const ebooksWithTranslations = (data || []).map((ebook: any) => {
-        const translation = ebook.ebooks_translations?.[0];
+      // Merge base data with translations, fallback to PT
+      const ebooksWithTranslations = await Promise.all((data || []).map(async (ebook: any) => {
+        let translation = ebook.ebooks_translations?.[0];
+        
+        if (!translation && currentLang !== 'pt') {
+          const { data: ptData } = await supabase
+            .from('ebooks_translations')
+            .select('title, description')
+            .eq('ebook_id', ebook.id)
+            .eq('lang', 'pt' as 'pt' | 'es' | 'en')
+            .single();
+          translation = ptData;
+        }
         
         return {
           ...ebook,
           title: translation?.title || ebook.title,
           description: translation?.description || ebook.description,
-          // Remove translation array after merging
           ebooks_translations: undefined,
         };
-      });
+      }));
 
       setEbooks(ebooksWithTranslations);
     } catch (err) {

@@ -35,7 +35,7 @@ export const useNews = () => {
       setLoading(true);
       setError(null);
 
-      const currentLang = i18n.language || 'pt';
+      const currentLang = (i18n.language || 'pt') as 'pt' | 'es' | 'en';
       
       // Fetch news with translations
       const { data, error } = await supabase
@@ -45,13 +45,9 @@ export const useNews = () => {
           news_categories (
             id,
             name,
-            slug,
-            news_categories_translations!inner (
-              name,
-              description
-            )
+            slug
           ),
-          news_translations!inner (
+          news_translations!left (
             title,
             excerpt,
             content
@@ -59,33 +55,34 @@ export const useNews = () => {
         `)
         .eq('status', 'published')
         .eq('news_translations.lang', currentLang)
-        .eq('news_categories.news_categories_translations.lang', currentLang)
         .order('published_at', { ascending: false });
 
       if (error) {
         throw error;
       }
 
-      // Merge base data with translations
-      const newsWithTranslations = (data || []).map((item: any) => {
-        const translation = item.news_translations?.[0];
-        const categoryTranslation = item.news_categories?.news_categories_translations?.[0];
+      // Merge base data with translations, fallback to PT
+      const newsWithTranslations = await Promise.all((data || []).map(async (item: any) => {
+        let translation = item.news_translations?.[0];
+        
+        if (!translation && currentLang !== 'pt') {
+          const { data: ptData } = await supabase
+            .from('news_translations')
+            .select('title, excerpt, content')
+            .eq('news_id', item.id)
+            .eq('lang', 'pt' as 'pt' | 'es' | 'en')
+            .single();
+          translation = ptData;
+        }
         
         return {
           ...item,
           title: translation?.title || item.title,
           excerpt: translation?.excerpt || item.excerpt,
           content: translation?.content || item.content,
-          news_categories: item.news_categories ? {
-            ...item.news_categories,
-            name: categoryTranslation?.name || item.news_categories.name,
-            description: categoryTranslation?.description || item.news_categories.description,
-            news_categories_translations: undefined,
-          } : null,
-          // Remove translation arrays after merging
           news_translations: undefined,
         };
-      });
+      }));
 
       setNews(newsWithTranslations);
     } catch (err) {

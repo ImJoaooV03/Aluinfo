@@ -35,13 +35,13 @@ export const useEvents = () => {
       setLoading(true);
       setError(null);
 
-      const currentLang = i18n.language || 'pt';
+      const currentLang = (i18n.language || 'pt') as 'pt' | 'es' | 'en';
       
       const { data, error } = await supabase
         .from('events')
         .select(`
           *,
-          events_translations!inner (
+          events_translations!left (
             title,
             description,
             location,
@@ -56,9 +56,19 @@ export const useEvents = () => {
         throw error;
       }
 
-      // Merge base data with translations
-      const eventsWithTranslations = (data || []).map((event: any) => {
-        const translation = event.events_translations?.[0];
+      // Merge base data with translations, fallback to PT
+      const eventsWithTranslations = await Promise.all((data || []).map(async (event: any) => {
+        let translation = event.events_translations?.[0];
+        
+        if (!translation && currentLang !== 'pt') {
+          const { data: ptData } = await supabase
+            .from('events_translations')
+            .select('title, description, venue, location')
+            .eq('event_id', event.id)
+            .eq('lang', 'pt' as 'pt' | 'es' | 'en')
+            .single();
+          translation = ptData;
+        }
         
         return {
           ...event,
@@ -66,10 +76,9 @@ export const useEvents = () => {
           description: translation?.description || event.description,
           location: translation?.location || event.location,
           venue: translation?.venue || event.venue,
-          // Remove translation array after merging
           events_translations: undefined,
         };
-      });
+      }));
 
       setEvents(eventsWithTranslations);
     } catch (err) {

@@ -30,13 +30,13 @@ export const useTechnicalMaterials = () => {
       setLoading(true);
       setError(null);
 
-      const currentLang = i18n.language || 'pt';
+      const currentLang = (i18n.language || 'pt') as 'pt' | 'es' | 'en';
       
       const { data, error } = await supabase
         .from('technical_materials')
         .select(`
           *,
-          technical_materials_translations!inner (
+          technical_materials_translations!left (
             title,
             description
           )
@@ -49,18 +49,27 @@ export const useTechnicalMaterials = () => {
         throw error;
       }
 
-      // Merge base data with translations
-      const materialsWithTranslations = (data || []).map((material: any) => {
-        const translation = material.technical_materials_translations?.[0];
+      // Merge base data with translations, fallback to PT
+      const materialsWithTranslations = await Promise.all((data || []).map(async (material: any) => {
+        let translation = material.technical_materials_translations?.[0];
+        
+        if (!translation && currentLang !== 'pt') {
+          const { data: ptData } = await supabase
+            .from('technical_materials_translations')
+            .select('title, description')
+            .eq('material_id', material.id)
+            .eq('lang', 'pt' as 'pt' | 'es' | 'en')
+            .single();
+          translation = ptData;
+        }
         
         return {
           ...material,
           title: translation?.title || material.title,
           description: translation?.description || material.description,
-          // Remove translation array after merging
           technical_materials_translations: undefined,
         };
-      });
+      }));
 
       setMaterials(materialsWithTranslations);
     } catch (err) {

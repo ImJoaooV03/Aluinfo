@@ -8,12 +8,27 @@ const HeroSlider = () => {
   const { banners, loading } = useSupabaseBanners();
   
   // Filter banners for home slider
-  const sliderBanners = banners.filter(banner => 
-    banner.position === 'home-slider' && 
-    banner.is_active &&
-    new Date() >= new Date(banner.start_date) &&
-    new Date() <= new Date(banner.end_date)
-  );
+  const sliderBanners = banners.filter(banner => {
+    if (banner.position !== 'home-slider' || !banner.is_active || !banner.image_url) {
+      return false;
+    }
+    
+    const now = new Date();
+    
+    // Check start date - if set, current date must be after it
+    if (banner.start_date) {
+      const startDate = new Date(banner.start_date);
+      if (now < startDate) return false;
+    }
+    
+    // Check end date - if set, current date must be before it
+    if (banner.end_date) {
+      const endDate = new Date(banner.end_date);
+      if (now > endDate) return false;
+    }
+    
+    return true;
+  });
 
   // Auto-advance slides
   useEffect(() => {

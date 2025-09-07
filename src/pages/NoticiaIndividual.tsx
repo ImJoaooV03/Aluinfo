@@ -1,5 +1,5 @@
 import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, Clock, User, Tag, Share2, Eye } from "lucide-react";
+import { ArrowLeft, Clock, User, Tag, Share2, Eye, Copy, Mail, ExternalLink } from "lucide-react";
 import DOMPurify from "dompurify";
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -12,6 +12,8 @@ import Sidebar from "@/components/Sidebar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
+import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
@@ -37,7 +39,9 @@ const NoticiaIndividual = () => {
   const [relatedNews, setRelatedNews] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
   const viewTrackedRef = useRef(false);
+  const { toast } = useToast();
 
   useEffect(() => {
     const fetchNews = async () => {
@@ -108,6 +112,44 @@ const NoticiaIndividual = () => {
       return format(new Date(dateString), "dd 'de' MMMM, yyyy", { locale: ptBR });
     } catch {
       return dateString;
+    }
+  };
+
+  const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
+  const shareTitle = noticia?.title || '';
+  const shareText = noticia?.excerpt || '';
+
+  const handleShareClick = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: shareTitle,
+          text: shareText,
+          url: currentUrl,
+        });
+      } catch (error) {
+        // If native sharing fails, open popover
+        setShareOpen(true);
+      }
+    } else {
+      setShareOpen(true);
+    }
+  };
+
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(currentUrl);
+      toast({
+        title: "Link copiado!",
+        description: "O link foi copiado para a área de transferência.",
+      });
+      setShareOpen(false);
+    } catch (error) {
+      toast({
+        title: "Erro ao copiar",
+        description: "Não foi possível copiar o link.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -191,10 +233,80 @@ const NoticiaIndividual = () => {
                       <Eye className="h-4 w-4" />
                       <span>{noticia.view_count || 0} visualizações</span>
                     </div>
-                    <Button variant="ghost" size="sm">
-                      <Share2 className="h-4 w-4 mr-1" />
-                      Compartilhar
-                    </Button>
+                    <Popover open={shareOpen} onOpenChange={setShareOpen}>
+                      <PopoverTrigger asChild>
+                        <Button variant="ghost" size="sm" onClick={handleShareClick}>
+                          <Share2 className="h-4 w-4 mr-1" />
+                          Compartilhar
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-64">
+                        <div className="space-y-2">
+                          <h4 className="font-medium text-sm mb-3">Compartilhar notícia</h4>
+                          <div className="space-y-1">
+                            <a
+                              href={`https://wa.me/?text=${encodeURIComponent(`${shareTitle} - ${currentUrl}`)}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center w-full px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground rounded-md transition-colors"
+                            >
+                              <ExternalLink className="h-4 w-4 mr-2" />
+                              WhatsApp
+                            </a>
+                            <a
+                              href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(currentUrl)}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center w-full px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground rounded-md transition-colors"
+                            >
+                              <ExternalLink className="h-4 w-4 mr-2" />
+                              Facebook
+                            </a>
+                            <a
+                              href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(currentUrl)}&text=${encodeURIComponent(shareTitle)}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center w-full px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground rounded-md transition-colors"
+                            >
+                              <ExternalLink className="h-4 w-4 mr-2" />
+                              Twitter/X
+                            </a>
+                            <a
+                              href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(currentUrl)}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center w-full px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground rounded-md transition-colors"
+                            >
+                              <ExternalLink className="h-4 w-4 mr-2" />
+                              LinkedIn
+                            </a>
+                            <a
+                              href={`https://t.me/share/url?url=${encodeURIComponent(currentUrl)}&text=${encodeURIComponent(shareTitle)}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center w-full px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground rounded-md transition-colors"
+                            >
+                              <ExternalLink className="h-4 w-4 mr-2" />
+                              Telegram
+                            </a>
+                            <a
+                              href={`mailto:?subject=${encodeURIComponent(shareTitle)}&body=${encodeURIComponent(`${shareText}\n\n${currentUrl}`)}`}
+                              className="flex items-center w-full px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground rounded-md transition-colors"
+                            >
+                              <Mail className="h-4 w-4 mr-2" />
+                              E-mail
+                            </a>
+                            <button
+                              onClick={handleCopyLink}
+                              className="flex items-center w-full px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground rounded-md transition-colors"
+                            >
+                              <Copy className="h-4 w-4 mr-2" />
+                              Copiar link
+                            </button>
+                          </div>
+                        </div>
+                      </PopoverContent>
+                    </Popover>
                   </div>
                 </div>
 

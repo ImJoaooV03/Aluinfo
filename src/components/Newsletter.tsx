@@ -4,12 +4,14 @@ import { Input } from "@/components/ui/input";
 import { Mail, Send, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 
 const Newsletter = () => {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const { t } = useTranslation(['footer', 'common']);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -76,12 +78,10 @@ const Newsletter = () => {
               <Mail className="h-8 w-8 text-orange-500" />
             </div>
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-              Mantenha-se Atualizado
+              {t('footer:newsletter')}
             </h2>
             <p className="text-lg text-slate-300 max-w-2xl mx-auto">
-              Receba as últimas notícias, tendências e insights do mercado de alumínio 
-              diretamente em seu e-mail. Seja o primeiro a saber sobre inovações, 
-              eventos e oportunidades no setor.
+              {t('footer:newsletterText')}
             </p>
           </div>
 
@@ -89,7 +89,7 @@ const Newsletter = () => {
             <div className="flex flex-col gap-3">
               <Input
                 type="text"
-                placeholder="Seu nome (opcional)"
+                placeholder={t('common:name') + ' (opcional)'}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 className="h-12 text-base bg-white/10 border-white/20 text-white placeholder:text-white/60"
@@ -99,7 +99,7 @@ const Newsletter = () => {
                 <div className="flex-1">
                   <Input
                     type="email"
-                    placeholder="Seu melhor e-mail"
+                    placeholder={t('footer:emailPlaceholder')}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="h-12 text-base bg-white/10 border-white/20 text-white placeholder:text-white/60"
@@ -118,7 +118,7 @@ const Newsletter = () => {
                   ) : (
                     <Send className="h-4 w-4 mr-2" />
                   )}
-                  {isLoading ? "Processando..." : "Assinar"}
+                  {isLoading ? t('common:loading') : t('common:subscribe')}
                 </Button>
               </div>
             </div>

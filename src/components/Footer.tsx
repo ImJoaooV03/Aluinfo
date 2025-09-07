@@ -1,8 +1,12 @@
 
 import { Mail, Phone, MapPin, Instagram, Linkedin } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
+import { useLanguageUtils, pathWithLang } from "@/utils/i18nUtils";
 
 const Footer = () => {
+  const { t } = useTranslation(['footer', 'navigation']);
+  const { currentLanguage } = useLanguageUtils();
   return (
     <footer className="text-sidebar-foreground" style={{ backgroundColor: 'hsl(var(--header-footer))' }}>
       <div className="container mx-auto px-4 py-12">
@@ -16,7 +20,7 @@ const Footer = () => {
               className="h-12 w-auto mb-4"
             />
             <p className="text-sm mb-6">
-              O portal global que conecta toda a cadeia produtiva do alumínio. Fornecedores, fundições, compradores e profissionais unidos em uma só plataforma.
+              {t('footer:aboutText')}
             </p>
             <div className="space-y-3">
               <div className="flex items-center text-sm">
@@ -36,7 +40,7 @@ const Footer = () => {
 
           {/* Portal */}
           <div>
-            <h3 className="text-white font-semibold mb-4">PORTAL</h3>
+            <h3 className="text-white font-semibold mb-4">{t('footer:quickLinks')}</h3>
             <ul className="space-y-2 text-sm">
               <li><a href="#" className="hover:text-primary transition-colors">Anuncie</a></li>
               <li><a href="#" className="hover:text-primary transition-colors">Midia Kit</a></li>

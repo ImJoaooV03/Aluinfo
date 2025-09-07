@@ -1,0 +1,16 @@
+{
+  "latestNews": "Latest News",
+  "technicalMaterials": "Technical Materials",
+  "ebooks": "E-books",
+  "events": "Events",
+  "suppliers": "Suppliers",
+  "foundries": "Foundries",
+  "lmeIndicators": "LME Indicators",
+  "configureSlides": "Configure slides in the admin panel to display the carousel",
+  "noNewsAvailable": "No news available at the moment",
+  "noMaterialsAvailable": "No technical materials available at the moment",
+  "noEbooksAvailable": "No e-books available at the moment",
+  "noEventsAvailable": "No events available at the moment",
+  "noSuppliersAvailable": "No suppliers available at the moment",
+  "noFoundriesAvailable": "No foundries available at the moment"
+}

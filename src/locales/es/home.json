@@ -1,0 +1,16 @@
+{
+  "latestNews": "Últimas Noticias",
+  "technicalMaterials": "Materiales Técnicos",
+  "ebooks": "E-books",
+  "events": "Eventos",
+  "suppliers": "Proveedores",
+  "foundries": "Fundiciones",
+  "lmeIndicators": "Indicadores LME",
+  "configureSlides": "Configure diapositivas en el panel administrativo para mostrar el carrusel",
+  "noNewsAvailable": "No hay noticias disponibles en este momento",
+  "noMaterialsAvailable": "No hay materiales técnicos disponibles en este momento",
+  "noEbooksAvailable": "No hay e-books disponibles en este momento",
+  "noEventsAvailable": "No hay eventos disponibles en este momento",
+  "noSuppliersAvailable": "No hay proveedores disponibles en este momento",
+  "noFoundriesAvailable": "No hay fundiciones disponibles en este momento"
+}

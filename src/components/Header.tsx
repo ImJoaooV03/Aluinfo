@@ -4,17 +4,23 @@ import { useNavigate, Link } from "react-router-dom";
 import { Search, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useTranslation } from "react-i18next";
+import { useLanguageUtils, pathWithLang } from "@/utils/i18nUtils";
+import LanguageSwitcher from "./LanguageSwitcher";
 import AdBanner from "./AdBanner";
 
 const Header = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
+  const { t } = useTranslation(['header', 'common']);
+  const { currentLanguage } = useLanguageUtils();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchTerm.trim()) {
-      // Simular busca - redirecionar para página de notícias com parâmetro de busca
-      navigate(`/noticias?search=${encodeURIComponent(searchTerm.trim())}`);
+      // Redirect to news page with search parameter in current language
+      const searchPath = pathWithLang(`noticias?search=${encodeURIComponent(searchTerm.trim())}`, currentLanguage);
+      navigate(searchPath);
       setSearchTerm("");
     }
   };
@@ -30,19 +36,20 @@ const Header = () => {
         {/* Top bar */}
         <div className="flex items-center justify-between py-2 border-b border-border">
           <div className="text-sm text-muted-foreground">
-            Portal Global do Mercado de Alumínio
+            {t('header:tagline')}
           </div>
           <div className="flex items-center space-x-4">
             <Button variant="ghost" size="sm" className="text-sm text-primary hover:text-primary-foreground hover:bg-primary">
-              Newsletter
+              {t('header:newsletter')}
             </Button>
             <Button variant="ghost" size="sm" className="text-sm text-primary hover:text-primary-foreground hover:bg-primary">
-              Anuncie Conosco
+              {t('header:advertise')}
             </Button>
-            <Link to="/admin/auth">
+            <LanguageSwitcher />
+            <Link to={pathWithLang('admin/auth', currentLanguage)}>
               <Button variant="ghost" size="sm" className="text-sm text-primary hover:text-primary-foreground hover:bg-primary">
                 <Settings className="h-3 w-3 mr-1" />
-                Admin
+                {t('header:admin')}
               </Button>
             </Link>
           </div>
@@ -67,7 +74,7 @@ const Header = () => {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onKeyPress={handleKeyPress}
-                placeholder="Buscar no portal..." 
+                placeholder={t('common:searchPlaceholder')} 
                 className="pl-10 w-full"
               />
               <Button 
@@ -75,7 +82,7 @@ const Header = () => {
                 size="sm"
                 className="absolute right-1 top-1/2 transform -translate-y-1/2 h-8"
               >
-                Buscar
+                {t('header:searchButton')}
               </Button>
             </div>
           </form>

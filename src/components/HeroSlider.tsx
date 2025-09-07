@@ -2,10 +2,12 @@ import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useSupabaseBanners } from "@/hooks/useSupabaseBanners";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
 
 const HeroSlider = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const { banners, loading } = useSupabaseBanners();
+  const { t } = useTranslation('home');
   
   // Filter banners for home slider
   const sliderBanners = banners.filter(banner => {
@@ -65,7 +67,7 @@ const HeroSlider = () => {
             Portal ALUINFO
           </h2>
           <p className="text-lg text-muted-foreground">
-            Configure os slides do banner principal no painel administrativo
+            {t('configureSlides')}
           </p>
         </div>
       </section>

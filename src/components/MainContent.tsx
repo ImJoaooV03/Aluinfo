@@ -11,9 +11,11 @@ import { useEbooks } from "@/hooks/useEbooks";
 import { useEvents } from "@/hooks/useEvents";
 import { useLMEIndicators } from "@/hooks/useLMEIndicators";
 import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { ptBR, es, enUS } from "date-fns/locale";
 import { useState } from "react";
 import { DownloadGateDialog } from "@/components/DownloadGateDialog";
+import { useTranslation } from "react-i18next";
+import { useLanguageUtils, pathWithLang, formatDate as formatDateI18n, formatPrice as formatPriceI18n } from "@/utils/i18nUtils";
 
 const MainContent = () => {
   const { news, loading: newsLoading } = useNews();
@@ -21,6 +23,8 @@ const MainContent = () => {
   const { ebooks, loading: ebooksLoading } = useEbooks();
   const { events, loading: eventsLoading } = useEvents();
   const { indicators, loading: indicatorsLoading } = useLMEIndicators();
+  const { t } = useTranslation(['home', 'common']);
+  const { currentLanguage } = useLanguageUtils();
   
   // Estados para controle dos popups de download
   const [isGateOpen, setIsGateOpen] = useState(false);
@@ -38,15 +42,15 @@ const MainContent = () => {
 
   const formatDate = (dateString: string) => {
     try {
-      return format(new Date(dateString), "dd 'de' MMMM, yyyy", { locale: ptBR });
+      return formatDateI18n(new Date(dateString), currentLanguage);
     } catch {
       return dateString;
     }
   };
 
   const formatPrice = (price: number | null) => {
-    if (!price || price === 0) return "Gratuito";
-    return `R$ ${price.toFixed(2)}`;
+    if (!price || price === 0) return t('common:free');
+    return formatPriceI18n(price, 'USD', currentLanguage);
   };
 
   return (
@@ -59,10 +63,10 @@ const MainContent = () => {
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-2">
             <FileText className="h-6 w-6 text-primary" />
-            <h2 className="text-2xl font-bold text-foreground">Últimas Notícias</h2>
+            <h2 className="text-2xl font-bold text-foreground">{t('home:latestNews')}</h2>
           </div>
           <Button variant="outline" asChild>
-            <Link to="/noticias">Ver todas</Link>
+            <Link to={pathWithLang('noticias', currentLanguage)}>{t('common:viewAll')}</Link>
           </Button>
         </div>
 
@@ -99,10 +103,10 @@ const MainContent = () => {
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-2">
             <Wrench className="h-6 w-6 text-primary" />
-            <h2 className="text-2xl font-bold text-foreground">Artigos Técnicos</h2>
+            <h2 className="text-2xl font-bold text-foreground">{t('home:technicalMaterials')}</h2>
           </div>
           <Button variant="outline" asChild>
-            <Link to="/artigos-tecnicos">Ver todos</Link>
+            <Link to={pathWithLang('artigos-tecnicos', currentLanguage)}>{t('common:viewAll')}</Link>
           </Button>
         </div>
 
@@ -120,7 +124,7 @@ const MainContent = () => {
                   <div className="flex items-center justify-between mb-2">
                     <Badge variant="secondary">{material.file_type || 'PDF'}</Badge>
                     <span className="text-sm text-muted-foreground">
-                      {material.download_count || 0} downloads
+                      {material.download_count || 0} {t('common:downloads')}
                     </span>
                   </div>
                   <CardTitle className="line-clamp-2 text-base">
@@ -144,7 +148,7 @@ const MainContent = () => {
                     }}
                     disabled={!material.file_url}
                   >
-                    {material.file_url ? 'Download' : 'Arquivo indisponível'}
+                    {material.file_url ? t('common:download') : 'Arquivo indisponível'}
                   </Button>
                 </CardContent>
               </Card>
@@ -161,10 +165,10 @@ const MainContent = () => {
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-2">
             <BookOpen className="h-6 w-6 text-primary" />
-            <h2 className="text-2xl font-bold text-foreground">E-books</h2>
+            <h2 className="text-2xl font-bold text-foreground">{t('home:ebooks')}</h2>
           </div>
           <Button variant="outline" asChild>
-            <Link to="/ebooks">Ver todos</Link>
+            <Link to={pathWithLang('ebooks', currentLanguage)}>{t('common:viewAll')}</Link>
           </Button>
         </div>
 
@@ -206,8 +210,8 @@ const MainContent = () => {
                     {ebook.description || 'E-book disponível para download'}
                   </p>
                   <div className="flex items-center justify-between text-xs text-muted-foreground mb-3">
-                    {ebook.pages_count && <span>{ebook.pages_count} páginas</span>}
-                    {ebook.download_count && <span>{ebook.download_count} downloads</span>}
+                    {ebook.pages_count && <span>{ebook.pages_count} {t('common:pages')}</span>}
+                    {ebook.download_count && <span>{ebook.download_count} {t('common:downloads')}</span>}
                   </div>
                   <Button 
                     size="sm" 
@@ -220,7 +224,7 @@ const MainContent = () => {
                       setIsGateOpen(true);
                     }}
                   >
-                    {ebook.price && ebook.price > 0 ? 'Comprar' : 'Download'}
+                    {ebook.price && ebook.price > 0 ? 'Comprar' : t('common:download')}
                   </Button>
                 </CardContent>
               </Card>
@@ -237,10 +241,10 @@ const MainContent = () => {
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-2">
             <Calendar className="h-6 w-6 text-primary" />
-            <h2 className="text-2xl font-bold text-foreground">Próximos Eventos</h2>
+            <h2 className="text-2xl font-bold text-foreground">{t('home:events')}</h2>
           </div>
           <Button variant="outline" asChild>
-            <Link to="/eventos">Ver todos</Link>
+            <Link to={pathWithLang('eventos', currentLanguage)}>{t('common:viewAll')}</Link>
           </Button>
         </div>
 
@@ -325,7 +329,7 @@ const MainContent = () => {
       <section>
         <div className="flex items-center space-x-2 mb-6">
           <TrendingUp className="h-6 w-6 text-primary" />
-          <h2 className="text-2xl font-bold text-foreground">Indicadores LME</h2>
+          <h2 className="text-2xl font-bold text-foreground">{t('home:lmeIndicators')}</h2>
         </div>
 
         {indicatorsLoading ? (

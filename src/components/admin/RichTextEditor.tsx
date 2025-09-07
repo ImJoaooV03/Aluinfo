@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useCallback, useMemo } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { supabase } from '@/integrations/supabase/client';
@@ -18,7 +18,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
   const quillRef = useRef<ReactQuill>(null);
   const { toast } = useToast();
 
-  const imageHandler = () => {
+  const imageHandler = useCallback(() => {
     const input = document.createElement('input');
     input.setAttribute('type', 'file');
     input.setAttribute('accept', 'image/png,image/jpg,image/jpeg,image/webp');
@@ -87,9 +87,9 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
         });
       }
     };
-  };
+  }, [toast]);
 
-  const modules = {
+  const modules = useMemo(() => ({
     toolbar: {
       container: [
         [{ 'header': [1, 2, 3, false] }],
@@ -103,20 +103,24 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
         image: imageHandler
       }
     }
-  };
+  }), [imageHandler]);
 
-  const formats = [
+  const formats = useMemo(() => [
     'header', 'bold', 'italic', 'underline', 'strike',
     'list', 'bullet', 'align', 'link', 'image'
-  ];
+  ], []);
+
+  const handleChange = useCallback((content: string) => {
+    onChange(content || '');
+  }, [onChange]);
 
   return (
     <div className="rich-text-editor">
       <ReactQuill
         ref={quillRef}
         theme="snow"
-        value={value}
-        onChange={onChange}
+        value={value || ''}
+        onChange={handleChange}
         modules={modules}
         formats={formats}
         placeholder={placeholder}

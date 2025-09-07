@@ -109,7 +109,7 @@ const CategoryDialog = ({ onCategoryCreated }: CategoryDialogProps) => {
             <Input
               id="category-name"
               value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
               placeholder="Ex: Tecnologia, Mercado, Sustentabilidade"
               required
             />
@@ -120,7 +120,7 @@ const CategoryDialog = ({ onCategoryCreated }: CategoryDialogProps) => {
             <Textarea
               id="category-description"
               value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
               placeholder="Breve descrição da categoria"
               rows={3}
             />
@@ -451,50 +451,50 @@ export default function AdminNoticias() {
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="title">Título</Label>
-                    <Input
-                      id="title"
-                      value={formData.title}
-                      onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                      required
-                    />
+                     <Input
+                       id="title"
+                       value={formData.title}
+                       onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
+                       required
+                     />
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="excerpt">Resumo</Label>
-                    <Textarea
-                      id="excerpt"
-                      value={formData.excerpt}
-                      onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
-                      rows={3}
-                    />
+                     <Textarea
+                       id="excerpt"
+                       value={formData.excerpt}
+                       onChange={(e) => setFormData(prev => ({ ...prev, excerpt: e.target.value }))}
+                       rows={3}
+                     />
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="content">Conteúdo</Label>
-                    <RichTextEditor
-                      value={formData.content}
-                      onChange={(content) => setFormData({ ...formData, content })}
-                      placeholder="Digite o conteúdo da notícia..."
-                    />
+                     <RichTextEditor
+                       value={formData.content}
+                       onChange={(content) => setFormData(prev => ({ ...prev, content }))}
+                       placeholder="Digite o conteúdo da notícia..."
+                     />
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="featured_image">URL da Imagem</Label>
-                    <Input
-                      id="featured_image"
-                      value={formData.featured_image_url}
-                      onChange={(e) => setFormData({ ...formData, featured_image_url: e.target.value })}
-                      placeholder="https://exemplo.com/imagem.jpg"
-                    />
+                     <Input
+                       id="featured_image"
+                       value={formData.featured_image_url}
+                       onChange={(e) => setFormData(prev => ({ ...prev, featured_image_url: e.target.value }))}
+                       placeholder="https://exemplo.com/imagem.jpg"
+                     />
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="category">Categoria</Label>
-                      <Select 
-                        value={formData.category_id} 
-                        onValueChange={(value) => setFormData({ ...formData, category_id: value })}
-                      >
+                       <Select 
+                         value={formData.category_id} 
+                         onValueChange={(value) => setFormData(prev => ({ ...prev, category_id: value }))}
+                       >
                         <SelectTrigger>
                           <SelectValue placeholder="Selecione uma categoria" />
                         </SelectTrigger>
@@ -510,10 +510,10 @@ export default function AdminNoticias() {
 
                     <div className="space-y-2">
                       <Label htmlFor="status">Status</Label>
-                      <Select 
-                        value={formData.status} 
-                        onValueChange={(value: 'draft' | 'published' | 'archived') => setFormData({ ...formData, status: value })}
-                      >
+                       <Select 
+                         value={formData.status} 
+                         onValueChange={(value: 'draft' | 'published' | 'archived') => setFormData(prev => ({ ...prev, status: value }))}
+                       >
                         <SelectTrigger>
                           <SelectValue />
                         </SelectTrigger>

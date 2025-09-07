@@ -430,6 +430,36 @@ export type Database = {
         }
         Relationships: []
       }
+      media_kits: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          file_url: string
+          id: string
+          status: Database["public"]["Enums"]["content_status"] | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          file_url: string
+          id?: string
+          status?: Database["public"]["Enums"]["content_status"] | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          file_url?: string
+          id?: string
+          status?: Database["public"]["Enums"]["content_status"] | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       news: {
         Row: {
           author_id: string | null

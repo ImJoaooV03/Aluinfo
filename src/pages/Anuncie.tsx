@@ -5,6 +5,8 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { DownloadGateDialog } from "@/components/DownloadGateDialog";
+import { useActiveMediaKit } from "@/hooks/useMediaKits";
 import { 
   MessageCircle, 
   Download, 
@@ -20,6 +22,9 @@ import {
 } from "lucide-react";
 
 const Anuncie = () => {
+  const [showDownloadDialog, setShowDownloadDialog] = useState(false);
+  const { data: activeMediaKit } = useActiveMediaKit();
+
   const handleContactSpecialist = () => {
     // Default WhatsApp contact - can be made configurable later
     const phoneNumber = "5511999999999"; // Replace with actual number
@@ -29,12 +34,12 @@ const Anuncie = () => {
   };
 
   const handleDownloadMediaKit = () => {
-    // Default media kit URL - can be made configurable later
-    const mediaKitUrl = "/media-kit-aluinfo.pdf"; // Replace with actual URL
-    const link = document.createElement('a');
-    link.href = mediaKitUrl;
-    link.download = "Media-Kit-Aluinfo.pdf";
-    link.click();
+    if (activeMediaKit) {
+      setShowDownloadDialog(true);
+    } else {
+      // Fallback if no media kit is available
+      alert("Mídia kit não disponível no momento. Entre em contato conosco para mais informações.");
+    }
   };
 
   const stats = [
@@ -230,6 +235,18 @@ const Anuncie = () => {
       </section>
 
       <Footer />
+      
+      {/* Download Gate Dialog */}
+      {activeMediaKit && (
+        <DownloadGateDialog
+          open={showDownloadDialog}
+          onOpenChange={setShowDownloadDialog}
+          contentType="media_kit"
+          contentId={activeMediaKit.id}
+          fileUrl={activeMediaKit.file_url}
+          title={activeMediaKit.title}
+        />
+      )}
     </div>
   );
 };

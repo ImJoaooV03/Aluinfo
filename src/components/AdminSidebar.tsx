@@ -14,7 +14,8 @@ import {
   BookOpen,
   Download,
   Building,
-  Factory
+  Factory,
+  Mail
 } from "lucide-react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -48,6 +49,7 @@ const menuItems = [
   { title: "Indicadores LME", url: "/admin/lme", icon: TrendingUp },
   { title: "Downloads", url: "/admin/downloads", icon: Download },
   { title: "Newsletter", url: "/admin/newsletter", icon: Users },
+  { title: "Mídia Kit", url: "/admin/media-kit", icon: Mail },
 ];
 
 export function AdminSidebar() {

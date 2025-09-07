@@ -35,7 +35,7 @@ type FormValues = z.infer<typeof formSchema>;
 interface DownloadGateDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  contentType: "technical_materials" | "ebooks";
+  contentType: "technical_materials" | "ebooks" | "media_kit";
   contentId: string;
   fileUrl: string;
   title: string;

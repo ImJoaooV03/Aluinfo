@@ -29,6 +29,7 @@ import AdminBanners from "./pages/admin/AdminBanners";
 import AdminLME from "./pages/admin/AdminLME";
 import AdminDownloads from "./pages/admin/AdminDownloads";
 import AdminNewsletter from "./pages/admin/AdminNewsletter";
+import AdminMediaKit from "./pages/admin/AdminMediaKit";
 import AdminAuth from "./pages/AdminAuth";
 
 import EditarBanners from "./pages/EditarBanners";
@@ -85,6 +86,7 @@ function App() {
               <Route path="lme" element={<AdminLME />} />
               <Route path="downloads" element={<AdminDownloads />} />
               <Route path="newsletter" element={<AdminNewsletter />} />
+              <Route path="media-kit" element={<AdminMediaKit />} />
             </Route>
 
             {/* Rota 404 */}

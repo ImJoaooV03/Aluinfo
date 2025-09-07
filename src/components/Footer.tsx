@@ -1,5 +1,5 @@
 
-import { Mail, Phone, MapPin, Facebook, Twitter, Linkedin, Youtube } from "lucide-react";
+import { Mail, Phone, MapPin, Instagram, Linkedin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const Footer = () => {
@@ -98,17 +98,23 @@ const Footer = () => {
               <a href="#" className="hover:text-primary transition-colors ml-2">Política de Privacidade</a>
             </div>
             <div className="flex space-x-4 mt-4 md:mt-0">
-              <a href="#" className="text-gray-400 hover:text-primary transition-colors">
-                <Facebook className="h-5 w-5" />
+              <a 
+                href="https://www.instagram.com/portal.aluinfo" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                aria-label="Seguir ALUINFO no Instagram"
+                className="text-gray-400 hover:text-primary transition-colors"
+              >
+                <Instagram className="h-5 w-5" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-primary transition-colors">
-                <Twitter className="h-5 w-5" />
-              </a>
-              <a href="#" className="text-gray-400 hover:text-primary transition-colors">
+              <a 
+                href="https://www.linkedin.com/in/portal-aluinfo-231955374/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                aria-label="Seguir ALUINFO no LinkedIn"
+                className="text-gray-400 hover:text-primary transition-colors"
+              >
                 <Linkedin className="h-5 w-5" />
-              </a>
-              <a href="#" className="text-gray-400 hover:text-primary transition-colors">
-                <Youtube className="h-5 w-5" />
               </a>
             </div>
           </div>

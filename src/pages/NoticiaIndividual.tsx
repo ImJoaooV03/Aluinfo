@@ -119,6 +119,26 @@ const NoticiaIndividual = () => {
   const shareTitle = noticia?.title || '';
   const shareText = noticia?.excerpt || '';
 
+  const getShareUrls = () => {
+    const encodedUrl = encodeURIComponent(currentUrl);
+    const encodedTitle = encodeURIComponent(shareTitle);
+    const encodedText = encodeURIComponent(shareText);
+    
+    return {
+      whatsapp: `https://api.whatsapp.com/send?text=${encodedTitle}%20-%20${encodedUrl}`,
+      facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}&quote=${encodedTitle}`,
+      twitter: `https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}`,
+      linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`,
+      telegram: `https://t.me/share/url?url=${encodedUrl}&text=${encodedTitle}`,
+      email: `mailto:?subject=${encodedTitle}&body=${encodedText}%0A%0A${encodedUrl}`
+    };
+  };
+
+  const openShareWindow = (url: string) => {
+    window.open(url, '_blank', 'noopener,noreferrer');
+    setShareOpen(false);
+  };
+
   const handleShareClick = async () => {
     if (navigator.share) {
       try {
@@ -240,72 +260,62 @@ const NoticiaIndividual = () => {
                           Compartilhar
                         </Button>
                       </PopoverTrigger>
-                      <PopoverContent className="w-64">
-                        <div className="space-y-2">
-                          <h4 className="font-medium text-sm mb-3">Compartilhar notícia</h4>
-                          <div className="space-y-1">
-                            <a
-                              href={`https://wa.me/?text=${encodeURIComponent(`${shareTitle} - ${currentUrl}`)}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="flex items-center w-full px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground rounded-md transition-colors"
-                            >
-                              <ExternalLink className="h-4 w-4 mr-2" />
-                              WhatsApp
-                            </a>
-                            <a
-                              href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(currentUrl)}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="flex items-center w-full px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground rounded-md transition-colors"
-                            >
-                              <ExternalLink className="h-4 w-4 mr-2" />
-                              Facebook
-                            </a>
-                            <a
-                              href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(currentUrl)}&text=${encodeURIComponent(shareTitle)}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="flex items-center w-full px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground rounded-md transition-colors"
-                            >
-                              <ExternalLink className="h-4 w-4 mr-2" />
-                              Twitter/X
-                            </a>
-                            <a
-                              href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(currentUrl)}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="flex items-center w-full px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground rounded-md transition-colors"
-                            >
-                              <ExternalLink className="h-4 w-4 mr-2" />
-                              LinkedIn
-                            </a>
-                            <a
-                              href={`https://t.me/share/url?url=${encodeURIComponent(currentUrl)}&text=${encodeURIComponent(shareTitle)}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="flex items-center w-full px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground rounded-md transition-colors"
-                            >
-                              <ExternalLink className="h-4 w-4 mr-2" />
-                              Telegram
-                            </a>
-                            <a
-                              href={`mailto:?subject=${encodeURIComponent(shareTitle)}&body=${encodeURIComponent(`${shareText}\n\n${currentUrl}`)}`}
-                              className="flex items-center w-full px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground rounded-md transition-colors"
-                            >
-                              <Mail className="h-4 w-4 mr-2" />
-                              E-mail
-                            </a>
-                            <button
-                              onClick={handleCopyLink}
-                              className="flex items-center w-full px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground rounded-md transition-colors"
-                            >
-                              <Copy className="h-4 w-4 mr-2" />
-                              Copiar link
-                            </button>
-                          </div>
-                        </div>
-                      </PopoverContent>
+                       <PopoverContent className="w-64">
+                         <div className="space-y-2">
+                           <h4 className="font-medium text-sm mb-3">Compartilhar notícia</h4>
+                           <div className="space-y-1">
+                             <button
+                               onClick={() => openShareWindow(getShareUrls().whatsapp)}
+                               className="flex items-center w-full px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground rounded-md transition-colors"
+                             >
+                               <ExternalLink className="h-4 w-4 mr-2" />
+                               WhatsApp
+                             </button>
+                             <button
+                               onClick={() => openShareWindow(getShareUrls().facebook)}
+                               className="flex items-center w-full px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground rounded-md transition-colors"
+                             >
+                               <ExternalLink className="h-4 w-4 mr-2" />
+                               Facebook
+                             </button>
+                             <button
+                               onClick={() => openShareWindow(getShareUrls().twitter)}
+                               className="flex items-center w-full px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground rounded-md transition-colors"
+                             >
+                               <ExternalLink className="h-4 w-4 mr-2" />
+                               Twitter/X
+                             </button>
+                             <button
+                               onClick={() => openShareWindow(getShareUrls().linkedin)}
+                               className="flex items-center w-full px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground rounded-md transition-colors"
+                             >
+                               <ExternalLink className="h-4 w-4 mr-2" />
+                               LinkedIn
+                             </button>
+                             <button
+                               onClick={() => openShareWindow(getShareUrls().telegram)}
+                               className="flex items-center w-full px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground rounded-md transition-colors"
+                             >
+                               <ExternalLink className="h-4 w-4 mr-2" />
+                               Telegram
+                             </button>
+                             <button
+                               onClick={() => openShareWindow(getShareUrls().email)}
+                               className="flex items-center w-full px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground rounded-md transition-colors"
+                             >
+                               <Mail className="h-4 w-4 mr-2" />
+                               E-mail
+                             </button>
+                             <button
+                               onClick={handleCopyLink}
+                               className="flex items-center w-full px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground rounded-md transition-colors"
+                             >
+                               <Copy className="h-4 w-4 mr-2" />
+                               Copiar link
+                             </button>
+                           </div>
+                         </div>
+                       </PopoverContent>
                     </Popover>
                   </div>
                 </div>

@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { useTranslation } from 'react-i18next';
 
 export interface Ebook {
   id: string;
@@ -22,6 +23,7 @@ export interface Ebook {
 }
 
 export const useEbooks = () => {
+  const { i18n } = useTranslation();
   const [ebooks, setEbooks] = useState<Ebook[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -31,6 +33,8 @@ export const useEbooks = () => {
       setLoading(true);
       setError(null);
 
+      const currentLang = i18n.language || 'pt';
+      
       const { data, error } = await supabase
         .from('ebooks')
         .select('*')
@@ -41,6 +45,8 @@ export const useEbooks = () => {
         throw error;
       }
 
+      // TODO: Fetch translations once types are updated
+      // For now, return original content
       setEbooks(data || []);
     } catch (err) {
       console.error('Error fetching ebooks:', err);
@@ -74,7 +80,7 @@ export const useEbooks = () => {
       console.log('Removing realtime channel for ebooks');
       supabase.removeChannel(channel);
     };
-  }, []);
+  }, [i18n.language]);
 
   return {
     ebooks,

@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { useTranslation } from 'react-i18next';
 
 export interface NewsCategory {
   id: string;
@@ -11,6 +12,7 @@ export interface NewsCategory {
 }
 
 export const useNewsCategories = () => {
+  const { i18n } = useTranslation();
   const [categories, setCategories] = useState<NewsCategory[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -20,6 +22,8 @@ export const useNewsCategories = () => {
       setLoading(true);
       setError(null);
 
+      const currentLang = i18n.language || 'pt';
+      
       const { data, error: fetchError } = await supabase
         .from('news_categories')
         .select('*')
@@ -27,6 +31,8 @@ export const useNewsCategories = () => {
 
       if (fetchError) throw fetchError;
 
+      // TODO: Fetch translations once types are updated
+      // For now, return original content
       setCategories(data || []);
     } catch (err) {
       console.error('Error fetching news categories:', err);
@@ -58,7 +64,7 @@ export const useNewsCategories = () => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, []);
+  }, [i18n.language]);
 
   return {
     categories,

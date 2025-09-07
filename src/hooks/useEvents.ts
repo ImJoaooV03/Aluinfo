@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { useTranslation } from 'react-i18next';
 
 export interface Event {
   id: string;
@@ -24,6 +25,7 @@ export interface Event {
 }
 
 export const useEvents = () => {
+  const { i18n } = useTranslation();
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -33,6 +35,8 @@ export const useEvents = () => {
       setLoading(true);
       setError(null);
 
+      const currentLang = i18n.language || 'pt';
+      
       const { data, error } = await supabase
         .from('events')
         .select('*')
@@ -43,6 +47,8 @@ export const useEvents = () => {
         throw error;
       }
 
+      // TODO: Fetch translations once types are updated
+      // For now, return original content
       setEvents(data || []);
     } catch (err) {
       console.error('Error fetching events:', err);
@@ -76,7 +82,7 @@ export const useEvents = () => {
       console.log('Removing realtime channel for events');
       supabase.removeChannel(channel);
     };
-  }, []);
+  }, [i18n.language]);
 
   return {
     events,

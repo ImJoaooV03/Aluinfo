@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { useTranslation } from 'react-i18next';
 
 export interface TechnicalMaterial {
   id: string;
@@ -19,6 +20,7 @@ export interface TechnicalMaterial {
 }
 
 export const useTechnicalMaterials = () => {
+  const { i18n } = useTranslation();
   const [materials, setMaterials] = useState<TechnicalMaterial[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -28,6 +30,8 @@ export const useTechnicalMaterials = () => {
       setLoading(true);
       setError(null);
 
+      const currentLang = i18n.language || 'pt';
+      
       const { data, error } = await supabase
         .from('technical_materials')
         .select('*')
@@ -38,6 +42,8 @@ export const useTechnicalMaterials = () => {
         throw error;
       }
 
+      // TODO: Fetch translations once types are updated
+      // For now, return original content
       setMaterials(data || []);
     } catch (err) {
       console.error('Error fetching technical materials:', err);
@@ -81,7 +87,7 @@ export const useTechnicalMaterials = () => {
       console.log('Removing realtime channel for technical materials');
       supabase.removeChannel(channel);
     };
-  }, []);
+  }, [i18n.language]);
 
   return {
     materials,

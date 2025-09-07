@@ -63,51 +63,63 @@ export const DownloadGateDialog = ({
     },
   });
 
-  const handleDownload = (url: string) => {
+  const handleDownload = async (url: string) => {
     try {
       const secureUrl = enforceHttps(url);
       
-      // Método 1: Tentar window.open
-      let downloadStarted = false;
+      // Adicionar parâmetro download para forçar download
+      const filename = title.replace(/[^a-zA-Z0-9.-]/g, '_');
+      const downloadUrl = `${secureUrl}${secureUrl.includes('?') ? '&' : '?'}download=${filename}`;
+      
+      // Método 1: Fetch + blob para contornar bloqueios
       try {
-        const newWindow = window.open(secureUrl, '_blank', 'noopener,noreferrer');
-        if (newWindow) {
-          downloadStarted = true;
-          toast({
-            title: "Download iniciado",
-            description: `O arquivo "${title}" foi aberto em uma nova aba.`,
-          });
-        }
-      } catch (e) {
-        console.log('window.open falhou, tentando fallback');
-      }
-
-      // Método 2: Fallback com elemento <a>
-      if (!downloadStarted) {
-        const link = document.createElement('a');
-        link.href = secureUrl;
-        link.target = '_blank';
-        link.rel = 'noopener noreferrer';
-        link.style.display = 'none';
-        document.body.appendChild(link);
-        
-        try {
+        const response = await fetch(downloadUrl);
+        if (response.ok) {
+          const blob = await response.blob();
+          const blobUrl = window.URL.createObjectURL(blob);
+          
+          const link = document.createElement('a');
+          link.href = blobUrl;
+          link.download = filename;
+          link.style.display = 'none';
+          document.body.appendChild(link);
           link.click();
-          downloadStarted = true;
+          document.body.removeChild(link);
+          
+          // Limpar URL do blob
+          window.URL.revokeObjectURL(blobUrl);
+          
           toast({
             title: "Download iniciado",
             description: `O arquivo "${title}" está sendo baixado.`,
           });
-        } catch (e) {
-          console.log('Link click falhou, usando location.href');
-        } finally {
-          document.body.removeChild(link);
+          return;
         }
+      } catch (fetchError) {
+        console.log('Fetch download falhou, tentando fallback:', fetchError);
       }
 
-      // Método 3: Último recurso - abrir na mesma aba
-      if (!downloadStarted) {
-        window.location.href = secureUrl;
+      // Método 2: Fallback com elemento <a>
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      link.download = filename;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.style.display = 'none';
+      document.body.appendChild(link);
+      
+      try {
+        link.click();
+        toast({
+          title: "Download iniciado",
+          description: `O arquivo "${title}" está sendo baixado.`,
+        });
+      } catch (e) {
+        console.log('Link click falhou, usando location.href');
+        // Método 3: Último recurso - abrir na mesma aba
+        window.location.href = downloadUrl;
+      } finally {
+        document.body.removeChild(link);
       }
     } catch (error) {
       console.error('Erro no download:', error);

@@ -50,7 +50,7 @@ const Header = () => {
               </Button>
             </Link>
             <LanguageSwitcher />
-            <Link to={pathWithLang('admin/auth', currentLanguage)}>
+            <Link to={pathWithLang('admin/dashboard', currentLanguage)}>
               <Button variant="ghost" size="sm" className="text-sm text-primary hover:text-primary-foreground hover:bg-primary">
                 <Settings className="h-3 w-3 mr-1" />
                 {t('header:admin')}

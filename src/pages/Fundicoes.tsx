@@ -98,8 +98,13 @@ const Fundicoes = () => {
         <Header />
         <Navigation />
         <div className="container mx-auto px-4 py-8">
-          <div className="text-center">
-            <p className="text-destructive">Erro ao carregar fundições: {error}</p>
+          <div className="flex items-center justify-center min-h-[400px]">
+            <div className="text-center p-8 bg-destructive/10 border border-destructive/20 rounded-lg max-w-md">
+              <h2 className="text-2xl font-bold text-destructive mb-4">Erro ao Carregar</h2>
+              <p className="text-destructive text-lg">
+                Não foi possível carregar as fundições. Tente novamente mais tarde.
+              </p>
+            </div>
           </div>
         </div>
         <Footer />

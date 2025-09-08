@@ -12,17 +12,12 @@ export const languageNames = {
 };
 
 export const getLanguageFromPath = (pathname: string): SupportedLanguage => {
-  const segments = pathname.split('/');
-  const langSegment = segments[1];
-  
-  if (supportedLanguages.includes(langSegment as SupportedLanguage)) {
-    return langSegment as SupportedLanguage;
-  }
-  
-  return 'pt'; // Default language
+  // Always return 'pt' since we're not using language prefixes anymore
+  return 'pt';
 };
 
 export const getPathWithoutLanguage = (pathname: string): string => {
+  // Strip language prefix if present for compatibility
   const segments = pathname.split('/');
   const langSegment = segments[1];
   
@@ -34,15 +29,15 @@ export const getPathWithoutLanguage = (pathname: string): string => {
 };
 
 export const pathWithLang = (path: string, lang: SupportedLanguage): string => {
-  // Remove leading slash if present
-  const cleanPath = path.startsWith('/') ? path.slice(1) : path;
+  // Return clean path without language prefix
+  const cleanPath = path.startsWith('/') ? path : `/${path}`;
   
-  // If path is empty or just "/", return the language prefix
-  if (!cleanPath || cleanPath === '/') {
-    return `/${lang}`;
+  // If path is empty or just "/", return root
+  if (!path || path === '/' || cleanPath === '/') {
+    return '/';
   }
   
-  return `/${lang}/${cleanPath}`;
+  return cleanPath;
 };
 
 export const useLanguageUtils = () => {
@@ -53,12 +48,8 @@ export const useLanguageUtils = () => {
   const pathWithoutLanguage = getPathWithoutLanguage(location.pathname);
   
   const changeLanguage = (newLang: SupportedLanguage) => {
-    // Update i18n language
-    i18n.changeLanguage(newLang);
-    
-    // Navigate to the same path with new language
-    const newPath = pathWithLang(pathWithoutLanguage, newLang);
-    navigate(newPath);
+    // No-op since we're not using language switching anymore
+    // Keep the function for compatibility but don't navigate
   };
   
   return {

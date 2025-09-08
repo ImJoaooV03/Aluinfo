@@ -5,22 +5,19 @@ import { Search, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useTranslation } from "react-i18next";
-import { useLanguageUtils, pathWithLang } from "@/utils/i18nUtils";
-import LanguageSwitcher from "./LanguageSwitcher";
 import AdBanner from "./AdBanner";
 
 const Header = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
   const { t } = useTranslation(['header', 'common']);
-  const { currentLanguage } = useLanguageUtils();
+  
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchTerm.trim()) {
-      // Redirect to news page with search parameter in current language
-      const searchPath = pathWithLang(`noticias?search=${encodeURIComponent(searchTerm.trim())}`, currentLanguage);
-      navigate(searchPath);
+      // Redirect to news page with search parameter
+      navigate(`/noticias?search=${encodeURIComponent(searchTerm.trim())}`);
       setSearchTerm("");
     }
   };
@@ -39,18 +36,17 @@ const Header = () => {
             {t('header:tagline')}
           </div>
           <div className="flex items-center space-x-4">
-            <a href={pathWithLang('', currentLanguage) + '#newsletter'}>
+            <a href="/#newsletter">
               <Button variant="ghost" size="sm" className="text-sm text-primary hover:text-primary-foreground hover:bg-primary">
                 {t('header:newsletter')}
               </Button>
             </a>
-            <Link to={pathWithLang('anuncie', currentLanguage)}>
+            <Link to="/anuncie">
               <Button variant="ghost" size="sm" className="text-sm text-primary hover:text-primary-foreground hover:bg-primary">
                 {t('header:advertise')}
               </Button>
             </Link>
-            <LanguageSwitcher />
-            <Link to={pathWithLang('admin/dashboard', currentLanguage)}>
+            <Link to="/admin/dashboard">
               <Button variant="ghost" size="sm" className="text-sm text-primary hover:text-primary-foreground hover:bg-primary">
                 <Settings className="h-3 w-3 mr-1" />
                 {t('header:admin')}

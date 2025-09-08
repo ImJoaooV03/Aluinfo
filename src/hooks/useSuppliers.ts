@@ -42,17 +42,10 @@ export const useSuppliers = (categoryId?: string) => {
 
       const currentLang = i18n.language || 'pt';
       
-      // Fetch suppliers with optional translations
+      // Fetch suppliers without translations
       const { data, error } = await supabase
         .from('suppliers')
-        .select(`
-          *,
-          suppliers_translations (
-            name,
-            description,
-            specialty
-          )
-        `)
+        .select('*')
         .eq('status', 'published')
         .order('name');
 
@@ -66,13 +59,8 @@ export const useSuppliers = (categoryId?: string) => {
         filteredData = filteredData.filter(supplier => supplier.category_id === categoryId);
       }
 
-      const suppliersWithTranslations = await Promise.all(
+      const suppliersWithContactInfo = await Promise.all(
         filteredData.map(async (supplier: any) => {
-          // Find translation for current language, fallback to Portuguese, then original
-          const currentLangTranslation = supplier.suppliers_translations?.find((t: any) => t.lang === currentLang);
-          const ptTranslation = supplier.suppliers_translations?.find((t: any) => t.lang === 'pt');
-          const translation = currentLangTranslation || ptTranslation;
-          
           // Fetch contact info for each supplier using the existing RPC function
           const { data: contactData } = await supabase.rpc(
             'get_supplier_contact_info',
@@ -81,17 +69,12 @@ export const useSuppliers = (categoryId?: string) => {
           
           return {
             ...supplier,
-            name: translation?.name || supplier.name,
-            description: translation?.description || supplier.description,
-            specialty: translation?.specialty || supplier.specialty,
             contact_info: contactData as unknown as SupplierContactInfo,
-            // Remove translation array after merging
-            suppliers_translations: undefined,
           };
         })
       );
 
-      setSuppliers(suppliersWithTranslations);
+      setSuppliers(suppliersWithContactInfo);
     } catch (err) {
       console.error('Error fetching suppliers:', err);
       setError(err instanceof Error ? err.message : 'Erro ao carregar fornecedores');

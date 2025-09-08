@@ -26,32 +26,12 @@ export const useFoundryCategories = () => {
       
       const { data, error: fetchError } = await supabase
         .from('foundry_categories')
-        .select(`
-          *,
-          foundry_categories_translations!inner (
-            name,
-            description
-          )
-        `)
-        .eq('foundry_categories_translations.lang', currentLang)
+        .select('*')
         .order('name');
 
       if (fetchError) throw fetchError;
 
-      // Merge base data with translations
-      const categoriesWithTranslations = (data || []).map((category: any) => {
-        const translation = category.foundry_categories_translations?.[0];
-        
-        return {
-          ...category,
-          name: translation?.name || category.name,
-          description: translation?.description || category.description,
-          // Remove translation array after merging
-          foundry_categories_translations: undefined,
-        };
-      });
-
-      setCategories(categoriesWithTranslations);
+      setCategories(data || []);
     } catch (err) {
       console.error('Error fetching foundry categories:', err);
       setError(err instanceof Error ? err.message : 'An error occurred');

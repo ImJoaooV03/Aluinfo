@@ -45,17 +45,10 @@ export const useFoundries = (categoryId?: string) => {
 
       const currentLang = i18n.language || 'pt';
       
-      // Fetch foundries with optional translations
+      // Fetch foundries without translations
       const { data, error } = await supabase
         .from('foundries')
-        .select(`
-          *,
-          foundries_translations (
-            name,
-            description,
-            specialty
-          )
-        `)
+        .select('*')
         .eq('status', 'published')
         .order('name');
 
@@ -69,13 +62,8 @@ export const useFoundries = (categoryId?: string) => {
         filteredData = filteredData.filter(foundry => foundry.category_id === categoryId);
       }
 
-      const foundriesWithTranslations = await Promise.all(
+      const foundriesWithContactInfo = await Promise.all(
         filteredData.map(async (foundry: any) => {
-          // Find translation for current language, fallback to Portuguese, then original
-          const currentLangTranslation = foundry.foundries_translations?.find((t: any) => t.lang === currentLang);
-          const ptTranslation = foundry.foundries_translations?.find((t: any) => t.lang === 'pt');
-          const translation = currentLangTranslation || ptTranslation;
-          
           // Fetch contact info for each foundry using the existing RPC function
           const { data: contactData } = await supabase.rpc(
             'get_foundry_contact_info',
@@ -84,17 +72,12 @@ export const useFoundries = (categoryId?: string) => {
           
           return {
             ...foundry,
-            name: translation?.name || foundry.name,
-            description: translation?.description || foundry.description,
-            specialty: translation?.specialty || foundry.specialty,
             contact_info: contactData as unknown as FoundryContactInfo,
-            // Remove translation array after merging
-            foundries_translations: undefined,
           };
         })
       );
 
-      setFoundries(foundriesWithTranslations);
+      setFoundries(foundriesWithContactInfo);
     } catch (err) {
       console.error('Error fetching foundries:', err);
       setError(err instanceof Error ? err.message : 'Erro ao carregar fundições');

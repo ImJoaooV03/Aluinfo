@@ -1,6 +1,5 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
-import LanguageDetector from 'i18next-browser-languagedetector';
 
 // Import translation files
 import commonPT from '@/locales/pt/common.json';
@@ -48,20 +47,12 @@ const resources = {
 };
 
 i18n
-  .use(LanguageDetector)
   .use(initReactI18next)
   .init({
     resources,
-    lng: 'pt', // Default language
+    lng: 'pt', // Fixed to Portuguese
     fallbackLng: 'pt',
     debug: false,
-    
-    // Detection options
-    detection: {
-      order: ['localStorage', 'navigator'],
-      caches: ['localStorage'],
-      lookupLocalStorage: 'i18nextLng',
-    },
 
     interpolation: {
       escapeValue: false,

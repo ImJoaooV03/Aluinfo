@@ -3,10 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Outlet, Navigate, useParams } from "react-router-dom";
-import { useTranslation } from "react-i18next";
-import { useEffect } from "react";
-import { getLanguageFromPath, supportedLanguages, type SupportedLanguage } from "@/utils/i18nUtils";
+import { BrowserRouter, Routes, Route, Outlet, Navigate, useLocation } from "react-router-dom";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { AdminLayout } from "@/components/AdminLayout";
 import Index from "./pages/Index";
@@ -48,28 +45,19 @@ function AdminLayoutWrapper() {
   );
 }
 
-// Language wrapper component to handle i18n
-function LanguageWrapper({ children }: { children: React.ReactNode }) {
-  const { lang } = useParams<{ lang: string }>();
-  const { i18n } = useTranslation();
+// Component to redirect old language URLs to clean URLs
+function LangStripRedirect() {
+  const location = useLocation();
+  const pathname = location.pathname;
   
-  useEffect(() => {
-    const currentLang = lang as SupportedLanguage;
-    if (currentLang && supportedLanguages.includes(currentLang)) {
-      if (i18n.language !== currentLang) {
-        i18n.changeLanguage(currentLang);
-      }
-    }
-  }, [lang, i18n]);
+  // Check if URL starts with language prefix
+  const match = pathname.match(/^\/(pt|es|en)(\/.*|$)/);
+  if (match) {
+    const newPath = match[2] || '/';
+    return <Navigate to={newPath + location.search + location.hash} replace />;
+  }
   
-  return <>{children}</>;
-}
-
-// Redirect component for root path
-function RootRedirect() {
-  const savedLang = localStorage.getItem('i18nextLng') as SupportedLanguage;
-  const defaultLang = savedLang && supportedLanguages.includes(savedLang) ? savedLang : 'pt';
-  return <Navigate to={`/${defaultLang}`} replace />;
+  return <Navigate to="/404" replace />;
 }
 
 function App() {
@@ -81,61 +69,47 @@ function App() {
       <BrowserRouter>
         <ScrollToTop />
         <Routes>
-            {/* Root redirect */}
-            <Route path="/" element={<RootRedirect />} />
+            {/* Main routes without language prefix */}
+            <Route path="/" element={<Index />} />
+            <Route path="/noticias" element={<Noticias />} />
+            <Route path="/noticias/:slug" element={<NoticiaIndividual />} />
+            {/* Compatibility route for old singular URLs */}
+            <Route path="/noticia/:slug" element={<NoticiaIndividual />} />
+            <Route path="/artigos-tecnicos" element={<ArtigosTecnicos />} />
+            <Route path="/ebooks" element={<Ebooks />} />
+            <Route path="/eventos" element={<Eventos />} />
+            <Route path="/fornecedores" element={<Fornecedores />} />
+            <Route path="/fundicoes" element={<Fundicoes />} />
+            <Route path="/lme" element={<LME />} />
+            <Route path="/patrocinadas" element={<Patrocinadas />} />
+            <Route path="/anuncie" element={<Anuncie />} />
+            <Route path="/editar-banners" element={<EditarBanners />} />
             
-            {/* Language-prefixed routes */}
-            <Route path="/:lang" element={<LanguageWrapper><Outlet /></LanguageWrapper>}>
-              {/* Rotas públicas */}
-              <Route index element={<Index />} />
-              <Route path="noticias" element={<Noticias />} />
-              <Route path="noticias/:slug" element={<NoticiaIndividual />} />
-              {/* Compatibility route for old singular URLs */}
-              <Route path="noticia/:slug" element={<NoticiaIndividual />} />
-              <Route path="artigos-tecnicos" element={<ArtigosTecnicos />} />
-              <Route path="ebooks" element={<Ebooks />} />
-              <Route path="eventos" element={<Eventos />} />
-              <Route path="fornecedores" element={<Fornecedores />} />
-              <Route path="fundicoes" element={<Fundicoes />} />
-              <Route path="lme" element={<LME />} />
-              <Route path="patrocinadas" element={<Patrocinadas />} />
-              <Route path="anuncie" element={<Anuncie />} />
-              <Route path="editar-banners" element={<EditarBanners />} />
-              
-              {/* Rotas administrativas sem layout */}
-              <Route path="admin/auth" element={<AdminAuth />} />
-              
-              {/* Rotas administrativas com layout */}
-              <Route path="admin" element={<AdminLayoutWrapper />}>
-                <Route path="dashboard" element={<Dashboard />} />
-                <Route path="noticias" element={<AdminNoticias />} />
-                <Route path="materiais" element={<AdminMateriais />} />
-                <Route path="ebooks" element={<AdminEbooks />} />
-                <Route path="eventos" element={<AdminEventos />} />
-                <Route path="fornecedores" element={<AdminFornecedores />} />
-                <Route path="fundicoes" element={<AdminFundicoes />} />
-                <Route path="banners" element={<AdminBanners />} />
-                <Route path="lme" element={<AdminLME />} />
-                <Route path="downloads" element={<AdminDownloads />} />
-                <Route path="newsletter" element={<AdminNewsletter />} />
-                <Route path="media-kit" element={<AdminMediaKit />} />
-              </Route>
+            {/* Administrative routes without layout */}
+            <Route path="/admin/auth" element={<AdminAuth />} />
+            
+            {/* Administrative routes with layout */}
+            <Route path="/admin" element={<AdminLayoutWrapper />}>
+              <Route path="dashboard" element={<Dashboard />} />
+              <Route path="noticias" element={<AdminNoticias />} />
+              <Route path="materiais" element={<AdminMateriais />} />
+              <Route path="ebooks" element={<AdminEbooks />} />
+              <Route path="eventos" element={<AdminEventos />} />
+              <Route path="fornecedores" element={<AdminFornecedores />} />
+              <Route path="fundicoes" element={<AdminFundicoes />} />
+              <Route path="banners" element={<AdminBanners />} />
+              <Route path="lme" element={<AdminLME />} />
+              <Route path="downloads" element={<AdminDownloads />} />
+              <Route path="newsletter" element={<AdminNewsletter />} />
+              <Route path="media-kit" element={<AdminMediaKit />} />
             </Route>
 
-            {/* Legacy routes without language prefix - redirect to /pt/path */}
-            <Route path="/noticias" element={<Navigate to="/pt/noticias" replace />} />
-            <Route path="/noticias/:slug" element={<Navigate to={`/pt/noticias/${window.location.pathname.split('/')[2]}`} replace />} />
-            <Route path="/artigos-tecnicos" element={<Navigate to="/pt/artigos-tecnicos" replace />} />
-            <Route path="/ebooks" element={<Navigate to="/pt/ebooks" replace />} />
-            <Route path="/eventos" element={<Navigate to="/pt/eventos" replace />} />
-            <Route path="/fornecedores" element={<Navigate to="/pt/fornecedores" replace />} />
-            <Route path="/fundicoes" element={<Navigate to="/pt/fundicoes" replace />} />
-            <Route path="/lme" element={<Navigate to="/pt/lme" replace />} />
-            <Route path="/patrocinadas" element={<Navigate to="/pt/patrocinadas" replace />} />
-            <Route path="/anuncie" element={<Navigate to="/pt/anuncie" replace />} />
-            <Route path="/admin/auth" element={<Navigate to="/pt/admin/auth" replace />} />
+            {/* Language-prefixed routes redirect to clean URLs */}
+            <Route path="/pt/*" element={<LangStripRedirect />} />
+            <Route path="/es/*" element={<LangStripRedirect />} />
+            <Route path="/en/*" element={<LangStripRedirect />} />
 
-            {/* Rota 404 */}
+            {/* 404 route */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

@@ -3,6 +3,7 @@ import { Clock, User, Tag } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
+import { useLanguageUtils, pathWithLang } from "@/utils/i18nUtils";
 
 interface NewsCardProps {
   title: string;
@@ -27,8 +28,12 @@ const NewsCard = ({
   slug,
   newsId
 }: NewsCardProps) => {
-  // Create link based on slug or ID
-  const linkTo = slug ? `/noticias/${slug}` : `/noticias/${newsId || '1'}`;
+  const { currentLanguage } = useLanguageUtils();
+  
+  // Create link based on slug or ID with language prefix
+  const linkTo = slug 
+    ? pathWithLang(`noticia/${slug}`, currentLanguage) 
+    : pathWithLang(`noticia/${newsId || '1'}`, currentLanguage);
 
   return (
     <Link to={linkTo} className="block">

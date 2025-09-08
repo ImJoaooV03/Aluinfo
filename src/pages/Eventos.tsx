@@ -6,7 +6,9 @@ import { useEvents } from "@/hooks/useEvents";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import Header from "@/components/Header";
+import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import AdBanner from "@/components/AdBanner";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const Eventos = () => {
@@ -28,8 +30,10 @@ const Eventos = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
+      <Navigation />
       
       <main className="container mx-auto px-4 py-8">
+        <AdBanner size="large" position="content" slotKey="eventos-top" className="mb-8" />
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-foreground mb-2">Eventos</h1>
           <p className="text-muted-foreground">

@@ -73,7 +73,7 @@ export function AdminSidebar() {
         title: "Logout realizado",
         description: "Você foi desconectado com sucesso.",
       });
-      navigate('/admin/auth');
+      navigate('/pt/admin/auth');
     } catch (error: any) {
       toast({
         title: "Erro",
@@ -84,7 +84,7 @@ export function AdminSidebar() {
   };
 
   const handleGoToSite = () => {
-    navigate('/');
+    navigate('/pt');
   };
 
   return (

@@ -3,6 +3,7 @@ import { ArrowLeft, Clock, User, Tag, Share2, Eye, Copy, Mail, ExternalLink } fr
 import DOMPurify from "dompurify";
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useLanguageUtils, pathWithLang, formatDate } from "@/utils/i18nUtils";
 import Header from "@/components/Header";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
@@ -33,6 +34,12 @@ interface NewsItem {
   updated_at: string;
 }
 
+interface NewsTranslation {
+  title?: string;
+  content?: string;
+  excerpt?: string;
+}
+
 const NoticiaIndividual = () => {
   const { slug } = useParams();
   const [noticia, setNoticia] = useState<NewsItem | null>(null);
@@ -42,6 +49,7 @@ const NoticiaIndividual = () => {
   const [shareOpen, setShareOpen] = useState(false);
   const viewTrackedRef = useRef(false);
   const { toast } = useToast();
+  const { currentLanguage } = useLanguageUtils();
 
   useEffect(() => {
     const fetchNews = async () => {
@@ -63,7 +71,23 @@ const NoticiaIndividual = () => {
           return;
         }
 
-        setNoticia(newsData);
+        // Fetch translations for the current language
+        const { data: translationData } = await supabase
+          .from('news_translations')
+          .select('title, content, excerpt')
+          .eq('news_id', newsData.id)
+          .eq('lang', currentLanguage)
+          .single();
+
+        // Merge translation data if available
+        const finalNewsData = {
+          ...newsData,
+          title: translationData?.title || newsData.title,
+          content: translationData?.content || newsData.content,
+          excerpt: translationData?.excerpt || newsData.excerpt
+        };
+
+        setNoticia(finalNewsData);
 
         // Track the view only once per page load
         if (!viewTrackedRef.current) {
@@ -72,7 +96,7 @@ const NoticiaIndividual = () => {
             await supabase
               .from('analytics_views')
               .insert({
-                content_id: newsData.id,
+                content_id: finalNewsData.id,
                 content_type: 'news',
                 user_id: null, // Could be set if user is authenticated
                 ip_address: null, // Could be captured if needed
@@ -90,7 +114,7 @@ const NoticiaIndividual = () => {
           .from('news')
           .select('*')
           .eq('status', 'published')
-          .neq('id', newsData.id)
+          .neq('id', finalNewsData.id)
           .order('published_at', { ascending: false })
           .limit(3);
 
@@ -105,15 +129,8 @@ const NoticiaIndividual = () => {
     };
 
     fetchNews();
-  }, [slug]);
+  }, [slug, currentLanguage]);
 
-  const formatDate = (dateString: string) => {
-    try {
-      return format(new Date(dateString), "dd 'de' MMMM, yyyy", { locale: ptBR });
-    } catch {
-      return dateString;
-    }
-  };
 
   const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
   const shareTitle = noticia?.title || '';
@@ -205,7 +222,7 @@ const NoticiaIndividual = () => {
             <p className="text-muted-foreground mb-6">
               A notícia que você está procurando não existe ou foi removida.
             </p>
-            <Link to="/noticias">
+            <Link to={pathWithLang('noticias', currentLanguage)}>
               <Button>Voltar para Notícias</Button>
             </Link>
           </div>
@@ -230,8 +247,8 @@ const NoticiaIndividual = () => {
             
             {/* Breadcrumb */}
             <div className="mb-6">
-              <Link 
-                to="/noticias"
+            <Link 
+                to={pathWithLang('noticias', currentLanguage)}
                 className="inline-flex items-center text-sm text-muted-foreground hover:text-primary transition-colors"
               >
                 <ArrowLeft className="h-4 w-4 mr-2" />
@@ -338,7 +355,7 @@ const NoticiaIndividual = () => {
                     </div>
                     <div className="flex items-center space-x-2">
                       <Clock className="h-4 w-4" />
-                      <span>{formatDate(noticia.published_at || noticia.created_at)}</span>
+                      <span>{formatDate(new Date(noticia.published_at || noticia.created_at), currentLanguage)}</span>
                     </div>
                   </div>
                 </div>
@@ -379,7 +396,7 @@ const NoticiaIndividual = () => {
                       title={news.title}
                       summary={news.excerpt || news.content.substring(0, 200) + '...'}
                       author="Portal da Fundição"
-                      date={formatDate(news.published_at || news.created_at)}
+                      date={formatDate(new Date(news.published_at || news.created_at), currentLanguage)}
                       category="Notícia"
                       image={news.featured_image_url || undefined}
                       slug={news.slug}

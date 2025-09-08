@@ -39,12 +39,16 @@ const Header = () => {
             {t('header:tagline')}
           </div>
           <div className="flex items-center space-x-4">
-            <Button variant="ghost" size="sm" className="text-sm text-primary hover:text-primary-foreground hover:bg-primary">
-              {t('header:newsletter')}
-            </Button>
-            <Button variant="ghost" size="sm" className="text-sm text-primary hover:text-primary-foreground hover:bg-primary">
-              {t('header:advertise')}
-            </Button>
+            <a href={pathWithLang('', currentLanguage) + '#newsletter'}>
+              <Button variant="ghost" size="sm" className="text-sm text-primary hover:text-primary-foreground hover:bg-primary">
+                {t('header:newsletter')}
+              </Button>
+            </a>
+            <Link to={pathWithLang('anuncie', currentLanguage)}>
+              <Button variant="ghost" size="sm" className="text-sm text-primary hover:text-primary-foreground hover:bg-primary">
+                {t('header:advertise')}
+              </Button>
+            </Link>
             <LanguageSwitcher />
             <Link to={pathWithLang('admin/auth', currentLanguage)}>
               <Button variant="ghost" size="sm" className="text-sm text-primary hover:text-primary-foreground hover:bg-primary">

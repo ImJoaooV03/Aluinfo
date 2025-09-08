@@ -14,12 +14,14 @@ import { useNews } from "@/hooks/useNews";
 import { useNewsCategories } from "@/hooks/useNewsCategories";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { useLanguageUtils, pathWithLang } from "@/utils/i18nUtils";
 
 const Noticias = () => {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const searchTerm = searchParams.get('search');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const { currentLanguage } = useLanguageUtils();
 
   const { results: searchResults, loading: searchLoading } = useUniversalSearch(searchTerm || '');
   const { news, loading: newsLoading } = useNews();
@@ -145,9 +147,11 @@ const Noticias = () => {
                   <p className="text-muted-foreground mb-6">
                     Não encontramos resultados para "{searchTerm}". Tente usar termos diferentes ou mais gerais.
                   </p>
-                  <Button variant="outline" onClick={() => window.history.back()}>
-                    Voltar
-                  </Button>
+                  <Link to={pathWithLang('noticias', currentLanguage)}>
+                    <Button variant="outline">
+                      Voltar
+                    </Button>
+                  </Link>
                 </div>
               )}
             </main>
@@ -210,10 +214,10 @@ const Noticias = () => {
               </div>
             ) : (
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
-                {news
-                  .filter((noticia) => selectedCategory === 'all' || noticia.category_id === selectedCategory)
-                  .map((noticia) => (
-                  <Link key={noticia.id} to={`/noticia/${noticia.slug}`}>
+                  {news
+                    .filter((noticia) => selectedCategory === 'all' || noticia.category_id === selectedCategory)
+                    .map((noticia) => (
+                    <Link key={noticia.id} to={pathWithLang(`noticia/${noticia.slug}`, currentLanguage)}>
                     <Card className="overflow-hidden hover:shadow-lg transition-shadow">
                       {noticia.featured_image_url && (
                         <div className="aspect-video bg-muted">

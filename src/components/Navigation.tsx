@@ -29,7 +29,7 @@ const Navigation = () => {
     { id: "ebooks", label: t('ebooks'), icon: BookOpen, path: "ebooks" },
     { id: "fornecedores", label: t('suppliers'), icon: Users, path: "fornecedores" },
     { id: "fundicoes", label: t('foundries'), icon: Factory, path: "fundicoes" },
-    { id: "anuncie", label: "Anuncie", icon: Megaphone, path: "anuncie" },
+    { id: "anuncie", label: t('advertise'), icon: Megaphone, path: "anuncie" },
   ];
 
   const isActive = (path: string) => {

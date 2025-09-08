@@ -42,19 +42,18 @@ export const useSuppliers = (categoryId?: string) => {
 
       const currentLang = i18n.language || 'pt';
       
-      // Fetch suppliers with translations
+      // Fetch suppliers with optional translations
       const { data, error } = await supabase
         .from('suppliers')
         .select(`
           *,
-          suppliers_translations!inner (
+          suppliers_translations (
             name,
             description,
             specialty
           )
         `)
         .eq('status', 'published')
-        .eq('suppliers_translations.lang', currentLang)
         .order('name');
 
       if (error) {
@@ -69,7 +68,10 @@ export const useSuppliers = (categoryId?: string) => {
 
       const suppliersWithTranslations = await Promise.all(
         filteredData.map(async (supplier: any) => {
-          const translation = supplier.suppliers_translations?.[0];
+          // Find translation for current language, fallback to Portuguese, then original
+          const currentLangTranslation = supplier.suppliers_translations?.find((t: any) => t.lang === currentLang);
+          const ptTranslation = supplier.suppliers_translations?.find((t: any) => t.lang === 'pt');
+          const translation = currentLangTranslation || ptTranslation;
           
           // Fetch contact info for each supplier using the existing RPC function
           const { data: contactData } = await supabase.rpc(

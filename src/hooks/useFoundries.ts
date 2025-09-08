@@ -45,19 +45,18 @@ export const useFoundries = (categoryId?: string) => {
 
       const currentLang = i18n.language || 'pt';
       
-      // Fetch foundries with translations
+      // Fetch foundries with optional translations
       const { data, error } = await supabase
         .from('foundries')
         .select(`
           *,
-          foundries_translations!inner (
+          foundries_translations (
             name,
             description,
             specialty
           )
         `)
         .eq('status', 'published')
-        .eq('foundries_translations.lang', currentLang)
         .order('name');
 
       if (error) {
@@ -72,7 +71,10 @@ export const useFoundries = (categoryId?: string) => {
 
       const foundriesWithTranslations = await Promise.all(
         filteredData.map(async (foundry: any) => {
-          const translation = foundry.foundries_translations?.[0];
+          // Find translation for current language, fallback to Portuguese, then original
+          const currentLangTranslation = foundry.foundries_translations?.find((t: any) => t.lang === currentLang);
+          const ptTranslation = foundry.foundries_translations?.find((t: any) => t.lang === 'pt');
+          const translation = currentLangTranslation || ptTranslation;
           
           // Fetch contact info for each foundry using the existing RPC function
           const { data: contactData } = await supabase.rpc(

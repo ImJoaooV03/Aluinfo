@@ -10,15 +10,11 @@ import { useActiveMediaKit } from "@/hooks/useMediaKits";
 import { 
   MessageCircle, 
   Download, 
-  Users, 
-  TrendingUp, 
   Globe,
   Target,
   Zap,
   Award,
-  BarChart3,
-  Eye,
-  MousePointer
+  BarChart3
 } from "lucide-react";
 
 const Anuncie = () => {
@@ -26,8 +22,8 @@ const Anuncie = () => {
   const { data: activeMediaKit } = useActiveMediaKit();
 
   const handleContactSpecialist = () => {
-    // Default WhatsApp contact - can be made configurable later
-    const phoneNumber = "5511999999999"; // Replace with actual number
+    // WhatsApp contact
+    const phoneNumber = "5547996312867"; // +55 47 99631-2867
     const message = "Olá! Gostaria de saber mais sobre oportunidades de anúncio no Portal Aluinfo.";
     const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
@@ -42,12 +38,6 @@ const Anuncie = () => {
     }
   };
 
-  const stats = [
-    { label: "Visitantes Mensais", value: "50K+", icon: Users },
-    { label: "Visualizações de Página", value: "200K+", icon: Eye },
-    { label: "Taxa de Engajamento", value: "75%", icon: MousePointer },
-    { label: "Crescimento Mensal", value: "15%", icon: TrendingUp },
-  ];
 
   const adTypes = [
     {
@@ -113,26 +103,6 @@ const Anuncie = () => {
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section className="py-16 px-4 bg-muted/30">
-        <div className="container mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-12">
-            Números que Impressionam
-          </h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {stats.map((stat, index) => {
-              const Icon = stat.icon;
-              return (
-                <Card key={index} className="p-6 text-center hover:shadow-lg transition-shadow">
-                  <Icon className="h-8 w-8 text-primary mx-auto mb-4" />
-                  <div className="text-3xl font-bold text-primary mb-2">{stat.value}</div>
-                  <div className="text-sm text-muted-foreground">{stat.label}</div>
-                </Card>
-              );
-            })}
-          </div>
-        </div>
-      </section>
 
       {/* O Portal Aluinfo Section */}
       <section className="py-16 px-4">

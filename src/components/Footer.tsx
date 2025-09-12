@@ -42,9 +42,9 @@ const Footer = () => {
           <div>
             <h3 className="text-white font-semibold mb-4">{t('footer:quickLinks')}</h3>
             <ul className="space-y-2 text-sm">
-              <li><a href="#" className="hover:text-primary transition-colors">Anuncie</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Midia Kit</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Contato</a></li>
+              <li><a href="/anuncie" className="hover:text-primary transition-colors">Anuncie</a></li>
+              <li><a href="/anuncie" className="hover:text-primary transition-colors">Midia Kit</a></li>
+              <li><a href="https://wa.me/5547996312867" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">Contato</a></li>
             </ul>
           </div>
 
@@ -54,8 +54,8 @@ const Footer = () => {
             <ul className="space-y-2 text-sm">
               <li><a href="/fornecedores" className="hover:text-primary transition-colors">Guia de Fornecedores</a></li>
               <li><a href="/fundicoes" className="hover:text-primary transition-colors">Guias de Fundições</a></li>
-              <li><a href="/materiais" className="hover:text-primary transition-colors">Artigos Técnicos</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Newsletter</a></li>
+              <li><a href="/artigos-tecnicos" className="hover:text-primary transition-colors">Artigos Técnicos</a></li>
+              <li><a href="/#newsletter" className="hover:text-primary transition-colors">Newsletter</a></li>
             </ul>
           </div>
 
@@ -63,7 +63,7 @@ const Footer = () => {
           <div>
             <h3 className="text-white font-semibold mb-4">Educação</h3>
             <ul className="space-y-2 text-sm">
-              <li><a href="#" className="hover:text-primary transition-colors">Cursos (Em breve)</a></li>
+              <li><a href="/cursos" className="hover:text-primary transition-colors">Cursos (Em breve)</a></li>
               <li><a href="/ebooks" className="hover:text-primary transition-colors">E-books</a></li>
             </ul>
           </div>
@@ -73,9 +73,9 @@ const Footer = () => {
             <h3 className="text-white font-semibold mb-4">Notícias</h3>
             <ul className="space-y-2 text-sm">
               <li><a href="/noticias" className="hover:text-primary transition-colors">Mercado</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Análises</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Cotações</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Relatórios</a></li>
+              <li><a href="/noticias" className="hover:text-primary transition-colors">Análises</a></li>
+              <li><a href="/noticias" className="hover:text-primary transition-colors">Cotações</a></li>
+              <li><a href="/noticias" className="hover:text-primary transition-colors">Relatórios</a></li>
             </ul>
           </div>
         </div>

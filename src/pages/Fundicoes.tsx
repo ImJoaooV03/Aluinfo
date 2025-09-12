@@ -7,13 +7,15 @@ import Sidebar from "@/components/Sidebar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MapPin, Phone, Mail, Globe, Star, Factory, Loader2, Shield } from "lucide-react";
+import { MapPin, Phone, Mail, Globe, Star, Factory, Loader2, Shield, ArrowRight } from "lucide-react";
 import { useState } from "react";
 import { useFoundries } from "@/hooks/useFoundries";
 import { useFoundryCategories } from "@/hooks/useFoundryCategories";
 import { useToast } from "@/hooks/use-toast";
+import { Link } from "react-router-dom";
 
 const Fundicoes = () => {
+  // Filtro single-select (como solicitado)
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
   const { foundries, loading, error } = useFoundries(selectedCategoryId || undefined);
   const { categories } = useFoundryCategories();
@@ -129,7 +131,7 @@ const Fundicoes = () => {
               </p>
             </div>
 
-            {/* Filtros por categoria */}
+            {/* Filtros por categoria (single-select) */}
             <div className="mb-6">
               <div className="flex flex-wrap gap-2">
                 <Button
@@ -169,15 +171,42 @@ const Fundicoes = () => {
                         )}
                       </div>
                       <div className="flex-1">
-                        <div className="flex items-center justify-between mb-2">
-                          <Badge variant="secondary">{foundry.specialty || 'Fundição'}</Badge>
-                          <div className="flex items-center space-x-1">
-                            <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                            <span className="text-sm font-medium">{foundry.rating || 0}</span>
-                          </div>
+                        <div className="flex items-center justify-between mb-1">
+                          <CardTitle className="text-lg">{foundry.name}</CardTitle>
                         </div>
-                        <CardTitle className="text-lg">{foundry.name}</CardTitle>
-                        <p className="text-sm text-primary font-medium">{foundry.specialty}</p>
+                        <div className="flex flex-wrap items-center gap-2 mb-2">
+                          {(() => {
+                            const names: string[] = [];
+                            if (foundry.foundry_categories?.name) names.push(foundry.foundry_categories.name);
+                            if (foundry.categories?.length) {
+                              foundry.categories.forEach((c: any) => {
+                                if (c?.name) names.push(c.name as string);
+                                else if (c?.foundry_categories?.name) names.push(c.foundry_categories.name as string);
+                              });
+                            }
+                            const unique = Array.from(new Set(names));
+                            const firstTwo = unique.slice(0, 2);
+                            return (
+                              <>
+                                {firstTwo.map((n) => (
+                                  <Badge key={n} variant="secondary">{n}</Badge>
+                                ))}
+                                {unique.length > 2 && (
+                                  <span className="text-xs text-muted-foreground">Entre outras…</span>
+                                )}
+                              </>
+                            );
+                          })()}
+                          {foundry.specialty && (
+                            <Badge variant="outline">{foundry.specialty}</Badge>
+                          )}
+                          {typeof foundry.rating === 'number' && foundry.rating > 0 && (
+                            <div className="flex items-center space-x-1 text-xs text-muted-foreground">
+                              <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                              <span>{foundry.rating}</span>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </CardHeader>
@@ -189,7 +218,7 @@ const Fundicoes = () => {
                     <div className="space-y-2 text-sm mb-4">
                       <div className="flex items-center space-x-2 text-muted-foreground">
                         <MapPin className="h-4 w-4" />
-                        <span>{foundry.city}, {foundry.state}</span>
+                        <span>{[foundry.address, [foundry.city, foundry.state].filter(Boolean).join(', ')].filter(Boolean).join(' — ')}</span>
                       </div>
                       {foundry.employees_count && (
                         <div className="flex items-center space-x-2 text-muted-foreground">
@@ -205,6 +234,14 @@ const Fundicoes = () => {
                           <Shield className="h-4 w-4" />
                           <span>Faça login para ver informações completas de contato</span>
                         </div>
+                      </div>
+                    )}
+
+                    {/* Contatos acima dos botões */}
+                    {foundry.contact_info && !foundry.contact_info.masked && (
+                      <div className="text-sm text-muted-foreground mb-3 flex flex-wrap gap-6">
+                        <div className="flex items-center"><Phone className="h-4 w-4 mr-2" /> {foundry.contact_info.phone}</div>
+                        <div className="flex items-center"><Mail className="h-4 w-4 mr-2" /> {foundry.contact_info.email}</div>
                       </div>
                     )}
 
@@ -237,16 +274,15 @@ const Fundicoes = () => {
                       >
                         <Globe className="h-3 w-3" />
                       </Button>
+                      <Link to={`/fundicoes/${foundry.slug}`} className="col-span-3">
+                        <Button className="w-full mt-2 group/btn">
+                          + Informações
+                          <ArrowRight className="h-4 w-4 ml-2 transition-transform group-hover/btn:translate-x-0.5" />
+                        </Button>
+                      </Link>
                     </div>
 
-                    {foundry.contact_info && !foundry.contact_info.masked && (
-                      <div className="mt-3 pt-3 border-t">
-                        <div className="text-xs text-muted-foreground space-y-1">
-                          <div>📞 {foundry.contact_info.phone}</div>
-                          <div>📧 {foundry.contact_info.email}</div>
-                        </div>
-                      </div>
-                    )}
+                    {/* removido bloco duplicado de contatos abaixo */}
                   </CardContent>
                 </Card>
               ))}

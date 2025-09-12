@@ -19,6 +19,7 @@ export interface Supplier {
   country: string | null;
   state: string | null;
   city: string | null;
+  address: string | null;
   website: string | null;
   rating: number | null;
   employees_count: number | null;
@@ -27,6 +28,8 @@ export interface Supplier {
   created_at: string;
   updated_at: string;
   contact_info?: SupplierContactInfo;
+  supplier_categories?: { name: string } | null;
+  categories?: { category_id: string; name: string }[];
 }
 
 export const useSuppliers = (categoryId?: string) => {
@@ -43,20 +46,42 @@ export const useSuppliers = (categoryId?: string) => {
       const currentLang = i18n.language || 'pt';
       
       // Fetch suppliers without translations
-      const { data, error } = await supabase
-        .from('suppliers')
-        .select('*')
-        .eq('status', 'published')
-        .order('name');
-
-      if (error) {
-        throw error;
+      // Primeira tentativa: com relação N:N
+      let data: any[] | null = null;
+      try {
+        const withLinks = await supabase
+          .from('suppliers')
+          .select(`
+            id, name, slug, specialty, description, logo_url, country, state, city, address, website, rating, employees_count, category_id, status, created_at, updated_at,
+            supplier_categories!suppliers_category_id_fkey(name),
+            categories:supplier_category_links(
+              category_id,
+              supplier_categories(name)
+            )
+          `)
+          .eq('status', 'published')
+          .order('name');
+        if (withLinks.error) throw withLinks.error;
+        data = withLinks.data as any[];
+      } catch (e) {
+        // Fallback: sem a relação N:N (caso a tabela não exista ainda)
+        const fallback = await supabase
+          .from('suppliers')
+          .select(`id, name, slug, specialty, description, logo_url, country, state, city, address, website, rating, employees_count, category_id, status, created_at, updated_at, supplier_categories!suppliers_category_id_fkey(name)`) 
+          .eq('status', 'published')
+          .order('name');
+        if (fallback.error) throw fallback.error;
+        data = fallback.data as any[];
       }
 
       // Filter by category if selected and merge translations
       let filteredData = data || [];
       if (categoryId) {
-        filteredData = filteredData.filter(supplier => supplier.category_id === categoryId);
+        filteredData = filteredData.filter(supplier => {
+          if (supplier.category_id === categoryId) return true;
+          const links = (supplier as any).categories as any[] | undefined;
+          return links?.some((l) => l?.category_id === categoryId);
+        });
       }
 
       const suppliersWithContactInfo = await Promise.all(
@@ -67,9 +92,14 @@ export const useSuppliers = (categoryId?: string) => {
             { supplier_id: supplier.id }
           );
           
+          const categories = ((supplier as any).categories || []).map((c: any) => ({
+            category_id: c?.category_id,
+            name: c?.supplier_categories?.name,
+          }));
           return {
             ...supplier,
             contact_info: contactData as unknown as SupplierContactInfo,
+            categories,
           };
         })
       );

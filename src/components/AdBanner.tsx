@@ -1,7 +1,9 @@
 
 import { ExternalLink } from "lucide-react";
 import { useBanners } from "@/hooks/useBanners";
+import { useEffect, useRef } from "react";
 import { useSupabaseBanners } from "@/hooks/useSupabaseBanners";
+import { supabase } from "@/integrations/supabase/client";
 import { getBannerSlotByKey } from "@/lib/bannerSlots";
 
 interface AdBannerProps {
@@ -55,6 +57,46 @@ const AdBanner = ({ size, position, spaceNumber, slotKey, className = "" }: AdBa
   const bannerImage = supabaseBanner?.image_url || localBanner?.imageUrl;
   const bannerLink = supabaseBanner?.link_url;
 
+  // Impression tracking (once per mount)
+  const impressionTracked = useRef(false);
+  useEffect(() => {
+    const registerImpression = async () => {
+      try {
+        if (impressionTracked.current) return;
+        if (!supabaseBanner?.id) return;
+        impressionTracked.current = true;
+        await supabase.from('analytics_views').insert({
+          content_id: supabaseBanner.id,
+          content_type: 'banner',
+          user_id: null,
+          ip_address: null,
+          user_agent: navigator.userAgent,
+          referer: document.referrer || null,
+        });
+      } catch (e) {
+        console.error('Erro ao registrar impressão do banner:', e);
+      }
+    };
+    registerImpression();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [supabaseBanner?.id]);
+
+  const trackClick = async (bannerId: string | undefined) => {
+    try {
+      if (!bannerId) return;
+      await supabase.from('analytics_banner_clicks').insert({
+        banner_id: bannerId,
+        user_id: null,
+        ip_address: null,
+        user_agent: navigator.userAgent,
+        referer: document.referrer || null,
+      });
+    } catch (e) {
+      // não bloquear navegação em caso de erro
+      console.error('Erro ao registrar clique no banner:', e);
+    }
+  };
+
   const BannerContent = () => (
     <div className={`banner-ad ${sizeClasses[size]} ${className} relative overflow-hidden rounded-lg border`}>
       {bannerImage ? (
@@ -79,7 +121,13 @@ const AdBanner = ({ size, position, spaceNumber, slotKey, className = "" }: AdBa
   );
 
   return bannerLink ? (
-    <a href={bannerLink} target="_blank" rel="noopener noreferrer" className="block">
+    <a
+      href={bannerLink}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="block"
+      onClick={() => trackClick(supabaseBanner?.id)}
+    >
       <BannerContent />
     </a>
   ) : (

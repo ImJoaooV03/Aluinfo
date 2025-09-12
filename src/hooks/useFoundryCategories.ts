@@ -77,6 +77,15 @@ export const useFoundryCategories = () => {
     }
   };
 
+  const linkCategories = async (foundryId: string, categoryIds: string[]) => {
+    const unique = Array.from(new Set(categoryIds));
+    await supabase.from('foundry_category_links').delete().eq('foundry_id', foundryId);
+    if (unique.length) {
+      const rows = unique.map((id) => ({ foundry_id: foundryId, category_id: id }));
+      await supabase.from('foundry_category_links').insert(rows);
+    }
+  };
+
   const deleteCategory = async (id: string) => {
     try {
       const { error: deleteError } = await supabase
@@ -104,6 +113,7 @@ export const useFoundryCategories = () => {
     error,
     refetch: fetchCategories,
     createCategory,
+    linkCategories,
     updateCategory,
     deleteCategory,
   };

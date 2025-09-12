@@ -30,9 +30,11 @@ export interface Foundry {
   created_at: string;
   updated_at: string;
   contact_info?: FoundryContactInfo;
+  foundry_categories?: { name: string } | null;
+  categories?: { category_id: string; name: string }[];
 }
 
-export const useFoundries = (categoryId?: string) => {
+export const useFoundries = (categoryIds?: string | string[]) => {
   const { i18n } = useTranslation();
   const [foundries, setFoundries] = useState<Foundry[]>([]);
   const [loading, setLoading] = useState(true);
@@ -45,10 +47,14 @@ export const useFoundries = (categoryId?: string) => {
 
       const currentLang = i18n.language || 'pt';
       
-      // Fetch foundries without translations
+      // Buscar fundições com embed do nome da categoria
       const { data, error } = await supabase
         .from('foundries')
-        .select('*')
+        .select(`
+          *,
+          foundry_categories:foundry_categories!foundries_category_id_fkey(name),
+          categories:foundry_category_links(category_id, foundry_categories(name))
+        `) 
         .eq('status', 'published')
         .order('name');
 
@@ -58,8 +64,23 @@ export const useFoundries = (categoryId?: string) => {
 
       // Filter by category if selected and merge translations
       let filteredData = data || [];
-      if (categoryId) {
-        filteredData = filteredData.filter(foundry => foundry.category_id === categoryId);
+      const selected = Array.isArray(categoryIds) ? categoryIds.filter(Boolean) : (categoryIds ? [categoryIds] : []);
+      if (selected.length === 1) {
+        const id = selected[0];
+        filteredData = filteredData.filter((foundry: any) => {
+          const direct = foundry.category_id === id;
+          const viaLinks = Array.isArray(foundry.categories) && foundry.categories.some((c: any) => c?.category_id === id);
+          return direct || viaLinks;
+        });
+      } else if (selected.length > 1) {
+        filteredData = filteredData.filter((foundry: any) => {
+          const foundryCatIds = [
+            ...(foundry.category_id ? [foundry.category_id] : []),
+            ...((foundry.categories || []).map((c: any) => c?.category_id).filter(Boolean))
+          ];
+          // match se contém todas as selecionadas (AND)
+          return selected.every((id) => foundryCatIds.includes(id));
+        });
       }
 
       const foundriesWithContactInfo = await Promise.all(
@@ -125,24 +146,25 @@ export const useFoundries = (categoryId?: string) => {
 
   const deleteFoundry = async (id: string) => {
     try {
-      const { error: deleteError } = await supabase
+      const { data, error: deleteError } = await supabase
         .from('foundries')
         .delete()
-        .eq('id', id);
+        .eq('id', id)
+        .select('id');
 
       if (deleteError) throw deleteError;
 
       await fetchFoundries();
-      return { error: null };
+      return { error: null, deleted: Array.isArray(data) && data.length > 0 };
     } catch (err) {
       console.error('Error deleting foundry:', err);
-      return { error: err instanceof Error ? err.message : 'An error occurred' };
+      return { error: err instanceof Error ? err.message : 'An error occurred', deleted: false };
     }
   };
 
   useEffect(() => {
     fetchFoundries();
-  }, [categoryId, i18n.language]);
+  }, [Array.isArray(categoryIds) ? categoryIds.join(',') : categoryIds, i18n.language]);
 
   return {
     foundries,

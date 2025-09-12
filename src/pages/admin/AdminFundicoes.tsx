@@ -9,14 +9,16 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, Edit, Trash2, Factory, Star, MapPin, Phone, Mail, Globe } from "lucide-react";
+import { Plus, Edit, Trash2, Factory, Star, MapPin, Phone, Mail, Globe, FileText } from "lucide-react";
 import { useFoundries } from "@/hooks/useFoundries";
 import { useFoundryCategories } from "@/hooks/useFoundryCategories";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { useMemo } from "react";
 
 const AdminFundicoes = () => {
   const { foundries, createFoundry, updateFoundry, deleteFoundry } = useFoundries();
-  const { categories, createCategory, updateCategory, deleteCategory } = useFoundryCategories();
+  const { categories, createCategory, updateCategory, deleteCategory, linkCategories } = useFoundryCategories();
   const { toast } = useToast();
 
   // Estados para fundições
@@ -26,17 +28,12 @@ const AdminFundicoes = () => {
     name: "",
     slug: "",
     description: "",
-    specialty: "",
     email: "",
     phone: "",
     website: "",
     address: "",
-    city: "",
-    state: "",
     country: "Brasil",
-    employees_count: "",
-    rating: "",
-    category_id: "",
+    category_ids: [] as string[],
     status: "published" as const,
     logo_url: "",
   });
@@ -55,17 +52,12 @@ const AdminFundicoes = () => {
       name: "",
       slug: "",
       description: "",
-      specialty: "",
       email: "",
       phone: "",
       website: "",
       address: "",
-      city: "",
-      state: "",
       country: "Brasil",
-      employees_count: "",
-      rating: "",
-      category_id: "",
+      category_ids: [],
       status: "published",
       logo_url: "",
     });
@@ -81,13 +73,67 @@ const AdminFundicoes = () => {
     setEditingCategory(null);
   };
 
+  const slugify = (s: string) => s
+    .normalize('NFD').replace(/\p{Diacritic}/gu, '')
+    .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+
+  const COUNTRIES = [
+    { code: 'BR', name: 'Brasil', ddi: '55', emoji: '🇧🇷' },
+    { code: 'AR', name: 'Argentina', ddi: '54', emoji: '🇦🇷' },
+    { code: 'CL', name: 'Chile', ddi: '56', emoji: '🇨🇱' },
+    { code: 'PY', name: 'Paraguai', ddi: '595', emoji: '🇵🇾' },
+    { code: 'UY', name: 'Uruguai', ddi: '598', emoji: '🇺🇾' },
+    { code: 'PT', name: 'Portugal', ddi: '351', emoji: '🇵🇹' },
+    { code: 'ES', name: 'Espanha', ddi: '34', emoji: '🇪🇸' },
+    { code: 'US', name: 'Estados Unidos', ddi: '1', emoji: '🇺🇸' },
+    { code: 'MX', name: 'México', ddi: '52', emoji: '🇲🇽' },
+    { code: 'DE', name: 'Alemanha', ddi: '49', emoji: '🇩🇪' },
+    { code: 'IT', name: 'Itália', ddi: '39', emoji: '🇮🇹' },
+    { code: 'FR', name: 'França', ddi: '33', emoji: '🇫🇷' },
+    { code: 'CN', name: 'China', ddi: '86', emoji: '🇨🇳' },
+    { code: 'JP', name: 'Japão', ddi: '81', emoji: '🇯🇵' },
+    { code: 'IN', name: 'Índia', ddi: '91', emoji: '🇮🇳' },
+    { code: 'CA', name: 'Canadá', ddi: '1', emoji: '🇨🇦' },
+    { code: 'GB', name: 'Reino Unido', ddi: '44', emoji: '🇬🇧' },
+  ];
+
+  const countryToDDI = (name?: string) => {
+    if (!name) return "55";
+    const norm = name.toLowerCase().trim();
+    const fromList = COUNTRIES.find(c => c.name.toLowerCase() === norm);
+    if (fromList) return fromList.ddi;
+    const alias: Record<string, string> = { 'brazil': '55', 'spain': '34', 'united states': '1', 'germany': '49', 'france': '33', 'italia': '39', 'japao': '81', 'india': '91', 'canada': '1', 'uk': '44', 'inglaterra': '44' };
+    return alias[norm] || '55';
+  };
+
+  const formatPhone = (raw: string, country?: string) => {
+    if (!raw) return "";
+    const ddi = countryToDDI(country);
+    const digits = raw.replace(/[^0-9]/g, "");
+    let ddd = ""; let num = digits;
+    if (digits.length >= 10) {
+      ddd = digits.slice(-10, -8);
+      num = digits.slice(-8);
+    }
+    if (num.length === 8) num = `${num.slice(0,4)}-${num.slice(4)}`;
+    if (num.length === 9) num = `${num.slice(0,5)}-${num.slice(5)}`;
+    return `+${ddi} ${ddd ? `(${ddd}) ` : ''}${num}`.trim();
+  };
+
   const handleFoundrySubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const foundryData = {
-      ...foundryForm,
-      employees_count: foundryForm.employees_count ? parseInt(foundryForm.employees_count) : null,
-      rating: foundryForm.rating ? parseFloat(foundryForm.rating) : null,
+    const foundryData: any = {
+      name: foundryForm.name,
+      slug: foundryForm.slug || slugify(foundryForm.name),
+      description: foundryForm.description || null,
+      email: foundryForm.email || null,
+      phone: foundryForm.phone || null,
+      website: foundryForm.website || null,
+      address: foundryForm.address || null,
+      country: foundryForm.country || null,
+      status: foundryForm.status,
+      logo_url: foundryForm.logo_url || null,
     };
 
     try {
@@ -106,6 +152,12 @@ const AdminFundicoes = () => {
         title: editingFoundry ? "Fundição atualizada" : "Fundição criada",
         description: editingFoundry ? "A fundição foi atualizada com sucesso." : "A fundição foi criada com sucesso.",
       });
+
+      // Salvar relações N:N
+      const foundryId = (editingFoundry ? editingFoundry.id : result.data?.id) as string | undefined;
+      if (foundryId) {
+        await linkCategories(foundryId, foundryForm.category_ids);
+      }
 
       setIsFoundryDialogOpen(false);
       resetFoundryForm();
@@ -154,17 +206,12 @@ const AdminFundicoes = () => {
       name: foundry.name,
       slug: foundry.slug,
       description: foundry.description || "",
-      specialty: foundry.specialty || "",
       email: foundry.email || "",
       phone: foundry.phone || "",
       website: foundry.website || "",
       address: foundry.address || "",
-      city: foundry.city || "",
-      state: foundry.state || "",
       country: foundry.country || "Brasil",
-      employees_count: foundry.employees_count?.toString() || "",
-      rating: foundry.rating?.toString() || "",
-      category_id: foundry.category_id || "",
+      category_ids: (foundry.categories || []).map((c: any) => c.category_id),
       status: foundry.status || "published",
       logo_url: foundry.logo_url || "",
     });
@@ -184,23 +231,18 @@ const AdminFundicoes = () => {
 
   const handleDeleteFoundry = async (id: string) => {
     if (!confirm("Tem certeza que deseja excluir esta fundição?")) return;
-
     try {
+      // Remove vínculos N:N primeiro para evitar bloqueios de RLS/consistência
+      const { error: linksErr } = await supabase.from('foundry_category_links').delete().eq('foundry_id', id);
+      if (linksErr) throw linksErr;
       const result = await deleteFoundry(id);
-      if (result.error) {
-        throw new Error(result.error);
-      }
-
-      toast({
-        title: "Fundição excluída",
-        description: "A fundição foi excluída com sucesso.",
-      });
+      if (result.error) throw new Error(result.error);
+      toast({ title: "Fundição excluída", description: "A fundição foi excluída com sucesso." });
+      // Otimização: remover imediatamente do estado local para refletir na UI
+      // (o hook também vai refazer o fetch, garantindo consistência)
+      // foundries é somente leitura aqui, então apenas aguardamos refetch implícito
     } catch (error) {
-      toast({
-        title: "Erro",
-        description: error instanceof Error ? error.message : "Erro ao excluir fundição",
-        variant: "destructive",
-      });
+      toast({ title: "Erro", description: error instanceof Error ? error.message : "Erro ao excluir fundição", variant: "destructive" });
     }
   };
 
@@ -262,25 +304,14 @@ const AdminFundicoes = () => {
                   </DialogHeader>
 
                   <form onSubmit={handleFoundrySubmit} className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="name">Nome *</Label>
-                        <Input
-                          id="name"
-                          value={foundryForm.name}
-                          onChange={(e) => setFoundryForm({ ...foundryForm, name: e.target.value })}
-                          required
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="slug">Slug *</Label>
-                        <Input
-                          id="slug"
-                          value={foundryForm.slug}
-                          onChange={(e) => setFoundryForm({ ...foundryForm, slug: e.target.value })}
-                          required
-                        />
-                      </div>
+                    <div>
+                      <Label htmlFor="name">Nome *</Label>
+                      <Input
+                        id="name"
+                        value={foundryForm.name}
+                        onChange={(e) => setFoundryForm({ ...foundryForm, name: e.target.value })}
+                        required
+                      />
                     </div>
 
                     <div>
@@ -293,29 +324,31 @@ const AdminFundicoes = () => {
                       />
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="specialty">Especialidade</Label>
-                        <Input
-                          id="specialty"
-                          value={foundryForm.specialty}
-                          onChange={(e) => setFoundryForm({ ...foundryForm, specialty: e.target.value })}
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="category">Categoria</Label>
-                        <Select value={foundryForm.category_id} onValueChange={(value) => setFoundryForm({ ...foundryForm, category_id: value })}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Selecione uma categoria" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {categories.map((category) => (
-                              <SelectItem key={category.id} value={category.id}>
-                                {category.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                    {/* Campos removidos: Especialidade e Categoria única */}
+
+                    <div>
+                      <Label>Categorias adicionais (N:N)</Label>
+                      <div className="flex flex-wrap gap-2 mt-2">
+                        {categories.map((category) => {
+                          const checked = foundryForm.category_ids.includes(category.id);
+                          return (
+                            <button
+                              key={category.id}
+                              type="button"
+                              onClick={() => {
+                                setFoundryForm((prev) => ({
+                                  ...prev,
+                                  category_ids: checked
+                                    ? prev.category_ids.filter((id) => id !== category.id)
+                                    : [...prev.category_ids, category.id],
+                                }));
+                              }}
+                              className={`px-2 py-1 rounded border text-xs ${checked ? 'bg-primary text-white border-primary' : 'bg-background'}`}
+                            >
+                              {category.name}
+                            </button>
+                          );
+                        })}
                       </div>
                     </div>
 
@@ -333,8 +366,9 @@ const AdminFundicoes = () => {
                         <Label htmlFor="phone">Telefone</Label>
                         <Input
                           id="phone"
+                          placeholder="+55 (11) 99999-9999"
                           value={foundryForm.phone}
-                          onChange={(e) => setFoundryForm({ ...foundryForm, phone: e.target.value })}
+                          onChange={(e) => setFoundryForm({ ...foundryForm, phone: formatPhone(e.target.value, foundryForm.country) })}
                         />
                       </div>
                     </div>
@@ -349,7 +383,7 @@ const AdminFundicoes = () => {
                     </div>
 
                     <div>
-                      <Label htmlFor="address">Endereço</Label>
+                      <Label htmlFor="address">Endereço completo</Label>
                       <Input
                         id="address"
                         value={foundryForm.address}
@@ -357,56 +391,26 @@ const AdminFundicoes = () => {
                       />
                     </div>
 
-                    <div className="grid grid-cols-3 gap-4">
-                      <div>
-                        <Label htmlFor="city">Cidade</Label>
-                        <Input
-                          id="city"
-                          value={foundryForm.city}
-                          onChange={(e) => setFoundryForm({ ...foundryForm, city: e.target.value })}
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="state">Estado</Label>
-                        <Input
-                          id="state"
-                          value={foundryForm.state}
-                          onChange={(e) => setFoundryForm({ ...foundryForm, state: e.target.value })}
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="country">País</Label>
-                        <Input
-                          id="country"
-                          value={foundryForm.country}
-                          onChange={(e) => setFoundryForm({ ...foundryForm, country: e.target.value })}
-                        />
-                      </div>
+                    <div>
+                      <Label>País</Label>
+                      <Select
+                        value={foundryForm.country}
+                        onValueChange={(value) => setFoundryForm({ ...foundryForm, country: value, phone: formatPhone(foundryForm.phone, value) })}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione o país" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {COUNTRIES.map((c) => (
+                            <SelectItem key={c.code} value={c.name}>
+                              {c.emoji} {c.name} (+{c.ddi})
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="employees_count">Número de Funcionários</Label>
-                        <Input
-                          id="employees_count"
-                          type="number"
-                          value={foundryForm.employees_count}
-                          onChange={(e) => setFoundryForm({ ...foundryForm, employees_count: e.target.value })}
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="rating">Avaliação (0-5)</Label>
-                        <Input
-                          id="rating"
-                          type="number"
-                          step="0.1"
-                          min="0"
-                          max="5"
-                          value={foundryForm.rating}
-                          onChange={(e) => setFoundryForm({ ...foundryForm, rating: e.target.value })}
-                        />
-                      </div>
-                    </div>
+                    {/* Campos removidos: Número de Funcionários e Avaliação */}
 
                     <DialogFooter>
                       <Button type="button" variant="outline" onClick={() => setIsFoundryDialogOpen(false)}>
@@ -471,6 +475,9 @@ const AdminFundicoes = () => {
                       )}
                     </div>
                     <div className="flex justify-end space-x-2">
+                      <Button size="sm" variant="outline" onClick={() => window.open(`/admin/fundicoes/${foundry.slug}/pagina`, '_self')} title="Editar Página">
+                        <FileText className="h-3 w-3" />
+                      </Button>
                       <Button size="sm" variant="outline" onClick={() => handleEditFoundry(foundry)}>
                         <Edit className="h-3 w-3" />
                       </Button>

@@ -26,7 +26,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
         
         if (!session?.user) {
           if (mounted) {
-            navigate('/pt/admin/auth');
+            navigate('/admin/auth');
           }
           return;
         }
@@ -47,7 +47,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
               description: "Você não tem permissão para acessar o painel administrativo.",
               variant: "destructive",
             });
-            navigate('/pt/admin/auth');
+            navigate('/admin/auth');
           }
           return;
         }
@@ -58,7 +58,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
       } catch (error) {
         console.error('Erro ao verificar autenticação:', error);
         if (mounted) {
-          navigate('/pt/admin/auth');
+          navigate('/admin/auth');
         }
       } finally {
         if (mounted) {
@@ -75,7 +75,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
         if (event === 'SIGNED_OUT' || !session) {
           if (mounted) {
             setUser(null);
-            navigate('/pt/admin/auth');
+            navigate('/admin/auth');
           }
           return;
         }

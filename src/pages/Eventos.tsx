@@ -9,6 +9,7 @@ import Header from "@/components/Header";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import AdBanner from "@/components/AdBanner";
+import Sidebar from "@/components/Sidebar";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const Eventos = () => {
@@ -33,13 +34,15 @@ const Eventos = () => {
       <Navigation />
       
       <main className="container mx-auto px-4 py-8">
-        <AdBanner size="large" position="content" slotKey="eventos-top" className="mb-8" />
-        <div className="mb-8">
+        <div className="flex gap-6">
+          <div className="flex-1">
+            <AdBanner size="large" position="content" slotKey="eventos-top" className="mb-8" />
+            <div className="mb-8">
           <h1 className="text-3xl font-bold text-foreground mb-2">Eventos</h1>
           <p className="text-muted-foreground">
             Descubra os próximos eventos do setor de fundição
           </p>
-        </div>
+            </div>
 
         {loading ? (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -150,6 +153,10 @@ const Eventos = () => {
             ))}
           </div>
         )}
+          </div>
+          {/* Sidebar com prefixo específico para a página de eventos */}
+          <Sidebar slotKeyPrefix="eventos" />
+        </div>
       </main>
 
       <Footer />

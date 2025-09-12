@@ -13,7 +13,9 @@ import ArtigosTecnicos from "./pages/ArtigosTecnicos";
 import Ebooks from "./pages/Ebooks";
 import Eventos from "./pages/Eventos";
 import Fornecedores from "./pages/Fornecedores";
+import FornecedorIndividual from "./pages/FornecedorIndividual";
 import Fundicoes from "./pages/Fundicoes";
+import FundicaoIndividual from "./pages/FundicaoIndividual";
 import LME from "./pages/LME";
 import Patrocinadas from "./pages/Patrocinadas";
 import Anuncie from "./pages/Anuncie";
@@ -31,6 +33,8 @@ import AdminDownloads from "./pages/admin/AdminDownloads";
 import AdminNewsletter from "./pages/admin/AdminNewsletter";
 import AdminMediaKit from "./pages/admin/AdminMediaKit";
 import AdminAuth from "./pages/AdminAuth";
+import SupplierPageEditor from "./pages/admin/SupplierPageEditor";
+import FoundryPageEditor from "./pages/admin/FoundryPageEditor";
 
 import EditarBanners from "./pages/EditarBanners";
 
@@ -79,7 +83,9 @@ function App() {
             <Route path="/ebooks" element={<Ebooks />} />
             <Route path="/eventos" element={<Eventos />} />
             <Route path="/fornecedores" element={<Fornecedores />} />
+            <Route path="/fornecedores/:slug" element={<FornecedorIndividual />} />
             <Route path="/fundicoes" element={<Fundicoes />} />
+            <Route path="/fundicoes/:slug" element={<FundicaoIndividual />} />
             <Route path="/lme" element={<LME />} />
             <Route path="/patrocinadas" element={<Patrocinadas />} />
             <Route path="/anuncie" element={<Anuncie />} />
@@ -96,6 +102,8 @@ function App() {
               <Route path="ebooks" element={<AdminEbooks />} />
               <Route path="eventos" element={<AdminEventos />} />
               <Route path="fornecedores" element={<AdminFornecedores />} />
+              <Route path="fornecedores/:slug/pagina" element={<SupplierPageEditor />} />
+              <Route path="fundicoes/:slug/pagina" element={<FoundryPageEditor />} />
               <Route path="fundicoes" element={<AdminFundicoes />} />
               <Route path="banners" element={<AdminBanners />} />
               <Route path="lme" element={<AdminLME />} />

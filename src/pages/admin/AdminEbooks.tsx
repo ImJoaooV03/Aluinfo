@@ -98,6 +98,22 @@ const AdminEbooks = () => {
       .trim();
   };
 
+  const generateUniqueSlug = async (title: string): Promise<string> => {
+    const base = generateSlug(title) || `ebook-${Date.now()}`;
+    let attempt = base;
+    let suffix = 2;
+    for (let i = 0; i < 25; i++) {
+      const { count, error } = await supabase
+        .from('ebooks')
+        .select('id', { count: 'exact', head: true })
+        .eq('slug', attempt);
+      if (error) throw error;
+      if (!count || count === 0) return attempt;
+      attempt = `${base}-${suffix++}`;
+    }
+    return `${base}-${Date.now()}`;
+  };
+
   const uploadFile = async (file: File, bucket: string): Promise<string> => {
     const fileExt = file.name.split('.').pop();
     const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
@@ -146,7 +162,7 @@ const AdminEbooks = () => {
         fileUrl = await uploadFile(ebookFile, 'ebooks');
       }
 
-      const slug = generateSlug(formData.title);
+      const slug = editingEbook?.slug || await generateUniqueSlug(formData.title);
       
       const ebookData = {
         title: formData.title,

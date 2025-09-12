@@ -10,7 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Edit, Trash2, Building, Star, MapPin, Users, Mail, Phone } from "lucide-react";
+import { Plus, Edit, Trash2, Building, Star, MapPin, Users, Mail, Phone, FileText } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useSupplierCategories } from "@/hooks/useSupplierCategories";
 import { SupplierCategoryDialog } from "@/components/admin/SupplierCategoryDialog";
@@ -35,6 +35,7 @@ interface Supplier {
   status: 'draft' | 'published' | 'archived';
   created_at: string;
   supplier_categories?: { name: string };
+  categories?: { category_id: string; supplier_categories?: { name: string } }[];
 }
 
 export default function AdminFornecedores() {
@@ -73,7 +74,11 @@ export default function AdminFornecedores() {
         .from('suppliers')
         .select(`
           *,
-          supplier_categories(name)
+          supplier_categories!suppliers_category_id_fkey(name),
+          categories:supplier_category_links(
+            category_id,
+            supplier_categories(name)
+          )
         `)
         .order('created_at', { ascending: false });
 
@@ -173,17 +178,33 @@ export default function AdminFornecedores() {
           .eq('id', editingSupplier.id);
 
         if (error) throw error;
+        // Atualizar vínculos N:N
+        const ids = ((formData as any).category_ids || []) as string[];
+        if (ids.length) {
+          await supabase.from('supplier_category_links').delete().eq('supplier_id', editingSupplier.id);
+          const rows = ids.map((category_id) => ({ supplier_id: editingSupplier.id, category_id }));
+          await supabase.from('supplier_category_links').insert(rows);
+        }
         
         toast({
           title: "Sucesso",
           description: "Fornecedor atualizado com sucesso!",
         });
       } else {
-        const { error } = await supabase
+        const { data, error } = await supabase
           .from('suppliers')
-          .insert([supplierData]);
+          .insert([supplierData])
+          .select('id')
+          .single();
 
         if (error) throw error;
+        // Criar vínculos N:N
+        const supplierId = (data as any)?.id as string;
+        const ids = ((formData as any).category_ids || []) as string[];
+        if (supplierId && ids.length) {
+          const rows = ids.map((category_id) => ({ supplier_id: supplierId, category_id }));
+          await supabase.from('supplier_category_links').insert(rows);
+        }
         
         toast({
           title: "Sucesso",
@@ -446,13 +467,25 @@ export default function AdminFornecedores() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="phone">Telefone</Label>
-                      <Input
-                        id="phone"
-                        value={formData.phone}
-                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                        placeholder="(11) 99999-9999"
-                      />
+                      <Label>Telefone (DDI, DDD e número)</Label>
+                      <div className="grid grid-cols-3 gap-2">
+                        <Input
+                          value={(formData as any).phone_ddi || ''}
+                          onChange={(e) => setFormData({ ...formData, ...( { phone_ddi: e.target.value } as any) })}
+                          placeholder="55"
+                        />
+                        <Input
+                          value={(formData as any).phone_ddd || ''}
+                          onChange={(e) => setFormData({ ...formData, ...( { phone_ddd: e.target.value } as any) })}
+                          placeholder="11"
+                        />
+                        <Input
+                          id="phone"
+                          value={formData.phone}
+                          onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                          placeholder="99999-9999"
+                        />
+                      </div>
                     </div>
                   </div>
 
@@ -482,22 +515,30 @@ export default function AdminFornecedores() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="category">Categoria</Label>
-                      <Select 
-                        value={formData.category_id} 
-                        onValueChange={(value) => setFormData({ ...formData, category_id: value })}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Selecione uma categoria" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {categories.map((category) => (
-                            <SelectItem key={category.id} value={category.id}>
+                      <Label>Categorias (múltiplas)</Label>
+                      <div className="flex flex-wrap gap-2">
+                        {categories.map((category) => {
+                          const ids = (formData as any).category_ids || [];
+                          const selected = ids.includes(category.id);
+                          return (
+                            <Button
+                              key={category.id}
+                              type="button"
+                              variant={selected ? 'default' : 'outline'}
+                              size="sm"
+                              onClick={() => {
+                                setFormData((prev) => {
+                                  const current = ((prev as any).category_ids || []) as string[];
+                                  const next = selected ? current.filter((id) => id !== category.id) : [...current, category.id];
+                                  return { ...(prev as any), category_ids: next, category_id: (prev as any).category_id || category.id } as any;
+                                });
+                              }}
+                            >
                               {category.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                            </Button>
+                          );
+                        })}
+                      </div>
                     </div>
                   </div>
 
@@ -593,6 +634,9 @@ export default function AdminFornecedores() {
                     <div className="flex space-x-1">
                       <Button size="sm" variant="outline" onClick={() => handleEdit(supplier)}>
                         <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button size="sm" variant="outline" onClick={() => window.open(`/admin/fornecedores/${supplier.slug}/pagina`, '_self')} title="Editar Página">
+                        <FileText className="h-4 w-4" />
                       </Button>
                       <Button size="sm" variant="destructive" onClick={() => handleDelete(supplier.id)}>
                         <Trash2 className="h-4 w-4" />

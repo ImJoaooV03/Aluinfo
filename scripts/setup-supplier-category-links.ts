@@ -1,5 +1,11 @@
 import { Client } from 'pg'
 
+// Declaração de tipos para Node.js
+declare const process: {
+  env: { [key: string]: string | undefined }
+  exit: (code?: number) => never
+}
+
 async function main() {
   const dbPassword = process.env.DB_PWD
   if (!dbPassword) {

@@ -87,9 +87,11 @@ const Footer = () => {
               <h3 className="text-white font-semibold mb-2">Mantenha-se Atualizado</h3>
               <p className="text-sm">Receba as principais notícias do setor diretamente no seu email</p>
             </div>
-            <Button className="bg-primary hover:bg-primary/90 text-white mt-4 md:mt-0">
-              Assinar Newsletter
-            </Button>
+            <a href="/anuncie">
+              <Button className="bg-primary hover:bg-primary/90 text-white mt-4 md:mt-0">
+                Assinar Newsletter
+              </Button>
+            </a>
           </div>
         </div>
 

@@ -62,12 +62,7 @@ const Navigation = () => {
             })}
           </div>
 
-          <div className="flex items-center space-x-4">
-            <Button variant="ghost" className="text-white hover:bg-white/10 text-sm">
-              {t('moreCategories')}
-              <ChevronDown className="ml-1 h-4 w-4" />
-            </Button>
-          </div>
+          {/* Botão "Mais Categorias" removido */}
         </div>
       </div>
     </nav>

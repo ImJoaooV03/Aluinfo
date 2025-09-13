@@ -168,7 +168,7 @@ const Ebooks = () => {
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
                 {filteredEbooks.map((ebook) => (
                   <Card key={ebook.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                    <div className="aspect-[3/4] bg-muted relative">
+                    <div className="aspect-video bg-muted relative">
                       {ebook.cover_image_url ? (
                         <img 
                           src={ebook.cover_image_url} 

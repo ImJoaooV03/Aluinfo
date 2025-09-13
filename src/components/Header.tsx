@@ -32,7 +32,7 @@ const Header = () => {
       <div className="container mx-auto px-4">
         {/* Top bar */}
         <div className="flex items-center justify-between py-2 border-b border-border">
-          <div className="text-sm text-muted-foreground">
+          <div className="text-sm text-white">
             {t('header:tagline')}
           </div>
           <div className="flex items-center space-x-4">

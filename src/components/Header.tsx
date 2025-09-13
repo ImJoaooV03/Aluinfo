@@ -67,7 +67,7 @@ const Header = () => {
           </div>
 
           {/* Search Bar */}
-          <form onSubmit={handleSearch} className="flex items-center max-w-md w-full mx-8">
+          <form onSubmit={handleSearch} className="flex items-center w-full ml-8">
             <div className="relative w-full">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
               <Input 
@@ -80,7 +80,7 @@ const Header = () => {
               <Button 
                 type="submit"
                 size="sm"
-                className="absolute right-1 top-1/2 transform -translate-y-1/2 h-8"
+                className="absolute right-1 top-1/2 -translate-y-1/2 h-8"
               >
                 {t('header:searchButton')}
               </Button>

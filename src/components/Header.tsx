@@ -67,7 +67,7 @@ const Header = () => {
           </div>
 
           {/* Search Bar */}
-          <form onSubmit={handleSearch} className="flex items-center w-128 ml-8">
+          <form onSubmit={handleSearch} className="flex items-center ml-8" style={{width: "600px"}}>
             <div className="relative w-full">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
               <Input 

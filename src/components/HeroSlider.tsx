@@ -104,14 +104,7 @@ const HeroSlider = () => {
               />
             )}
             
-            {/* Optional overlay with title */}
-            {banner.title && (
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-6">
-                <h3 className="text-white text-xl md:text-2xl font-bold">
-                  {banner.title}
-                </h3>
-              </div>
-            )}
+            {/* Removido o overlay com título para não aparecer para os usuários */}
           </div>
         ))}
       </div>

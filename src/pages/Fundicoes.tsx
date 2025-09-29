@@ -84,7 +84,7 @@ const Fundicoes = () => {
       <div className="min-h-screen bg-background">
         <Header />
         <Navigation />
-        <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto px-4 py-4 md:py-8">
           <div className="flex items-center justify-center min-h-[400px]">
             <Loader2 className="h-8 w-8 animate-spin" />
           </div>
@@ -99,7 +99,7 @@ const Fundicoes = () => {
       <div className="min-h-screen bg-background">
         <Header />
         <Navigation />
-        <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto px-4 py-4 md:py-8">
           <div className="flex items-center justify-center min-h-[400px]">
             <div className="text-center p-8 bg-destructive/10 border border-destructive/20 rounded-lg max-w-md">
               <h2 className="text-2xl font-bold text-destructive mb-4">Erro ao Carregar</h2>
@@ -119,8 +119,8 @@ const Fundicoes = () => {
       <Header />
       <Navigation />
       
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex gap-6">
+      <div className="container mx-auto px-4 py-4 md:py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-4 md:gap-6">
           <main className="flex-1">
             {/* Banner 12 - Fundições Topo */}
             <AdBanner size="large" position="content" slotKey="fundicoes-top" className="mb-8" />

@@ -239,7 +239,7 @@ const NoticiaIndividual = () => {
       </div>
 
       <div className="container mx-auto px-4 py-6">
-        <div className="flex gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-4 md:gap-6">
           {/* Conteúdo Principal */}
           <main className="flex-1">  
             {/* Banner 14 - Notícia Topo */}

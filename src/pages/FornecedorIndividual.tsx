@@ -90,7 +90,7 @@ const FornecedorIndividual = () => {
       <div className="min-h-screen bg-background">
         <Header />
         <Navigation />
-        <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto px-4 py-4 md:py-8">
           <div className="flex justify-center items-center min-h-[400px]">
             <div className="text-center">
               <p className="text-muted-foreground">Carregando...</p>
@@ -107,7 +107,7 @@ const FornecedorIndividual = () => {
       <div className="min-h-screen bg-background">
         <Header />
         <Navigation />
-        <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto px-4 py-4 md:py-8">
           <div className="flex justify-center items-center min-h-[400px]">
             <div className="text-center">
               <p className="text-destructive mb-4">Fornecedor não encontrado</p>
@@ -135,8 +135,8 @@ const FornecedorIndividual = () => {
       <Header />
       <Navigation />
 
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex gap-6">
+      <div className="container mx-auto px-4 py-4 md:py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-4 md:gap-6">
           <main className="flex-1">
             <AdBanner size="large" position="content" slotKey="fornecedores-top" className="mb-6" />
 

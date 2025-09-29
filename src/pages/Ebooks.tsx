@@ -84,7 +84,7 @@ const Ebooks = () => {
       <div className="min-h-screen bg-background">
         <Header />
         <Navigation />
-        <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto px-4 py-4 md:py-8">
           <div className="flex justify-center items-center min-h-[400px]">
             <div className="text-center">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
@@ -102,7 +102,7 @@ const Ebooks = () => {
       <div className="min-h-screen bg-background">
         <Header />
         <Navigation />
-        <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto px-4 py-4 md:py-8">
           <div className="flex justify-center items-center min-h-[400px]">
             <div className="text-center">
               <p className="text-destructive mb-4">Erro ao carregar e-books</p>
@@ -120,8 +120,8 @@ const Ebooks = () => {
       <Header />
       <Navigation />
       
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex gap-6">
+      <div className="container mx-auto px-4 py-4 md:py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-4 md:gap-6">
           <main className="flex-1">
             {/* Banner 10 - E-books Topo */}
             <AdBanner size="large" position="content" slotKey="ebooks-top" className="mb-8" />

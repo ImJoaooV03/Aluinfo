@@ -33,8 +33,8 @@ const Eventos = () => {
       <Header />
       <Navigation />
       
-      <main className="container mx-auto px-4 py-8">
-        <div className="flex gap-6">
+      <main className="container mx-auto px-4 py-4 md:py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-4 md:gap-6">
           <div className="flex-1">
             <AdBanner size="large" position="content" slotKey="eventos-top" className="mb-8" />
             <div className="mb-8">

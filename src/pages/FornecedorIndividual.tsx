@@ -50,30 +50,70 @@ const FornecedorIndividual = () => {
       if (!slug) return;
       try {
         setLoading(true);
-        const { data: supplier } = await supabase
+        console.log('Loading supplier with slug:', slug);
+        
+        // First, let's try a simple query without the complex joins
+        const { data: suppliers, error: suppliersError } = await supabase
+          .from('suppliers')
+          .select('id, name, slug, status')
+          .eq('slug', slug);
+          
+        console.log('Simple suppliers query result:', { suppliers, error: suppliersError });
+        
+        if (suppliersError) {
+          console.error('Error fetching suppliers:', suppliersError);
+          return;
+        }
+        
+        if (!suppliers || suppliers.length === 0) {
+          console.log('No suppliers found with slug:', slug);
+          return;
+        }
+        
+        const foundSupplier = suppliers[0];
+        console.log('Found supplier:', foundSupplier);
+        
+        // Now get the full supplier data
+        const { data: fullSupplier, error: fullError } = await supabase
           .from('suppliers')
           .select(`
             id, name, slug, specialty, description, logo_url, country, state, city, address, website, email, phone, category_id, created_at,
             supplier_categories(name),
             categories(category_id, supplier_categories(name))
           `)
-          .eq('slug', slug)
+          .eq('id', foundSupplier.id)
           .eq('status', 'published')
           .single();
-        if (!supplier) return;
-        setSupplier(supplier as Supplier);
+          
+        console.log('Full supplier query result:', { fullSupplier, error: fullError });
+        
+        if (fullError) {
+          console.error('Error fetching full supplier:', fullError);
+          return;
+        }
+        
+        if (!fullSupplier) {
+          console.log('No full supplier found');
+          return;
+        }
+        
+        setSupplier(fullSupplier as Supplier);
+        
         const { data: contactInfo } = await supabase
           .from('supplier_contact_info')
           .select('email, phone, masked')
-          .eq('supplier_id', supplier.id)
-          .single();
+          .eq('supplier_id', fullSupplier.id)
+          .maybeSingle();
         setContact(contactInfo);
+        
         const { data: page } = await supabase
           .from('supplier_pages')
           .select('title, content')
-          .eq('supplier_id', supplier.id)
+          .eq('supplier_id', fullSupplier.id)
           .maybeSingle();
         setPage(page);
+      } catch (error) {
+        console.error('Error in load function:', error);
       } finally {
         setLoading(false);
       }
@@ -109,6 +149,9 @@ const FornecedorIndividual = () => {
               <p className="text-destructive mb-4">Fornecedor não encontrado</p>
               <p className="text-muted-foreground mb-6">
                 O fornecedor que você está procurando não existe ou foi removido.
+              </p>
+              <p className="text-sm text-muted-foreground mb-4">
+                Slug procurado: {slug}
               </p>
               <Link to="/fornecedores">
                 <Button className="mt-4">Voltar</Button>

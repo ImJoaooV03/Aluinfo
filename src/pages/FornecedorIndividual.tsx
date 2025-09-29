@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { MapPin, Mail, Phone, Globe, ArrowLeft, Flag } from "lucide-react";
+import DOMPurify from "dompurify";
 
 interface Supplier {
   id: string;
@@ -49,27 +50,30 @@ const FornecedorIndividual = () => {
       if (!slug) return;
       try {
         setLoading(true);
-        const { data, error } = await supabase
+        const { data: supplier } = await supabase
           .from('suppliers')
           .select(`
             id, name, slug, specialty, description, logo_url, country, state, city, address, website, email, phone, category_id, created_at,
-            supplier_categories:supplier_categories!suppliers_category_id_fkey(name),
-            categories:supplier_category_links(category_id, supplier_categories(name))
+            supplier_categories(name),
+            categories(category_id, supplier_categories(name))
           `)
           .eq('slug', slug)
           .eq('status', 'published')
           .single();
-        if (error || !data) return;
-        setSupplier(data as Supplier);
-        const { data: supplierPage } = await supabase
+        if (!supplier) return;
+        setSupplier(supplier as Supplier);
+        const { data: contactInfo } = await supabase
+          .from('supplier_contact_info')
+          .select('email, phone, masked')
+          .eq('supplier_id', supplier.id)
+          .single();
+        setContact(contactInfo);
+        const { data: page } = await supabase
           .from('supplier_pages')
           .select('title, content')
-          .eq('supplier_id', data.id)
-          .single();
-        if (supplierPage) setPage({ title: supplierPage.title, content: supplierPage.content || '' });
-        const { data: contactData } = await supabase
-          .rpc('get_supplier_contact_info', { supplier_id: data.id });
-        setContact(contactData as SupplierContactInfo);
+          .eq('supplier_id', supplier.id)
+          .maybeSingle();
+        setPage(page);
       } finally {
         setLoading(false);
       }
@@ -82,9 +86,14 @@ const FornecedorIndividual = () => {
       <div className="min-h-screen bg-background">
         <Header />
         <Navigation />
-        <div className="container mx-auto px-4 py-10">
-          <div className="h-24 bg-muted animate-pulse rounded" />
+        <div className="container mx-auto px-4 py-8">
+          <div className="flex justify-center items-center min-h-[400px]">
+            <div className="text-center">
+              <p className="text-muted-foreground">Carregando...</p>
+            </div>
+          </div>
         </div>
+        <Footer />
       </div>
     );
   }
@@ -94,12 +103,20 @@ const FornecedorIndividual = () => {
       <div className="min-h-screen bg-background">
         <Header />
         <Navigation />
-        <div className="container mx-auto px-4 py-10 text-center">
-          <h2 className="text-xl font-semibold">Fornecedor não encontrado</h2>
-          <Link to="/fornecedores">
-            <Button className="mt-4">Voltar</Button>
-          </Link>
+        <div className="container mx-auto px-4 py-8">
+          <div className="flex justify-center items-center min-h-[400px]">
+            <div className="text-center">
+              <p className="text-destructive mb-4">Fornecedor não encontrado</p>
+              <p className="text-muted-foreground mb-6">
+                O fornecedor que você está procurando não existe ou foi removido.
+              </p>
+              <Link to="/fornecedores">
+                <Button className="mt-4">Voltar</Button>
+              </Link>
+            </div>
+          </div>
         </div>
+        <Footer />
       </div>
     );
   }
@@ -160,9 +177,12 @@ const FornecedorIndividual = () => {
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
-                {(page?.content || supplier.description) && (
-                  <p className="text-muted-foreground leading-relaxed whitespace-pre-line">{page?.content || supplier.description}</p>
-                )}
+                {(page?.content || supplier.description) && (() => {
+                  const contentHtml = (page?.content || supplier.description) ? DOMPurify.sanitize(page?.content || supplier.description || "") : null;
+                  return contentHtml ? (
+                    <div className="text-muted-foreground leading-relaxed prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: contentHtml }} />
+                  ) : null;
+                })()}
 
                 {(supplier.address || supplier.city || supplier.state) && (
                   <div className="flex items-start text-sm text-muted-foreground">
@@ -210,5 +230,3 @@ const FornecedorIndividual = () => {
 };
 
 export default FornecedorIndividual;
-
-

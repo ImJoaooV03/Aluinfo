@@ -3,6 +3,7 @@ import Navigation from "@/components/Navigation";
 import HeroSlider from "@/components/HeroSlider";
 import MainContent from "@/components/MainContent";
 import Sidebar from "@/components/Sidebar";
+import Newsletter from "@/components/Newsletter";
 import Footer from "@/components/Footer";
 
 const Index = () => {
@@ -22,6 +23,7 @@ const Index = () => {
         </div>
       </div>
       
+      <Newsletter />
       <Footer />
     </div>
   );

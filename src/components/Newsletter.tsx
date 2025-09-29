@@ -128,20 +128,7 @@ const Newsletter = () => {
             </p>
           </form>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-orange-500 mb-2">5k+</div>
-              <div className="text-sm text-slate-400">Assinantes ativos</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-orange-500 mb-2">3x</div>
-              <div className="text-sm text-slate-400">Por semana</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-orange-500 mb-2">100%</div>
-              <div className="text-sm text-slate-400">Conteúdo exclusivo</div>
-            </div>
-          </div>
+          {/* Estatísticas removidas - apenas o formulário permanece */}
         </div>
       </div>
     </section>

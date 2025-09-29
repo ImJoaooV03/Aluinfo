@@ -200,7 +200,7 @@ const FornecedorIndividual = () => {
               </CardContent>
             </Card>
           </main>
-          <Sidebar slotKeyPrefix="fornecedor" />
+          <Sidebar />
         </div>
       </div>
 

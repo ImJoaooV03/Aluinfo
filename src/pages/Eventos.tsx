@@ -155,7 +155,7 @@ const Eventos = () => {
         )}
           </div>
           {/* Sidebar com prefixo específico para a página de eventos */}
-          <Sidebar slotKeyPrefix="eventos" />
+          <Sidebar />
         </div>
       </main>
 

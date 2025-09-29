@@ -392,7 +392,7 @@ const Fornecedores = () => {
             </div>
           </main>
 
-          <Sidebar slotKeyPrefix="fornecedores" />
+          <Sidebar />
         </div>
       </div>
       

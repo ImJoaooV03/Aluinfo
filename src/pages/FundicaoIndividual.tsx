@@ -147,7 +147,7 @@ const FundicaoIndividual = () => {
               </CardContent>
             </Card>
           </main>
-          <Sidebar slotKeyPrefix="fundicao" />
+          <Sidebar />
         </div>
       </div>
 

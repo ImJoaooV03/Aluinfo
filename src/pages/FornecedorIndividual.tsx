@@ -114,7 +114,7 @@ const FornecedorIndividual = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="flex gap-6">
           <main className="flex-1">
-            <AdBanner size="large" position="content" slotKey="fornecedor-top" className="mb-6" />
+            <AdBanner size="large" position="content" slotKey="fornecedores-top" className="mb-6" />
 
             <Link to="/fornecedores" className="inline-flex items-center text-sm text-muted-foreground hover:text-primary">
               <ArrowLeft className="h-4 w-4 mr-2" /> Voltar para Fornecedores

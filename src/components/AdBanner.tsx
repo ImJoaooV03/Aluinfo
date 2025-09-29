@@ -1,4 +1,3 @@
-
 import { ExternalLink } from "lucide-react";
 import { useBanners } from "@/hooks/useBanners";
 import { useEffect, useRef } from "react";
@@ -106,9 +105,7 @@ const AdBanner = ({ size, position, spaceNumber, slotKey, className = "" }: AdBa
             alt={`${getPositionText()}`}
             className="w-full h-full object-cover"
           />
-          <div className="absolute top-2 right-2 bg-black/50 rounded px-2 py-1">
-            <span className="text-xs text-white">{getPositionText()}</span>
-          </div>
+          {/* Removido o overlay com o nome do banner para não aparecer para os usuários */}
         </>
       ) : (
         <div className="flex flex-col items-center justify-center space-y-1 h-full">

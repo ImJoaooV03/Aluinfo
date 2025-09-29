@@ -28,20 +28,11 @@ interface Supplier {
   phone: string | null;
   category_id: string | null;
   created_at: string;
-  supplier_categories?: { name: string } | null;
-  categories?: { category_id: string; name: string }[];
-}
-
-interface SupplierContactInfo {
-  email?: string;
-  phone?: string;
-  masked?: boolean;
 }
 
 const FornecedorIndividual = () => {
   const { slug } = useParams();
   const [supplier, setSupplier] = useState<Supplier | null>(null);
-  const [contact, setContact] = useState<SupplierContactInfo | null>(null);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState<{ title: string; content: string } | null>(null);
 
@@ -52,66 +43,39 @@ const FornecedorIndividual = () => {
         setLoading(true);
         console.log('Loading supplier with slug:', slug);
         
-        // First, let's try a simple query without the complex joins
-        const { data: suppliers, error: suppliersError } = await supabase
+        // Get supplier data
+        const { data: supplierData, error: supplierError } = await supabase
           .from('suppliers')
-          .select('id, name, slug, status')
-          .eq('slug', slug);
-          
-        console.log('Simple suppliers query result:', { suppliers, error: suppliersError });
-        
-        if (suppliersError) {
-          console.error('Error fetching suppliers:', suppliersError);
-          return;
-        }
-        
-        if (!suppliers || suppliers.length === 0) {
-          console.log('No suppliers found with slug:', slug);
-          return;
-        }
-        
-        const foundSupplier = suppliers[0];
-        console.log('Found supplier:', foundSupplier);
-        
-        // Now get the full supplier data
-        const { data: fullSupplier, error: fullError } = await supabase
-          .from('suppliers')
-          .select(`
-            id, name, slug, specialty, description, logo_url, country, state, city, address, website, email, phone, category_id, created_at,
-            supplier_categories(name),
-            categories(category_id, supplier_categories(name))
-          `)
-          .eq('id', foundSupplier.id)
+          .select('*')
+          .eq('slug', slug)
           .eq('status', 'published')
           .single();
           
-        console.log('Full supplier query result:', { fullSupplier, error: fullError });
+        console.log('Supplier query result:', { supplierData, error: supplierError });
         
-        if (fullError) {
-          console.error('Error fetching full supplier:', fullError);
+        if (supplierError) {
+          console.error('Error fetching supplier:', supplierError);
           return;
         }
         
-        if (!fullSupplier) {
-          console.log('No full supplier found');
+        if (!supplierData) {
+          console.log('No supplier found with slug:', slug);
           return;
         }
         
-        setSupplier(fullSupplier as Supplier);
+        console.log('Found supplier:', supplierData);
+        setSupplier(supplierData as Supplier);
         
-        const { data: contactInfo } = await supabase
-          .from('supplier_contact_info')
-          .select('email, phone, masked')
-          .eq('supplier_id', fullSupplier.id)
-          .maybeSingle();
-        setContact(contactInfo);
-        
-        const { data: page } = await supabase
+        // Get page content
+        const { data: pageData } = await supabase
           .from('supplier_pages')
           .select('title, content')
-          .eq('supplier_id', fullSupplier.id)
+          .eq('supplier_id', supplierData.id)
           .maybeSingle();
-        setPage(page);
+        setPage(pageData);
+        
+        console.log('Page data:', pageData);
+        
       } catch (error) {
         console.error('Error in load function:', error);
       } finally {
@@ -200,18 +164,6 @@ const FornecedorIndividual = () => {
                       )}
                     </div>
                     <div className="flex flex-wrap gap-2 mt-2">
-                      {(() => {
-                        const names: string[] = [];
-                        if (supplier.supplier_categories?.name) names.push(supplier.supplier_categories.name);
-                        if (supplier.categories?.length) {
-                          supplier.categories.forEach((c: any) => {
-                            if (c?.name) names.push(c.name as string);
-                            else if (c?.supplier_categories?.name) names.push(c.supplier_categories.name as string);
-                          });
-                        }
-                        const unique = Array.from(new Set(names));
-                        return unique.map((n) => <Badge key={n} variant="secondary">{n}</Badge>);
-                      })()}
                       {supplier.specialty && (
                         <Badge variant="outline">{supplier.specialty}</Badge>
                       )}
@@ -239,14 +191,14 @@ const FornecedorIndividual = () => {
                     <div className="text-muted-foreground mb-1">E-mail</div>
                     <div className="flex items-center">
                       <Mail className="h-4 w-4 mr-2" />
-                      <span>{contact?.masked ? 'Oculto' : (contact?.email || '—')}</span>
+                      <span>{supplier.email || '—'}</span>
                     </div>
                   </div>
                   <div className="text-sm">
                     <div className="text-muted-foreground mb-1">Telefone</div>
                     <div className="flex items-center">
                       <Phone className="h-4 w-4 mr-2" />
-                      <span>{contact?.masked ? 'Oculto' : (contact?.phone || '—')}</span>
+                      <span>{supplier.phone || '—'}</span>
                     </div>
                   </div>
                   <div className="text-sm">

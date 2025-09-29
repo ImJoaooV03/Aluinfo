@@ -50,7 +50,7 @@ const MainContent = () => {
 
   const formatPrice = (price: number | null) => {
     if (!price || price === 0) return t('common:free');
-    return formatPriceI18n(price, 'USD', currentLanguage);
+    return formatPriceI18n(price, 'BRL', currentLanguage);
   };
 
   return (

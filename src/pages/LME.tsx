@@ -4,10 +4,10 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 
 const LME = () => {
-  const [currency, setCurrency] = useState('USD');
+  const [currency, setCurrency] = useState('BRL');
   const [data, setData] = useState({
     price: '—',
-    unit: 'USD/t',
+    unit: 'BRL/t',
     change: '—',
     hint: '—',
     timestamp: '—',
@@ -17,7 +17,7 @@ const LME = () => {
   // API Configuration
   const API_KEY = '8570990866c048e:a9wrlb5jhurlxi1';
   const BASE = 'https://api.tradingeconomics.com';
-  const FXPAIR = 'USD:BRL';
+  const FXPAIR = 'BRL:USD';
 
   const buildUrl = (path: string) => {
     const separator = path.includes('?') ? '&' : '?';
@@ -58,13 +58,13 @@ const LME = () => {
       const fx = await getJSON(buildUrl(`/markets/currency/${FXPAIR}`));
       return Number(fx?.[0]?.Last || fx?.[0]?.Close || 0) || 0;
     } catch (e) {
-      console.warn('FX fetch failed, keeping USD', e);
+      console.warn('FX fetch failed, keeping BRL', e);
       return 0;
     }
   };
 
   const formatPrice = (n: number, curr: string) => {
-    return (curr === 'BRL' ? 'R$ ' : 'US$ ') + Number(n).toLocaleString('pt-BR', { maximumFractionDigits: 2 });
+    return (curr === 'BRL' ? 'R$ ' : 'R$ ') + Number(n).toLocaleString('pt-BR', { maximumFractionDigits: 2 });
   };
 
   const loadData = async () => {
@@ -83,8 +83,8 @@ const LME = () => {
       const price = toBRL ? priceUSDt * usdbrl : priceUSDt;
 
       setData({
-        price: formatPrice(price, toBRL ? 'BRL' : 'USD'),
-        unit: toBRL ? 'BRL/t' : 'USD/t',
+        price: formatPrice(price, toBRL ? 'BRL' : 'BRL'),
+        unit: toBRL ? 'BRL/t' : 'BRL/t',
         change: (chgPct >= 0 ? '+' : '') + chgPct.toFixed(2) + '%',
         hint: dayHigh && dayLow ? `Alta: ${dayHigh.toLocaleString('pt-BR')} | Baixa: ${dayLow.toLocaleString('pt-BR')}` : '—',
         timestamp: new Date(updated).toLocaleString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
@@ -94,7 +94,7 @@ const LME = () => {
       console.error(e);
       setData({
         price: '—',
-        unit: currency === 'BRL' ? 'BRL/t' : 'USD/t',
+        unit: currency === 'BRL' ? 'BRL/t' : 'BRL/t',
         change: '—',
         hint: 'Erro ao carregar dados',
         timestamp: '—',
@@ -163,7 +163,7 @@ const LME = () => {
                       padding: '4px 8px'
                     }}
                   >
-                    <option value="USD">USD</option>
+                    <option value="BRL">BRL</option>
                     <option value="BRL">BRL</option>
                   </select>
                 </label>

@@ -172,7 +172,7 @@ CREATE TABLE public.lme_indicators (
   metal_name TEXT NOT NULL, -- 'Aluminum', 'Copper', 'Lead', etc.
   metal_symbol TEXT NOT NULL, -- 'ALU', 'CU', 'PB', etc.
   price DECIMAL(10,2) NOT NULL,
-  currency TEXT DEFAULT 'USD',
+  currency TEXT DEFAULT 'BRL',
   unit TEXT DEFAULT 'tonne', -- 'tonne', 'pound', etc.
   change_amount DECIMAL(10,2),
   change_percent DECIMAL(5,2),

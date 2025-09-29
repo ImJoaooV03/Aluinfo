@@ -31,7 +31,7 @@ import {
   Image as ImageIcon,
   Star,
   Download,
-  DollarSign,
+  Currency,
   BookOpen,
   Clock
 } from "lucide-react";
@@ -515,12 +515,12 @@ const AdminEbooks = () => {
                   <div className="space-y-2">
                     {ebook.price && ebook.price > 0 ? (
                       <div className="flex items-center text-sm">
-                        <DollarSign className="h-4 w-4 mr-2" />
+                        <Currency className="h-4 w-4 mr-2" />
                         R$ {ebook.price.toFixed(2)}
                       </div>
                     ) : (
                       <div className="flex items-center text-sm text-green-600">
-                        <DollarSign className="h-4 w-4 mr-2" />
+                        <Currency className="h-4 w-4 mr-2" />
                         Gratuito
                       </div>
                     )}

@@ -88,7 +88,7 @@ export const formatNumber = (number: number, lang: SupportedLanguage = 'pt'): st
   return new Intl.NumberFormat(localeMap[lang]).format(number);
 };
 
-export const formatPrice = (price: number, currency: string = 'USD', lang: SupportedLanguage = 'pt'): string => {
+export const formatPrice = (price: number, currency: string = 'BRL', lang: SupportedLanguage = 'pt'): string => {
   const localeMap = {
     pt: 'pt-BR',
     es: 'es-ES',

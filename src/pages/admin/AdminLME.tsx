@@ -48,7 +48,7 @@ const AdminLME = () => {
     metal_name: '',
     metal_symbol: '',
     price: '',
-    currency: 'USD',
+    currency: 'BRL',
     unit: 'tonne',
     change_amount: '',
     change_percent: ''
@@ -159,7 +159,7 @@ const AdminLME = () => {
       metal_name: '',
       metal_symbol: '',
       price: '',
-      currency: 'USD',
+      currency: 'BRL',
       unit: 'tonne',
       change_amount: '',
       change_percent: ''
@@ -279,7 +279,7 @@ const AdminLME = () => {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="USD">USD</SelectItem>
+                      <SelectItem value="BRL">BRL</SelectItem>
                       <SelectItem value="BRL">BRL</SelectItem>
                       <SelectItem value="EUR">EUR</SelectItem>
                     </SelectContent>

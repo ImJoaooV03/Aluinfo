@@ -14,7 +14,7 @@ import {
   DialogTitle, 
   DialogTrigger 
 } from "@/components/ui/dialog";
-import { Plus, Edit, Trash2, Upload, Calendar, MapPin, DollarSign } from "lucide-react";
+import { Plus, Edit, Trash2, Upload, Calendar, MapPin, Currency } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useCategories } from "@/hooks/useCategories";
@@ -536,7 +536,7 @@ const AdminEventos = () => {
                     )}
 
                     <div className="flex items-center text-sm text-muted-foreground">
-                      <DollarSign className="h-4 w-4 mr-2" />
+                      <Currency className="h-4 w-4 mr-2" />
                       {event.price ? `R$ ${event.price.toFixed(2)}` : 'Gratuito'}
                     </div>
                   </div>

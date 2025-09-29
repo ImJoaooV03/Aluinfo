@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -13,7 +12,9 @@ import {
   Factory,
   TrendingUp,
   ChevronDown,
-  Megaphone
+  Megaphone,
+  Menu,
+  X
 } from "lucide-react";
 
 const Navigation = () => {
@@ -21,6 +22,7 @@ const Navigation = () => {
   const location = useLocation();
   const { t } = useTranslation('navigation');
   const { currentLanguage, pathWithoutLanguage } = useLanguageUtils();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const navItems = [
     { id: "inicio", label: t('home'), icon: Home, path: "" },
@@ -40,7 +42,8 @@ const Navigation = () => {
   return (
     <nav className="shadow-md sticky top-0 z-40" style={{ backgroundColor: 'hsl(var(--header-footer))' }}>
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-12">
+        {/* Desktop Navigation */}
+        <div className="hidden md:flex items-center justify-between h-12">
           <div className="flex items-center space-x-1">
             {navItems.map((item) => {
               const Icon = item.icon;
@@ -56,14 +59,72 @@ const Navigation = () => {
                   }`}
                 >
                   <Icon className="h-4 w-4" />
-                  <span className="hidden md:inline">{item.label}</span>
+                  <span>{item.label}</span>
                 </Button>
               );
             })}
           </div>
-
-          {/* Botão "Mais Categorias" removido */}
         </div>
+
+        {/* Mobile Navigation */}
+        <div className="md:hidden flex items-center justify-between h-12">
+          <div className="flex items-center space-x-1 overflow-x-auto">
+            {navItems.slice(0, 3).map((item) => {
+              const Icon = item.icon;
+              return (
+                <Button
+                  key={item.id}
+                  variant={isActive(item.path) ? "default" : "ghost"}
+                  onClick={() => navigate(pathWithLang(item.path, currentLanguage))}
+                  className={`flex items-center space-x-1 text-xs h-8 px-2 ${
+                    isActive(item.path) 
+                      ? "bg-primary text-white hover:bg-primary/90" 
+                      : "text-white hover:bg-primary hover:text-white"
+                  }`}
+                >
+                  <Icon className="h-3 w-3" />
+                  <span className="whitespace-nowrap">{item.label}</span>
+                </Button>
+              );
+            })}
+          </div>
+          
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-white"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            {isMobileMenuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+          </Button>
+        </div>
+
+        {/* Mobile Menu Dropdown */}
+        {isMobileMenuOpen && (
+          <div className="md:hidden border-t border-border py-2 space-y-1">
+            {navItems.slice(3).map((item) => {
+              const Icon = item.icon;
+              return (
+                <Button
+                  key={item.id}
+                  variant={isActive(item.path) ? "default" : "ghost"}
+                  onClick={() => {
+                    navigate(pathWithLang(item.path, currentLanguage));
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className={`w-full justify-start text-sm h-10 ${
+                    isActive(item.path) 
+                      ? "bg-primary text-white hover:bg-primary/90" 
+                      : "text-white hover:bg-primary hover:text-white"
+                  }`}
+                >
+                  <Icon className="h-4 w-4 mr-2" />
+                  {item.label}
+                </Button>
+              );
+            })}
+          </div>
+        )}
       </div>
     </nav>
   );

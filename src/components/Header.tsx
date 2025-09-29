@@ -1,7 +1,6 @@
-
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { Search, Settings } from "lucide-react";
+import { Search, Settings, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useTranslation } from "react-i18next";
@@ -9,6 +8,7 @@ import AdBanner from "./AdBanner";
 
 const Header = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const { t } = useTranslation(['header', 'common']);
   
@@ -27,11 +27,12 @@ const Header = () => {
       handleSearch(e as any);
     }
   };
+  
   return (
     <header className="shadow-lg" style={{ backgroundColor: 'hsl(var(--header-footer))' }}>
       <div className="container mx-auto px-4">
-        {/* Top bar */}
-        <div className="flex items-center justify-between py-2 border-b border-border">
+        {/* Top bar - Hidden on mobile */}
+        <div className="hidden md:flex items-center justify-between py-2 border-b border-border">
           <div className="text-sm text-white">
             {t('header:tagline')}
           </div>
@@ -62,12 +63,22 @@ const Header = () => {
             <img 
               src="/lovable-uploads/d3511c4a-0b98-48cc-89b9-33bdc5d980d2.png" 
               alt="ALUINFO" 
-              className="h-10 w-auto"
+              className="h-8 md:h-10 w-auto"
             />
           </div>
 
-          {/* Search Bar */}
-          <form onSubmit={handleSearch} className="flex items-center ml-8" style={{width: "350px"}}>
+          {/* Mobile menu button */}
+          <Button
+            variant="ghost"
+            size="sm"
+            className="md:hidden text-white"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </Button>
+
+          {/* Search Bar - Hidden on mobile, shown on desktop */}
+          <form onSubmit={handleSearch} className="hidden md:flex items-center ml-8" style={{width: "350px"}}>
             <div className="relative w-full">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
               <Input 
@@ -87,6 +98,52 @@ const Header = () => {
             </div>
           </form>
         </div>
+
+        {/* Mobile menu */}
+        {isMobileMenuOpen && (
+          <div className="md:hidden border-t border-border py-4 space-y-3">
+            {/* Mobile search */}
+            <form onSubmit={handleSearch} className="w-full">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                <Input 
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  placeholder={t('common:searchPlaceholder')} 
+                  className="pl-10 w-full"
+                />
+                <Button 
+                  type="submit"
+                  size="sm"
+                  className="absolute right-1 top-1/2 -translate-y-1/2 h-8"
+                >
+                  {t('header:searchButton')}
+                </Button>
+              </div>
+            </form>
+            
+            {/* Mobile links */}
+            <div className="flex flex-col space-y-2">
+              <a href="/#newsletter">
+                <Button variant="ghost" size="sm" className="w-full justify-start text-sm text-primary hover:text-primary-foreground hover:bg-primary">
+                  {t('header:newsletter')}
+                </Button>
+              </a>
+              <Link to="/anuncie">
+                <Button variant="ghost" size="sm" className="w-full justify-start text-sm text-primary hover:text-primary-foreground hover:bg-primary">
+                  {t('header:advertise')}
+                </Button>
+              </Link>
+              <Link to="/admin/dashboard">
+                <Button variant="ghost" size="sm" className="w-full justify-start text-sm text-primary hover:text-primary-foreground hover:bg-primary">
+                  <Settings className="h-3 w-3 mr-1" />
+                  {t('header:admin')}
+                </Button>
+              </Link>
+            </div>
+          </div>
+        )}
       </div>
     </header>
   );

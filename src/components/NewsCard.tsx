@@ -1,4 +1,3 @@
-
 import { Clock, User, Tag } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -49,31 +48,31 @@ const NewsCard = ({
           </div>
         )}
         
-        <div className="p-4">
-          <div className="flex items-center justify-between mb-2">
-            <Badge variant="secondary" className="bg-primary/10 text-primary">
+        <div className="p-3 md:p-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2 gap-2">
+            <Badge variant="secondary" className="bg-primary/10 text-primary text-xs">
               <Tag className="h-3 w-3 mr-1" />
               {category}
             </Badge>
             {featured && (
-              <Badge variant="default" className="bg-primary">
+              <Badge variant="default" className="bg-primary text-xs">
                 Destaque
               </Badge>
             )}
           </div>
 
-          <h3 className={`font-bold mb-2 line-clamp-2 ${featured ? 'text-lg' : 'text-base'}`}>
+          <h3 className={`font-bold mb-2 line-clamp-2 ${featured ? 'text-base md:text-lg' : 'text-sm md:text-base'}`}>
             {title}
           </h3>
           
-          <p className="text-muted-foreground text-sm mb-3 line-clamp-3">
+          <p className="text-muted-foreground text-xs md:text-sm mb-3 line-clamp-3">
             {summary}
           </p>
 
-          <div className="flex items-center justify-between text-xs text-muted-foreground">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between text-xs text-muted-foreground gap-2">
             <div className="flex items-center space-x-2">
               <User className="h-3 w-3" />
-              <span>{author}</span>
+              <span className="truncate">{author}</span>
             </div>
             <div className="flex items-center space-x-1">
               <Clock className="h-3 w-3" />

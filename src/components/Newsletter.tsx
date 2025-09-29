@@ -70,47 +70,45 @@ const Newsletter = () => {
   };
 
   return (
-    <section id="newsletter" className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white py-16">
+    <section id="newsletter" className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white py-8 md:py-16">
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto text-center">
-          <div className="mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-orange-500/20 rounded-full mb-6">
-              <Mail className="h-8 w-8 text-orange-500" />
+          <div className="mb-6 md:mb-8">
+            <div className="inline-flex items-center justify-center w-12 h-12 md:w-16 md:h-16 bg-orange-500/20 rounded-full mb-4 md:mb-6">
+              <Mail className="h-6 w-6 md:h-8 md:w-8 text-orange-500" />
             </div>
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-3 md:mb-4">
               {t('footer:newsletter')}
             </h2>
-            <p className="text-lg text-slate-300 max-w-2xl mx-auto">
+            <p className="text-base md:text-lg text-slate-300 max-w-2xl mx-auto px-4">
               {t('footer:newsletterText')}
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="max-w-md mx-auto space-y-3">
+          <form onSubmit={handleSubmit} className="max-w-md mx-auto space-y-3 px-4">
             <div className="flex flex-col gap-3">
               <Input
                 type="text"
                 placeholder={t('common:name') + ' (opcional)'}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="h-12 text-base bg-white/10 border-white/20 text-white placeholder:text-white/60"
+                className="h-10 md:h-12 text-sm md:text-base bg-white/10 border-white/20 text-white placeholder:text-white/60"
                 disabled={isLoading}
               />
-              <div className="flex flex-col sm:flex-row gap-3">
-                <div className="flex-1">
-                  <Input
-                    type="email"
-                    placeholder={t('footer:emailPlaceholder')}
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="h-12 text-base bg-white/10 border-white/20 text-white placeholder:text-white/60"
-                    required
-                    disabled={isLoading}
-                  />
-                </div>
+              <div className="flex flex-col gap-3">
+                <Input
+                  type="email"
+                  placeholder={t('footer:emailPlaceholder')}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="h-10 md:h-12 text-sm md:text-base bg-white/10 border-white/20 text-white placeholder:text-white/60"
+                  required
+                  disabled={isLoading}
+                />
                 <Button 
                   type="submit" 
                   size="lg" 
-                  className="h-12 px-8 bg-orange-500 hover:bg-orange-600 text-white"
+                  className="h-10 md:h-12 px-6 md:px-8 bg-orange-500 hover:bg-orange-600 text-white text-sm md:text-base"
                   disabled={isLoading}
                 >
                   {isLoading ? (
@@ -122,7 +120,7 @@ const Newsletter = () => {
                 </Button>
               </div>
             </div>
-            <p className="text-sm text-slate-400 mt-3">
+            <p className="text-xs md:text-sm text-slate-400 mt-3">
               Ao assinar, você concorda com nossa política de privacidade. 
               Cancele a qualquer momento.
             </p>

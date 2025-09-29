@@ -4,8 +4,8 @@ import { supabase } from '@/integrations/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { RichTextEditor } from '@/components/admin/RichTextEditor'
 
 export default function SupplierPageEditor() {
   const { slug } = useParams()
@@ -72,7 +72,14 @@ export default function SupplierPageEditor() {
           </div>
           <div className="space-y-2">
             <Label>Conteúdo</Label>
-            <Textarea rows={12} value={form.content} onChange={(e) => setForm({ ...form, content: e.target.value })} />
+            <RichTextEditor 
+              value={form.content} 
+              onChange={(content) => setForm({ ...form, content })} 
+              placeholder="Digite o conteúdo da página do fornecedor..."
+            />
+            <p className="text-sm text-muted-foreground">
+              Dica: use o botão de imagem para inserir URLs públicas; arquivos locais podem ser enviados antes para o bucket "banners" ou "ebooks".
+            </p>
           </div>
           <div className="flex justify-end">
             <Button onClick={handleSave}>Salvar</Button>
@@ -82,5 +89,3 @@ export default function SupplierPageEditor() {
     </div>
   )
 }
-
-

@@ -1,14 +1,11 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '@/integrations/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
-import { Suspense, lazy } from 'react'
-import ReactQuill from 'react-quill'
-import 'react-quill/dist/quill.snow.css'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { RichTextEditor } from '@/components/admin/RichTextEditor'
 
 export default function FoundryPageEditor() {
   const { slug } = useParams()
@@ -16,7 +13,6 @@ export default function FoundryPageEditor() {
   const [loading, setLoading] = useState(true)
   const [foundryId, setFoundryId] = useState<string>('')
   const [form, setForm] = useState({ title: '', slug: '', content: '' })
-  const quillRef = useRef<any>(null)
 
   useEffect(() => {
     const load = async () => {
@@ -55,49 +51,6 @@ export default function FoundryPageEditor() {
     navigate('/admin/fundicoes')
   }
 
-  const handleImageUpload = () => {
-    const input = document.createElement('input')
-    input.setAttribute('type', 'file')
-    input.setAttribute('accept', 'image/*')
-    input.onchange = async () => {
-      const file = (input.files && input.files[0]) as File | undefined
-      if (!file || !foundryId) return
-      try {
-        const ext = file.name.split('.').pop() || 'jpg'
-        const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
-        const path = `foundry-pages/${foundryId}/${fileName}`
-        const { error: uploadError } = await supabase.storage.from('banners').upload(path, file)
-        if (uploadError) throw uploadError
-        const { data } = supabase.storage.from('banners').getPublicUrl(path)
-        const quill = quillRef.current?.getEditor?.()
-        const range = quill?.getSelection(true)
-        if (quill && range) {
-          quill.insertEmbed(range.index, 'image', data.publicUrl, 'user')
-          quill.setSelection(range.index + 1)
-        }
-      } catch (e) {
-        console.error('Upload de imagem falhou:', e)
-      }
-    }
-    input.click()
-  }
-
-  const quillModules = useMemo(() => ({
-    toolbar: {
-      container: [
-        [{ header: [1, 2, 3, false] }],
-        ['bold', 'italic', 'underline', 'strike'],
-        [{ list: 'ordered' }, { list: 'bullet' }],
-        ['link', 'image'],
-        [{ align: [] }],
-        ['clean']
-      ],
-      handlers: { image: handleImageUpload }
-    }
-  }), [foundryId])
-
-  const QuillLazy = typeof window !== 'undefined' ? lazy(() => import('react-quill')) : null
-
   if (loading) return <div className="p-6">Carregando...</div>
 
   return (
@@ -119,16 +72,14 @@ export default function FoundryPageEditor() {
           </div>
           <div className="space-y-2">
             <Label>Conteúdo</Label>
-            <div className="prose max-w-none">
-              {QuillLazy ? (
-                <Suspense fallback={<div className="text-sm text-muted-foreground">Carregando editor…</div>}>
-                  <QuillLazy ref={quillRef as any} theme="snow" value={form.content} onChange={(val: string) => setForm({ ...form, content: val })} modules={quillModules} />
-                </Suspense>
-              ) : (
-                <Textarea rows={12} value={form.content} onChange={(e) => setForm({ ...form, content: e.target.value })} />
-              )}
-            </div>
-            <p className="text-xs text-muted-foreground">Dica: use o botão de imagem para inserir URLs públicas; arquivos locais podem ser enviados antes para o bucket “banners” ou “ebooks”.</p>
+            <RichTextEditor 
+              value={form.content} 
+              onChange={(content) => setForm({ ...form, content })} 
+              placeholder="Digite o conteúdo da página da fundição..."
+            />
+            <p className="text-sm text-muted-foreground">
+              Dica: use o botão de imagem para inserir URLs públicas; arquivos locais podem ser enviados antes para o bucket "banners" ou "ebooks".
+            </p>
           </div>
           <div className="flex justify-end">
             <Button onClick={handleSave}>Salvar</Button>
@@ -138,5 +89,3 @@ export default function FoundryPageEditor() {
     </div>
   )
 }
-
-

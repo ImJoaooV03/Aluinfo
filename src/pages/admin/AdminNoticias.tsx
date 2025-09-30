@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { RichTextEditor } from "@/components/admin/RichTextEditor";
+import { ImageUpload } from "@/components/admin/ImageUpload";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -479,12 +480,10 @@ export default function AdminNoticias() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="featured_image">URL da Imagem</Label>
-                     <Input
-                       id="featured_image"
+                    <Label htmlFor="featured_image">Imagens</Label>
+                     <ImageUpload
                        value={formData.featured_image_url}
-                       onChange={(e) => setFormData(prev => ({ ...prev, featured_image_url: e.target.value }))}
-                       placeholder="https://exemplo.com/imagem.jpg"
+                       onChange={(url) => setFormData(prev => ({ ...prev, featured_image_url: url }))}
                      />
                   </div>
 

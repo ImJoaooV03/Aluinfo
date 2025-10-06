@@ -3,15 +3,18 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useSupabaseBanners } from "@/hooks/useSupabaseBanners";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const HeroSlider = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const { banners, loading } = useSupabaseBanners();
   const { t } = useTranslation('home');
+  const isMobile = useIsMobile();
   
-  // Filter banners for home slider
+  // Filter banners for home slider - use mobile banners if on mobile, desktop otherwise
+  const sliderPosition = isMobile ? 'home-slider-mobile' : 'home-slider';
   const sliderBanners = banners.filter(banner => {
-    if (banner.position !== 'home-slider' || !banner.is_active || !banner.image_url) {
+    if (banner.position !== sliderPosition || !banner.is_active || !banner.image_url) {
       return false;
     }
     
@@ -31,6 +34,11 @@ const HeroSlider = () => {
     
     return true;
   });
+
+  // Reset slide when switching between mobile and desktop
+  useEffect(() => {
+    setCurrentSlide(0);
+  }, [isMobile]);
 
   // Auto-advance slides
   useEffect(() => {
@@ -53,7 +61,7 @@ const HeroSlider = () => {
 
   if (loading) {
     return (
-      <section className="w-full h-[300px] md:h-[400px] lg:h-[500px] bg-muted animate-pulse">
+      <section className="w-full h-[250px] sm:h-[350px] md:h-[450px] lg:h-[500px] bg-muted animate-pulse">
         <div className="w-full h-full bg-gradient-to-r from-muted/50 to-muted" />
       </section>
     );
@@ -61,12 +69,12 @@ const HeroSlider = () => {
 
   if (sliderBanners.length === 0) {
     return (
-      <section className="w-full h-[300px] md:h-[400px] lg:h-[500px] bg-gradient-to-br from-primary/10 via-secondary/5 to-accent/10 flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-2xl md:text-4xl font-bold text-lead mb-4">
+      <section className="w-full h-[250px] sm:h-[350px] md:h-[450px] lg:h-[500px] bg-gradient-to-br from-primary/10 via-secondary/5 to-accent/10 flex items-center justify-center">
+        <div className="text-center px-4">
+          <h2 className="text-xl sm:text-2xl md:text-4xl font-bold text-lead mb-4">
             Portal ALUINFO
           </h2>
-          <p className="text-lg text-muted-foreground">
+          <p className="text-base sm:text-lg text-muted-foreground">
             {t('configureSlides')}
           </p>
         </div>
@@ -75,7 +83,7 @@ const HeroSlider = () => {
   }
 
   return (
-    <section className="relative w-full h-[300px] md:h-[400px] lg:h-[500px] overflow-hidden">
+    <section className="relative w-full h-[250px] sm:h-[350px] md:h-[450px] lg:h-[500px] overflow-hidden">
       {/* Slides */}
       <div 
         className="flex transition-transform duration-500 ease-in-out h-full"
@@ -93,14 +101,14 @@ const HeroSlider = () => {
                 <img
                   src={banner.image_url || ''}
                   alt={banner.title}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover object-center"
                 />
               </a>
             ) : (
               <img
                 src={banner.image_url || ''}
                 alt={banner.title}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover object-center"
               />
             )}
             
@@ -115,35 +123,38 @@ const HeroSlider = () => {
           <Button
             variant="outline"
             size="icon"
-            className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white border-white/50 shadow-lg"
+            className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white border-white/50 shadow-lg h-8 w-8 md:h-10 md:w-10 rounded-full"
             onClick={prevSlide}
+            aria-label="Slide anterior"
           >
-            <ChevronLeft className="h-4 w-4" />
+            <ChevronLeft className="h-4 w-4 md:h-5 md:w-5" />
           </Button>
           
           <Button
             variant="outline"
             size="icon"
-            className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white border-white/50 shadow-lg"
+            className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white border-white/50 shadow-lg h-8 w-8 md:h-10 md:w-10 rounded-full"
             onClick={nextSlide}
+            aria-label="Próximo slide"
           >
-            <ChevronRight className="h-4 w-4" />
+            <ChevronRight className="h-4 w-4 md:h-5 md:w-5" />
           </Button>
         </>
       )}
 
       {/* Dots indicator - only show if there are multiple slides */}
       {sliderBanners.length > 1 && (
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+        <div className="absolute bottom-3 md:bottom-4 left-1/2 -translate-x-1/2 flex gap-2 bg-black/30 px-3 py-2 rounded-full backdrop-blur-sm">
           {sliderBanners.map((_, index) => (
             <button
               key={index}
-              className={`w-3 h-3 rounded-full transition-colors ${
+              className={`w-2 h-2 md:w-3 md:h-3 rounded-full transition-all duration-300 ${
                 currentSlide === index 
-                  ? 'bg-white' 
+                  ? 'bg-white scale-110' 
                   : 'bg-white/50 hover:bg-white/70'
               }`}
               onClick={() => setCurrentSlide(index)}
+              aria-label={`Ir para slide ${index + 1}`}
             />
           ))}
         </div>

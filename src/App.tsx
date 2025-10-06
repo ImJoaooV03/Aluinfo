@@ -20,6 +20,7 @@ import Cursos from "./pages/Cursos";
 import LME from "./pages/LME";
 import Patrocinadas from "./pages/Patrocinadas";
 import Anuncie from "./pages/Anuncie";
+import Busca from "./pages/Busca";
 import NotFound from "./pages/NotFound";
 import Dashboard from "./pages/admin/Dashboard";
 import AdminNoticias from "./pages/admin/AdminNoticias";
@@ -76,6 +77,7 @@ function App() {
         <Routes>
             {/* Main routes without language prefix */}
             <Route path="/" element={<Index />} />
+            <Route path="/busca" element={<Busca />} />
             <Route path="/noticias" element={<Noticias />} />
             <Route path="/noticias/:slug" element={<NoticiaIndividual />} />
             {/* Compatibility route for old singular URLs */}

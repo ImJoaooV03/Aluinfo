@@ -16,8 +16,8 @@ const Header = () => {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchTerm.trim()) {
-      // Redirect to news page with search parameter
-      navigate(`/noticias?search=${encodeURIComponent(searchTerm.trim())}`);
+      // Redirect to universal search page
+      navigate(`/busca?q=${encodeURIComponent(searchTerm.trim())}`);
       setSearchTerm("");
     }
   };

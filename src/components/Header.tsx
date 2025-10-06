@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { Search, Settings, Menu, X } from "lucide-react";
+import { Search, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useTranslation } from "react-i18next";
@@ -45,12 +45,6 @@ const Header = () => {
             <Link to="/anuncie">
               <Button variant="ghost" size="sm" className="text-sm text-primary hover:text-primary-foreground hover:bg-primary">
                 {t('header:advertise')}
-              </Button>
-            </Link>
-            <Link to="/admin/dashboard">
-              <Button variant="ghost" size="sm" className="text-sm text-primary hover:text-primary-foreground hover:bg-primary">
-                <Settings className="h-3 w-3 mr-1" />
-                {t('header:admin')}
               </Button>
             </Link>
           </div>
@@ -133,12 +127,6 @@ const Header = () => {
               <Link to="/anuncie">
                 <Button variant="ghost" size="sm" className="w-full justify-start text-sm text-primary hover:text-primary-foreground hover:bg-primary">
                   {t('header:advertise')}
-                </Button>
-              </Link>
-              <Link to="/admin/dashboard">
-                <Button variant="ghost" size="sm" className="w-full justify-start text-sm text-primary hover:text-primary-foreground hover:bg-primary">
-                  <Settings className="h-3 w-3 mr-1" />
-                  {t('header:admin')}
                 </Button>
               </Link>
             </div>
